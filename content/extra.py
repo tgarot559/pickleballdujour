@@ -7,23 +7,19 @@ TOURNEYS = [
 ]
 
 NEWS_FR = """
-<p>Chaque semaine, la lettre de Pickleball du Jour réunit les meilleurs conseils, l'actu des tournois en France et dans le monde, et une question de lecteur. Elle est gratuite.</p>
-<div class="two" style="margin:28px 0">
-<div class="price"><h3 style="margin-top:0">La lettre</h3><p class="p">Gratuit</p><ul><li>Les meilleurs conseils de la semaine</li><li>Le calendrier des tournois à venir</li><li>L'actu du pickleball en France et dans le monde</li></ul></div>
-<div class="price best"><h3 style="margin-top:0">Je soutiens le projet</h3><p class="p">6,50 € <span style="font-size:18px">/ mois</span></p><p>ou <strong>55 € / an</strong> (environ 30 % d'économie)</p><ul><li>Tout ce que contient la lettre gratuite</li><li>Une édition mensuelle enrichie : un programme d'entraînement sur quatre semaines, l'analyse des tournois du mois, le matériel testé</li><li>Vous aidez un site indépendant, sans publicité envahissante</li></ul></div>
-</div>
-<p class="drill"><b>Ouverture des inscriptions :</b> le formulaire d'inscription et le paiement sécurisé arrivent sur cette page très prochainement.</p>
-<p class="note">Résiliable à tout moment, en un clic.</p>
+<div class="answer"><strong>Gratuit, une fois par semaine</strong>Chaque semaine, les nouveaux conseils, les tournois qui arrivent et un point sur l'actu du pickleball. Un e-mail court, lisible sur téléphone. Désinscription en un clic.</div>
+<h2>Ce que vous recevez</h2>
+<ul><li>Les conseils de la semaine, avec leur exercice à essayer</li><li>Les tournois à venir, des grands rendez-vous aux K25 de clubs</li><li>Les changements de règles et l'actu en France et dans le monde, quand il y en a</li></ul>
+<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Je m'inscris</h2><div id="brevo-form"><p>L'inscription ouvre dans quelques jours. En attendant, le conseil du jour est déjà en ligne chaque matin : <a href="/conseils/">tous les conseils</a>. Vous pouvez aussi suivre le flux RSS : <a href="/conseils/feed.xml">pickleballdujour.fr/conseils/feed.xml</a>.</p></div></div>
+<p class="note">Votre adresse sert uniquement à envoyer la lettre. Elle n'est jamais revendue.</p>
 """
 
 NEWS_EN = """
-<p>Every week, the Pickleball du Jour letter brings together the best tips, tournament news from France and around the world, and a reader question. It's free.</p>
-<div class="two" style="margin:28px 0">
-<div class="price"><h3 style="margin-top:0">The letter</h3><p class="p">Free</p><ul><li>The week's best tips</li><li>Upcoming tournaments</li><li>Pickleball news from France and worldwide</li></ul></div>
-<div class="price best"><h3 style="margin-top:0">Support the project</h3><p class="p">€6.50 <span style="font-size:18px">/ month</span></p><p>or <strong>€55 / year</strong> (about 30% off)</p><ul><li>Everything in the free letter</li><li>A richer monthly edition: a four-week training plan, the month's tournaments analysed, gear tested</li><li>You keep an independent site going, without intrusive ads</li></ul></div>
-</div>
-<p class="drill"><b>Sign-ups open soon:</b> the sign-up form and secure payment will be added to this page very soon.</p>
-<p class="note">Cancel anytime, in one click.</p>
+<div class="answer"><strong>Free, once a week</strong>Every week: the new tips, upcoming tournaments and a quick look at pickleball news. A short email that reads well on a phone. One-click unsubscribe.</div>
+<h2>What you get</h2>
+<ul><li>The week's tips, each with a drill to try</li><li>Upcoming tournaments in France, from the big events to club K25s</li><li>Rule changes and news from France and worldwide, when there are any</li></ul>
+<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Sign up</h2><div id="brevo-form"><p>Sign-ups open in a few days. In the meantime, the tip of the day is online every morning: <a href="/en/tips/">all tips</a>. You can also follow the RSS feed: <a href="/en/tips/feed.xml">pickleballdujour.fr/en/tips/feed.xml</a>.</p></div></div>
+<p class="note">Your address is only used to send the letter. It is never sold.</p>
 """
 
 ABOUT_FR = """
@@ -62,12 +58,12 @@ LEGAL_EN = """
 
 EXTRA = {
  "fr": [
-  {"path": "/newsletter/", "alt": "/en/newsletter/", "h1": "La lettre de Pickleball du Jour", "title": "Newsletter pickleball gratuite · Pickleball du Jour", "desc": "La newsletter pickleball en français : conseils, tournois, actu. Gratuite, avec une édition mensuelle enrichie pour les soutiens (6,50 €/mois ou 55 €/an).", "body": NEWS_FR},
+  {"path": "/newsletter/", "alt": "/en/newsletter/", "h1": "La lettre de Pickleball du Jour", "title": "Newsletter pickleball gratuite · Pickleball du Jour", "desc": "La newsletter pickleball gratuite en français : les conseils de la semaine, les tournois près de chez vous et l'actu, chaque semaine.", "body": NEWS_FR},
   {"path": "/a-propos/", "alt": "/en/about/", "h1": "À propos", "title": "À propos · Pickleball du Jour", "desc": "Qui fait Pickleball du Jour, comment les informations sont vérifiées, et comment nous contacter.", "body": ABOUT_FR},
   {"path": "/mentions-legales/", "alt": "/en/legal/", "h1": "Mentions légales", "title": "Mentions légales · Pickleball du Jour", "desc": "Mentions légales du site Pickleball du Jour.", "body": LEGAL_FR},
  ],
  "en": [
-  {"path": "/en/newsletter/", "alt": "/newsletter/", "h1": "The Pickleball du Jour letter", "title": "Free pickleball newsletter · Pickleball du Jour", "desc": "A pickleball newsletter: tips, tournaments, news. Free, with a richer monthly edition for supporters (€6.50/month or €55/year).", "body": NEWS_EN},
+  {"path": "/en/newsletter/", "alt": "/newsletter/", "h1": "The Pickleball du Jour letter", "title": "Free pickleball newsletter · Pickleball du Jour", "desc": "A free weekly pickleball newsletter: the week's tips, upcoming tournaments and news.", "body": NEWS_EN},
   {"path": "/en/about/", "alt": "/a-propos/", "h1": "About", "title": "About · Pickleball du Jour", "desc": "Who makes Pickleball du Jour, how facts are checked, and how to get in touch.", "body": ABOUT_EN},
   {"path": "/en/legal/", "alt": "/mentions-legales/", "h1": "Legal notice", "title": "Legal notice · Pickleball du Jour", "desc": "Legal notice for Pickleball du Jour.", "body": LEGAL_EN},
  ],

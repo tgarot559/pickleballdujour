@@ -8,6 +8,7 @@ from content.tips_fr import TIPS as TFR
 from content.pages_en import PAGES as PEN
 from content.tips_en import TIPS as TEN
 from content.extra import EXTRA, TOURNEYS
+from finder import finder_html, data as tdata
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "docs")
@@ -26,7 +27,7 @@ T = {
         "hero_p": "Simple, concret, à essayer dès votre prochaine partie. Et des guides complets sur les règles, le matériel et les tournois en France et dans le monde.",
         "cta": "Recevoir les conseils", "about": "/a-propos/", "about_t": "À propos", "legal": "/mentions-legales/", "legal_t": "Mentions légales",
         "foot_p": "Le média indépendant du pickleball en français. Un conseil chaque jour, des guides complets, le calendrier des tournois.",
-        "cats": "Thèmes", "newsband_h": "La lettre de Pickleball du Jour", "newsband_p": "Les meilleurs conseils de la semaine et l'actu des tournois, gratuitement. Et une édition mensuelle enrichie pour ceux qui soutiennent le projet.",
+        "cats": "Thèmes", "newsband_h": "La lettre de Pickleball du Jour", "newsband_p": "Les conseils de la semaine et les tournois près de chez vous, gratuitement, une fois par semaine.",
         "date_fmt": lambda d: f"{d.day} {['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][d.month-1]} {d.year}",
         "events": "Les prochains grands rendez-vous", "see_cal": "Voir tout le calendrier", "world": "Dans le monde"},
  "en": {"name": "Pickleball du Jour", "lang": "en", "home": "/en/", "tips": "tips", "tips_t": "Tips", "tip_of_day": "Tip of the day",
@@ -38,7 +39,7 @@ T = {
         "hero_p": "Simple, practical, ready for your next game. Plus complete guides to the rules, gear and tournaments in France and worldwide.",
         "cta": "Get the tips", "about": "/en/about/", "about_t": "About", "legal": "/en/legal/", "legal_t": "Legal notice",
         "foot_p": "An independent pickleball site from France. A tip every day, complete guides, the tournament calendar.",
-        "cats": "Topics", "newsband_h": "The Pickleball du Jour letter", "newsband_p": "The week's best tips and tournament news, free. Plus a richer monthly edition for those who support the project.",
+        "cats": "Topics", "newsband_h": "The Pickleball du Jour letter", "newsband_p": "The week's tips and upcoming tournaments, free, once a week.",
         "date_fmt": lambda d: d.strftime("%B %-d, %Y"),
         "events": "Coming up", "see_cal": "Full calendar", "world": "Worldwide"},
 }
@@ -84,6 +85,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website"):
 <meta property="og:image" content="{SITE}/img/og.png"><meta name="twitter:card" content="summary_large_image">
 {FONTS}
 <link rel="stylesheet" href="/style.css">
+<link rel="alternate" type="application/rss+xml" title="Pickleball du Jour" href="{t['home'].rstrip('/')}/{t['tips']}/feed.xml">
 {lds}
 </head>
 <body>
@@ -111,6 +113,7 @@ def crumbs(lang, items):
 
 
 def fill(body, lang):
+    body = body.replace("{{FINDER}}", finder_html(lang))
     return body.replace("{{COURT}}", court_svg(lang)).replace("{{PADDLE}}", paddle_svg(lang)).replace("{{SERVE}}", serve_svg(lang))
 
 
@@ -159,14 +162,15 @@ def tip_pages(lang, tips, other):
     alt_base = "/en/tips/" if lang == "fr" else "/conseils/"
     paths = []
     for i, tip in enumerate(tips):
-        slug, cat, title, summary, body, drill = tip
+        slug, cat, title, summary, body, drill = tip[:6]
+        tdate = tip[6] if len(tip) > 6 else LAUNCH.isoformat()
         path = f"{base}{slug}/"
         alt = f"{alt_base}{other[i][0]}/"
         cr, crld = crumbs(lang, [(t["tips_t"], base), (title, None)])
         prev_l = f'<a href="{base}{tips[i-1][0]}/">← {esc(tips[i-1][2])}</a>' if i > 0 else ""
         next_l = f'<a href="{base}{tips[(i+1)%len(tips)][0]}/">{esc(tips[(i+1)%len(tips)][2])} →</a>'
         art = {"@context": "https://schema.org", "@type": "Article", "headline": title, "description": summary, "inLanguage": lang, "articleSection": cat,
-               "datePublished": LAUNCH.isoformat(), "dateModified": TODAY.isoformat(), "author": AUTHOR, "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": SITE}}
+               "datePublished": tdate, "dateModified": TODAY.isoformat(), "author": AUTHOR, "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": SITE}}
         b = f'''<div class="wrap page">{cr}<div class="read">
 <p class="meta">{t["tip_n"]}{i+1} · {esc(cat)} · {t["by"]}</p>
 <h1>{esc(title)}</h1>
@@ -230,6 +234,25 @@ def extra_pages(lang):
     return out
 
 
+def rss(lang, tips):
+    from email.utils import format_datetime
+    t = T[lang]
+    pre = "" if lang == "fr" else "/en"
+    base = f"{pre}/{t['tips']}/"
+    title = "Pickleball du Jour : le conseil du jour" if lang == "fr" else "Pickleball du Jour: tip of the day"
+    items = []
+    for i, tip in enumerate(sorted(tips, key=lambda x: (x[6] if len(x) > 6 else "", -tips.index(x)), reverse=True)[:30]):
+        slug, cat, ti, summary, body, drill = tip[:6]
+        d = datetime.datetime.fromisoformat((tip[6] if len(tip) > 6 else LAUNCH.isoformat()) + "T06:45:00+01:00")
+        url = SITE + base + slug + "/"
+        desc = f"<p><strong>{html.escape(summary)}</strong></p>{body}<p><em>{t['try']}{' :' if lang == 'fr' else ':'}</em> {html.escape(drill)}</p><p><a href=\"{url}\">{t['read']}</a></p>"
+        items.append(f"<item><title>{html.escape(ti)}</title><link>{url}</link><guid isPermaLink=\"true\">{url}</guid><category>{html.escape(cat)}</category><pubDate>{format_datetime(d)}</pubDate><description><![CDATA[{desc}]]></description></item>")
+    xml = f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>{title}</title><link>{SITE}{t["home"]}</link><atom:link href="{SITE}{base}feed.xml" rel="self" type="application/rss+xml"/><description>{html.escape(t["hero_p"])}</description><language>{lang}</language>{"".join(items)}</channel></rss>'
+    path = os.path.join(OUT, (base + "feed.xml").lstrip("/"))
+    with open(path, "w", encoding="utf-8") as f:
+        f.write(xml)
+
+
 def main():
     if os.path.exists(OUT):
         shutil.rmtree(OUT)
@@ -242,6 +265,7 @@ def main():
             urls.append(pillar(lang, p, o["slug"]))
         urls += tip_pages(lang, tips, otips)
         urls += extra_pages(lang)
+        rss(lang, tips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))
     shutil.copytree(os.path.join(ROOT, "static", "img"), os.path.join(OUT, "img"))
@@ -262,6 +286,8 @@ def main():
     llms += [f"- [{p['h1']}]({SITE}/{p['slug']}/): {p['answer']}" for p in PFR]
     llms += ["", "## Guides (EN)"] + [f"- [{p['h1']}]({SITE}/en/{p['slug']}/): {p['answer']}" for p in PEN]
     llms += ["", "## Conseils du jour", f"- [Tous les conseils]({SITE}/conseils/)", f"- [All tips]({SITE}/en/tips/)"]
+    with open(os.path.join(OUT, "tournois.json"), "w") as f:
+        json.dump(tdata(), f, ensure_ascii=False)
     with open(os.path.join(OUT, "llms.txt"), "w") as f:
         f.write("\n".join(llms) + "\n")
     nf = layout("fr", "/404.html", "Page introuvable · Pickleball du Jour", "Page introuvable", '<div class="wrap page"><h1>Balle dehors !</h1><p>Cette page n\'existe pas. <a href="/">Retour à l\'accueil</a> · <a href="/en/">English</a></p></div>', "/en/")

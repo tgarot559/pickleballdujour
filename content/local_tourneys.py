@@ -1,0 +1,52 @@
+# Tournois locaux (K25, K100, K250, clubs) en France.
+# Champs : debut, fin, nom, ville, departement, region, niveau, lat, lon, source
+# Mis à jour chaque lundi par la tâche programmée. Ne garder que les tournois à venir, vérifiés.
+CHECKED = "2026-11-27"
+SRC_PD = "https://pickledeck.com/tournois"
+SRC_TP = "https://tournoipickleball.fr/tournois"
+
+LOCAL = [
+ ("2026-11-28", "2026-11-29", "K100 Neuvy", "Neuvy", "03", "Auvergne-Rhône-Alpes", "K100", 46.565, 3.290, SRC_PD),
+ ("2026-11-28", "2026-11-29", "Pikkel K25", "Chambéry", "73", "Auvergne-Rhône-Alpes", "K25", 45.564, 5.917, SRC_TP),
+ ("2026-11-29", "2026-11-29", "K25 de novembre", "Les Essarts-le-Roi", "78", "Île-de-France", "K25", 48.716, 1.893, SRC_PD),
+ ("2026-11-29", "2026-11-29", "K25 d'automne du TC Trinquetaille", "Arles", "13", "Provence-Alpes-Côte d'Azur", "K25", 43.677, 4.630, SRC_PD),
+ ("2026-11-29", "2026-11-29", "K25 spécial débutants", "Vazerac", "82", "Occitanie", "K25", 44.196, 1.283, SRC_PD),
+ ("2026-11-29", "2026-11-29", "K100 CTRV", "Aulnay-sous-Bois", "93", "Île-de-France", "K100", 48.938, 2.497, SRC_PD),
+ ("2026-12-04", "2026-12-06", "K100 Circuit Occitanie ATM Montauban", "Montauban", "82", "Occitanie", "K100", 44.018, 1.355, SRC_TP),
+ ("2026-12-05", "2026-12-06", "K100 Pickleball Time", "Nîmes", "30", "Occitanie", "K100", 43.837, 4.360, SRC_PD),
+ ("2026-12-06", "2026-12-06", "K100 Saint-Maurice-de-Gourdans", "Saint-Maurice-de-Gourdans", "01", "Auvergne-Rhône-Alpes", "K100", 45.823, 5.193, SRC_TP),
+ ("2026-12-12", "2026-12-13", "CPC Tour, étape 8, Master Lyon", "Lyon", "69", "Auvergne-Rhône-Alpes", "Circuit", 45.764, 4.836, SRC_PD),
+ ("2026-12-12", "2026-12-13", "Open K100 de Noël Aulnay", "Aulnay", "17", "Nouvelle-Aquitaine", "K100", 46.023, -0.348, SRC_PD),
+ ("2026-12-12", "2026-12-12", "Tournoi Pickleball Iroise", "Le Conquet", "29", "Bretagne", "K25", 48.360, -4.771, SRC_PD),
+ ("2026-12-12", "2026-12-13", "K100 SKINUP Academy", "Azay-le-Rideau", "37", "Centre-Val de Loire", "K100", 47.262, 0.466, SRC_PD),
+ ("2026-12-12", "2026-12-12", "Tournoi des familles", "La Chapelle-des-Fougeretz", "35", "Bretagne", "Club", 48.177, -1.733, SRC_PD),
+ ("2026-12-12", "2026-12-13", "Viriat Pickleball K100", "Viriat", "01", "Auvergne-Rhône-Alpes", "K100", 46.254, 5.215, SRC_PD),
+ ("2026-12-13", "2026-12-13", "K25 de Creissels", "Creissels", "12", "Occitanie", "K25", 44.087, 3.062, SRC_PD),
+ ("2026-12-13", "2026-12-13", "K25 du TC de La Mure", "La Mure", "38", "Auvergne-Rhône-Alpes", "K25", 44.903, 5.786, SRC_TP),
+ ("2026-12-13", "2026-12-13", "K25 de Noël du Bruay Pickleball", "Bruay-la-Buissière", "62", "Hauts-de-France", "K25", 50.483, 2.550, SRC_TP),
+ ("2026-12-18", "2026-12-20", "Pikkel K100", "Chambéry", "73", "Auvergne-Rhône-Alpes", "K100", 45.564, 5.917, SRC_TP),
+ ("2026-12-18", "2026-12-20", "K100 de Noël Dink'it", "La Chapelle-des-Fougeretz", "35", "Bretagne", "K100", 48.177, -1.733, SRC_PD),
+ ("2026-12-19", "2026-12-19", "K25 Caussade", "Septfonds", "82", "Occitanie", "K25", 44.178, 1.617, SRC_PD),
+ ("2026-12-19", "2026-12-19", "K25 Trégunc Pickleball", "Trégunc", "29", "Bretagne", "K25", 47.855, -3.852, SRC_PD),
+ ("2026-12-20", "2026-12-20", "CD 68 K25, 1re édition", "Brunstatt-Didenheim", "68", "Grand Est", "K25", 47.721, 7.317, SRC_PD),
+ ("2026-12-20", "2026-12-20", "Tournoi en simple DUPR", "Lure", "70", "Bourgogne-Franche-Comté", "DUPR", 47.683, 6.497, SRC_PD),
+ ("2026-12-20", "2026-12-20", "TC Nevers K100", "Nevers", "58", "Bourgogne-Franche-Comté", "K100", 46.990, 3.159, SRC_PD),
+ ("2026-12-20", "2026-12-20", "K25 double mixte TC Auray", "Auray", "56", "Bretagne", "K25", 47.668, -2.983, SRC_PD),
+ ("2026-12-27", "2026-12-27", "Open K100 de Noël", "Niort", "79", "Nouvelle-Aquitaine", "K100", 46.323, -0.459, SRC_PD),
+ ("2026-12-27", "2026-12-27", "Tournoi de Noël K100", "La Rivière-de-Corps", "10", "Grand Est", "K100", 48.290, 4.027, SRC_PD),
+ ("2026-12-30", "2027-01-03", "Tournoi Nouvel An 2027", "Ville-d'Avray", "92", "Île-de-France", "Club", 48.825, 2.193, SRC_PD),
+ ("2027-01-02", "2027-01-03", "Tournoi de la Bonne année", "Saint-Hilaire-Saint-Mesmin", "45", "Centre-Val de Loire", "K100", 47.866, 1.836, SRC_PD),
+ ("2027-01-08", "2027-01-10", "K250 TC Riez Océan", "Saint-Hilaire-de-Riez", "85", "Pays de la Loire", "K250", 46.721, -1.946, SRC_PD),
+ ("2027-01-08", "2027-01-10", "K100 Pickleball Time", "Nîmes", "30", "Occitanie", "K100", 43.837, 4.360, SRC_PD),
+ ("2027-01-17", "2027-01-17", "Circuit PACA K100, épisode 3, TC Antibes", "Antibes", "06", "Provence-Alpes-Côte d'Azur", "K100", 43.580, 7.125, SRC_TP),
+ ("2027-01-17", "2027-01-17", "K100 Étang-sur-Arroux", "Étang-sur-Arroux", "71", "Bourgogne-Franche-Comté", "K100", 46.866, 4.190, SRC_PD),
+ ("2027-01-22", "2027-01-24", "Open d'hiver FFT", "Marcq-en-Barœul", "59", "Hauts-de-France", "K1000", 50.672, 3.096, "https://www.fft.fr/nos-sports/pickleball/competitions-pickleball"),
+ ("2027-01-29", "2027-01-31", "K100 Pickleball Time", "Nîmes", "30", "Occitanie", "K100", 43.837, 4.360, SRC_PD),
+ ("2027-02-06", "2027-02-06", "K100 d'hiver de Valencin", "Valencin", "38", "Auvergne-Rhône-Alpes", "K100", 45.611, 5.030, SRC_PD),
+ ("2027-03-05", "2027-03-07", "K100 Pickleball Time", "Nîmes", "30", "Occitanie", "K100", 43.837, 4.360, SRC_PD),
+ ("2027-03-19", "2027-03-21", "K100 Pickleball Time", "Nîmes", "30", "Occitanie", "K100", 43.837, 4.360, SRC_PD),
+ ("2027-03-27", "2027-03-28", "K100 de printemps de Foulain", "Foulain", "52", "Grand Est", "K100", 48.036, 5.207, SRC_PD),
+ ("2027-04-23", "2027-04-25", "Championnats de France 3.0 et 4.0", "Chevigny-Saint-Sauveur", "21", "Bourgogne-Franche-Comté", "K1000", 47.302, 5.135, "https://www.fft.fr/nos-sports/pickleball/competitions-pickleball"),
+ ("2027-05-07", "2027-05-09", "Championnats de France 5.0", "Chambéry", "73", "Auvergne-Rhône-Alpes", "K1000", 45.564, 5.917, "https://www.fft.fr/nos-sports/pickleball/competitions-pickleball"),
+ ("2027-05-29", "2027-05-30", "K100 de la Semaine du pickleball", "Niort", "79", "Nouvelle-Aquitaine", "K100", 46.323, -0.459, "https://tenup.fft.fr"),
+]

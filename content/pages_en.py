@@ -278,6 +278,7 @@ PAGES = [
 "kicker": "Competition",
 "answer": "The big French events of the 2026-2027 season: the Winter Open in Marcq-en-Barœul on 22-24 January 2027, the French Championships in Chevigny (23-25 April) and Chambéry (7-9 May), and the French Open on 18-20 June 2027. Worldwide, the US Open runs in Naples, Florida, on 17-24 April 2027.",
 "body": """
+{{FINDER}}
 <h2>Key dates</h2>
 <div class="tbl"><table><thead><tr><th>Dates</th><th>Event</th><th>Venue</th></tr></thead><tbody>
 <tr><td class="n">Jan 22-24, 2027</td><td>FFT Winter Open (K1000)</td><td>Marcq-en-Barœul, France</td></tr>

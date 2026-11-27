@@ -297,6 +297,7 @@ PAGES = [
 "kicker": "Compétition",
 "answer": "Les grands rendez-vous français de la saison 2026-2027 : l'Open d'hiver à Marcq-en-Barœul du 22 au 24 janvier 2027, les championnats de France à Chevigny (23-25 avril) et Chambéry (7-9 mai), et l'Open de France du 18 au 20 juin 2027. Tous les tournois homologués se trouvent sur Ten'Up.",
 "body": """
+{{FINDER}}
 <h2>Le calendrier des grands rendez-vous</h2>
 <div class="tbl"><table><thead><tr><th>Dates</th><th>Événement</th><th>Lieu</th></tr></thead><tbody>
 <tr><td class="n">22-24 janv. 2027</td><td>Open d'hiver FFT (catégorie K1000)</td><td>Marcq-en-Barœul</td></tr>
