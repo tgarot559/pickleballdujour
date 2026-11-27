@@ -129,3 +129,4 @@ summary{font-weight:700;cursor:pointer}
 body{padding-bottom:calc(72px + env(safe-area-inset-bottom))}
 .todimg{margin-top:8px}
 }
+code,pre{overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap}
