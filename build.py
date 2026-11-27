@@ -323,6 +323,11 @@ def main():
                    "icons": [{"src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, f)
     with open(os.path.join(OUT, "CNAME"), "w") as f:
         f.write("pickleballdujour.fr\n")
+    # Fichiers de validation moteurs (Search Console, IndexNow) servis à la racine
+    rootdir = os.path.join(ROOT, "static", "root")
+    if os.path.isdir(rootdir):
+        for fn in os.listdir(rootdir):
+            shutil.copy(os.path.join(rootdir, fn), os.path.join(OUT, fn))
     open(os.path.join(OUT, ".nojekyll"), "w").close()
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n  Strict-Transport-Security: max-age=31536000\n\n/img/*\n  Cache-Control: public, max-age=2592000\n\n/style.css\n  Cache-Control: public, max-age=86400\n")
