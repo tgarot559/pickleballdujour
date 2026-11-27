@@ -244,10 +244,10 @@ def rss(lang, tips):
     items = []
     for i, tip in enumerate(sorted(tips, key=lambda x: (x[6] if len(x) > 6 else "", -tips.index(x)), reverse=True)[:30]):
         slug, cat, ti, summary, body, drill = tip[:6]
-        d = datetime.datetime.fromisoformat((tip[6] if len(tip) > 6 else LAUNCH.isoformat()) + "T06:45:00+01:00")
+        d = datetime.datetime.fromisoformat((tip[6] if len(tip) > 6 else LAUNCH.isoformat()) + "T06:45:00+01:00") - datetime.timedelta(minutes=i)
         url = SITE + base + slug + "/"
-        desc = f"<p><strong>{html.escape(summary)}</strong></p>{body}<p><em>{t['try']}{' :' if lang == 'fr' else ':'}</em> {html.escape(drill)}</p><p><a href=\"{url}\">{t['read']}</a></p>"
-        items.append(f"<item><title>{html.escape(ti)}</title><link>{url}</link><guid isPermaLink=\"true\">{url}</guid><category>{html.escape(cat)}</category><pubDate>{format_datetime(d)}</pubDate><description><![CDATA[{desc}]]></description></item>")
+        desc = f"<p><strong>{html.escape(summary, quote=False)}</strong></p>{body}<p><em>{t['try']}{' :' if lang == 'fr' else ':'}</em> {html.escape(drill, quote=False)}</p><p><a href=\"{url}\">{t['read']}</a></p>"
+        items.append(f"<item><title>{html.escape(ti, quote=False)}</title><link>{url}</link><guid isPermaLink=\"true\">{url}</guid><category>{html.escape(cat, quote=False)}</category><pubDate>{format_datetime(d)}</pubDate><description><![CDATA[{desc}]]></description></item>")
     xml = f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>{title}</title><link>{SITE}{t["home"]}</link><atom:link href="{SITE}{base}feed.xml" rel="self" type="application/rss+xml"/><description>{html.escape(t["hero_p"])}</description><language>{lang}</language>{"".join(items)}</channel></rss>'
     path = os.path.join(OUT, (base + "feed.xml").lstrip("/"))
     with open(path, "w", encoding="utf-8") as f:

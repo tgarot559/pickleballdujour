@@ -10,7 +10,7 @@ NEWS_FR = """
 <div class="answer"><strong>Gratuit, une fois par semaine</strong>Chaque semaine, les nouveaux conseils, les tournois qui arrivent et un point sur l'actu du pickleball. Un e-mail court, lisible sur téléphone. Désinscription en un clic.</div>
 <h2>Ce que vous recevez</h2>
 <ul><li>Les conseils de la semaine, avec leur exercice à essayer</li><li>Les tournois à venir, des grands rendez-vous aux K25 de clubs</li><li>Les changements de règles et l'actu en France et dans le monde, quand il y en a</li></ul>
-<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Je m'inscris</h2><div id="brevo-form"><p>L'inscription ouvre dans quelques jours. En attendant, le conseil du jour est déjà en ligne chaque matin : <a href="/conseils/">tous les conseils</a>. Vous pouvez aussi suivre le flux RSS : <a href="/conseils/feed.xml">pickleballdujour.fr/conseils/feed.xml</a>.</p></div></div>
+<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Je m'inscris</h2><div id="brevo-form"><p>L'inscription ouvre dans quelques jours. En attendant, le conseil du jour est déjà en ligne chaque matin : <a href="/conseils/">tous les conseils</a>. Vous utilisez une application de lecture comme Feedly ? Ajoutez-y l'adresse <code>pickleballdujour.fr/conseils/feed.xml</code>.</p></div></div>
 <p class="note">Votre adresse sert uniquement à envoyer la lettre. Elle n'est jamais revendue.</p>
 """
 
@@ -18,7 +18,7 @@ NEWS_EN = """
 <div class="answer"><strong>Free, once a week</strong>Every week: the new tips, upcoming tournaments and a quick look at pickleball news. A short email that reads well on a phone. One-click unsubscribe.</div>
 <h2>What you get</h2>
 <ul><li>The week's tips, each with a drill to try</li><li>Upcoming tournaments in France, from the big events to club K25s</li><li>Rule changes and news from France and worldwide, when there are any</li></ul>
-<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Sign up</h2><div id="brevo-form"><p>Sign-ups open in a few days. In the meantime, the tip of the day is online every morning: <a href="/en/tips/">all tips</a>. You can also follow the RSS feed: <a href="/en/tips/feed.xml">pickleballdujour.fr/en/tips/feed.xml</a>.</p></div></div>
+<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Sign up</h2><div id="brevo-form"><p>Sign-ups open in a few days. In the meantime, the tip of the day is online every morning: <a href="/en/tips/">all tips</a>. Using a feed reader such as Feedly? Add <code>pickleballdujour.fr/en/tips/feed.xml</code>.</p></div></div>
 <p class="note">Your address is only used to send the letter. It is never sold.</p>
 """
 
