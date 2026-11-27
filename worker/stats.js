@@ -2,7 +2,7 @@
 // Aucune adresse IP ni cookie stocké : un identifiant de visiteur quotidien est dérivé
 // d'un hachage (IP + navigateur + date), non réversible, renouvelé chaque jour.
 // À coller dans le Worker « pickleballdujour-stats ». Remplacer ADMIN_HASH par le SHA-256 du code d'accès.
-const ADMIN_HASH = "9cbaf2268ba99dee905a727da56c73c8c09d85408185189d88df99836fd83d74";
+const ADMIN_HASH = "__ADMIN_HASH__";
 const ORIGINS = ["https://pickleballdujour.fr", "https://www.pickleballdujour.fr"];
 
 const SCHEMA = [
