@@ -9,6 +9,7 @@ from content.pages_en import PAGES as PEN
 from content.tips_en import TIPS as TEN
 from content.extra import EXTRA, TOURNEYS
 from finder import finder_html, data as tdata
+import scenes
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
 OUT = os.path.join(ROOT, "docs")
@@ -61,7 +62,20 @@ def write(path, content):
         f.write(content)
 
 
-def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website"):
+def tabbar(lang, path):
+    pre = "" if lang == "fr" else "/en"
+    items = [(pre + "/", "Accueil" if lang == "fr" else "Home", '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
+             (pre + ("/conseils/" if lang == "fr" else "/tips/"), "Conseils" if lang == "fr" else "Tips", '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'),
+             ("/tournois-pickleball/" if lang == "fr" else "/en/pickleball-tournaments/", "Tournois" if lang == "fr" else "Events", '<path d="M8 4h8v4a4 4 0 0 1-8 0zM6 5H4v2a3 3 0 0 0 3 3M18 5h2v2a3 3 0 0 1-3 3M12 12v4M8 20h8M10 16h4v4h-4z"/>'),
+             (pre + "/newsletter/", "Newsletter", '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>')]
+    out = []
+    for href, lab, ic in items:
+        on = (path == href) if href in ("/", "/en/") else path.startswith(href)
+        out.append(f'<a href="{href}"{' class="on" aria-current="page"' if on else ''}><svg viewBox="0 0 24 24" aria-hidden="true">{ic}</svg><span>{lab}</span></a>')
+    return '<nav class="tabbar" aria-label="' + ("Navigation rapide" if lang == "fr" else "Quick navigation") + '">' + "".join(out) + "</nav>"
+
+
+def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", og_img="/img/og.png"):
     t = T[lang]
     url = SITE + path
     alt_url = SITE + alt_path
@@ -82,7 +96,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website"):
 <meta property="og:type" content="{og_type}"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Pickleball du Jour"><meta property="og:locale" content="{'fr_FR' if lang=='fr' else 'en_GB'}">
 <meta name="theme-color" content="#1f5fbf">
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest">
-<meta property="og:image" content="{SITE}/img/og.png"><meta name="twitter:card" content="summary_large_image">
+<meta property="og:image" content="{SITE}{og_img}"><meta name="twitter:card" content="summary_large_image">
 {FONTS}
 <link rel="stylesheet" href="/style.css">
 <link rel="alternate" type="application/rss+xml" title="Pickleball du Jour" href="{t['home'].rstrip('/')}/{t['tips']}/feed.xml">
@@ -100,6 +114,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website"):
 <div><h4>{t['guides']}</h4><ul>{''.join(f'<li><a href="{h}">{esc(n)}</a></li>' for n,h in t['nav'][:5])}</ul></div>
 <div><h4>{t['name']}</h4><ul><li><a href="{t['news']}">{t['news_t']}</a></li><li><a href="{t['about']}">{t['about_t']}</a></li><li><a href="{t['legal']}">{t['legal_t']}</a></li><li><a href="{alt_path}">{'English version' if lang=='fr' else 'Version française'}</a></li></ul></div>
 </div><div class="wrap"><p class="note" style="color:#a9bcd8;margin-top:24px">© {TODAY.year} Pickleball du Jour</p></div></footer>
+{tabbar(lang, path)}
 <script>{{const b=document.getElementById('mb'),n=document.getElementById('nv');b.addEventListener('click',()=>{{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o)}})}}</script>
 <script>{{const A='https://pickleballdujour-stats.thierry-garot-17.workers.dev/hit';window.pbj=function(e,v){{try{{const q=new URLSearchParams(location.search);const d=JSON.stringify({{p:location.pathname,r:e?'':document.referrer,l:navigator.language,w:innerWidth,u:q.get('utm_source')||'',e:e||'',v:v||''}});if(navigator.sendBeacon)navigator.sendBeacon(A,d);else fetch(A,{{method:'POST',body:d,keepalive:true}})}}catch(x){{}}}};pbj();document.addEventListener('click',ev=>{{const a=ev.target.closest('a');if(!a)return;if(a.pathname&&/newsletter/.test(a.pathname)&&a.host===location.host)pbj('clic_newsletter',location.pathname)}})}}</script>
 </body></html>'''
@@ -165,6 +180,9 @@ def tip_pages(lang, tips, other):
     for i, tip in enumerate(tips):
         slug, cat, title, summary, body, drill = tip[:6]
         tdate = tip[6] if len(tip) > 6 else LAUNCH.isoformat()
+        fkey = slug if lang == "fr" else other[i][0]
+        png = f"/img/scenes/{fkey}-{lang}.png"
+        has_png = os.path.exists(os.path.join(ROOT, "static", png.lstrip("/")))
         path = f"{base}{slug}/"
         alt = f"{alt_base}{other[i][0]}/"
         cr, crld = crumbs(lang, [(t["tips_t"], base), (title, None)])
@@ -176,11 +194,14 @@ def tip_pages(lang, tips, other):
 <p class="meta">{t["tip_n"]}{i+1} · {esc(cat)} · {t["by"]}</p>
 <h1>{esc(title)}</h1>
 <div class="answer"><strong>{t["short"]}</strong>{esc(summary)}</div>
+<figure class="scene">{scenes.svg(fkey, lang, cat, title)}<figcaption>{scenes.LEGEND[lang] if scenes.INDEX.get(fkey, -1) not in scenes.SPECIAL else ""}</figcaption></figure>
 {body}
 <div class="drill"><b>{t["try"]}{" :" if lang=="fr" else ":"}</b> {esc(drill)}</div>
 <p style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">{prev_l}{next_l}</p>
 </div></div>'''
-        write(path, layout(lang, path, f"{title} · {t['tip_n']}{i+1}", summary, b, alt, [art, crld], "article"))
+        if has_png:
+            art["image"] = SITE + png
+        write(path, layout(lang, path, f"{title} · {t['tip_n']}{i+1}", summary, b, alt, [art, crld], "article", png if has_png else "/img/og.png"))
         paths.append(path)
     cats = sorted({x[1] for x in tips})
     chips = '<a class="on" href="#" data-c="">' + ("Tous" if lang == "fr" else "All") + "</a>" + "".join(f'<a href="#" data-c="{esc(c)}">{esc(c)}</a>' for c in cats)
@@ -195,13 +216,14 @@ def tip_pages(lang, tips, other):
     return paths
 
 
-def home(lang, pages, tips):
+def home(lang, pages, tips, otips):
     t = T[lang]
     pre = "" if lang == "fr" else "/en"
     base = f"{pre}/{t['tips']}/"
     idx = (TODAY - LAUNCH).days % len(tips)
     tip = tips[idx]
-    data = json.dumps([[f"{base}{x[0]}/", x[1], x[2], x[3]] for x in tips], ensure_ascii=False)
+    fk = lambda j: tips[j][0] if lang == "fr" else otips[j][0]
+    data = json.dumps([[f"{base}{x[0]}/", x[1], x[2], x[3], f"/img/scenes/{fk(j)}-{lang}.png"] for j, x in enumerate(tips)], ensure_ascii=False)
     guides = "".join(f'<a class="card" href="{pre}/{p["slug"]}/"><span class="k">{esc(p["kicker"])}</span><h3>{esc(p["h1"])}</h3><p>{esc(p["desc"])}</p></a>' for p in pages)
     latest = "".join(f'<a class="card" href="{base}{x[0]}/"><span class="k">{esc(x[1])}</span><h3>{esc(x[2])}</h3><p>{esc(x[3])}</p></a>' for x in tips[:6])
     ev = "".join(f'<tr><td class="n">{esc(e["label"][lang])}</td><td>{esc(e["name"][lang])}</td><td>{esc(e["place"])}</td></tr>' for e in TOURNEYS[:5])
@@ -210,14 +232,14 @@ def home(lang, pages, tips):
 <div><h1>{t["hero_h"]}</h1><p>{t["hero_p"]}</p>
 <div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · {esc(tip[1])}</span><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
 <p style="margin-top:22px"><a class="btn" href="{t["news"]}">{t["cta"]}</a></p></div>
-<div>{hero_svg()}</div>
+<div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
 </div></section>
 <section class="band"><div class="wrap"><h2 style="margin-top:0">{t["guides"]}</h2><div class="grid">{guides}</div></div></section>
 <section class="band tint"><div class="wrap"><h2 style="margin-top:0">{t["all_tips"]}</h2><div class="grid">{latest}</div><p><a href="{base}">{t["all_tips"]} →</a></p></div></section>
 <section class="band"><div class="wrap two"><div><h2 style="margin-top:0">{t["events"]}</h2><div class="tbl"><table><tbody>{ev}</tbody></table></div><p><a href="{cal}">{t["see_cal"]} →</a></p></div>
 <div class="price best"><h2 style="margin-top:0">{t["newsband_h"]}</h2><p>{t["newsband_p"]}</p><a class="btn" href="{t["news"]}">{t["cta"]}</a></div></div></section>
 <script>{{const D={data};const L=new Date(2026,10,27);const n=Math.floor((new Date().setHours(0,0,0,0)-L.getTime())/864e5);const i=((n%D.length)+D.length)%D.length;const x=D[i];
-document.getElementById('tod-t').textContent=x[2];document.getElementById('tod-s').textContent=x[3];document.getElementById('tod-a').href=x[0];}}</script>'''
+document.getElementById('tod-t').textContent=x[2];document.getElementById('tod-s').textContent=x[3];document.getElementById('tod-a').href=x[0];const im=document.getElementById('tod-img');im.src=x[4];im.alt=x[2];document.getElementById('tod-ia').href=x[0];}}</script>'''
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Pickleball du Jour", "url": SITE + t["home"], "inLanguage": lang,
            "description": t["hero_p"], "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": SITE, "founder": AUTHOR}}]
     title = "Pickleball du Jour · Un conseil de pickleball par jour" if lang == "fr" else "Pickleball du Jour · One pickleball tip a day"
@@ -235,7 +257,7 @@ def extra_pages(lang):
     return out
 
 
-def rss(lang, tips):
+def rss(lang, tips, otips):
     from email.utils import format_datetime
     t = T[lang]
     pre = "" if lang == "fr" else "/en"
@@ -246,7 +268,10 @@ def rss(lang, tips):
         slug, cat, ti, summary, body, drill = tip[:6]
         d = datetime.datetime.fromisoformat((tip[6] if len(tip) > 6 else LAUNCH.isoformat()) + "T06:45:00+01:00") - datetime.timedelta(minutes=i)
         url = SITE + base + slug + "/"
-        desc = f"<p><strong>{html.escape(summary, quote=False)}</strong></p>{body}<p><em>{t['try']}{' :' if lang == 'fr' else ':'}</em> {html.escape(drill, quote=False)}</p><p><a href=\"{url}\">{t['read']}</a></p>"
+        fkey = slug if lang == "fr" else otips[tips.index(tip)][0]
+        png = f"/img/scenes/{fkey}-{lang}.png"
+        img = f'<p><img src="{SITE}{png}" alt="{html.escape(ti, quote=True)}" width="600" style="max-width:100%;height:auto"></p>' if os.path.exists(os.path.join(ROOT, "static", png.lstrip("/"))) else ""
+        desc = img + f"<p><strong>{html.escape(summary, quote=False)}</strong></p>{body}<p><em>{t['try']}{' :' if lang == 'fr' else ':'}</em> {html.escape(drill, quote=False)}</p><p><a href=\"{url}\">{t['read']}</a></p>"
         items.append(f"<item><title>{html.escape(ti, quote=False)}</title><link>{url}</link><guid isPermaLink=\"true\">{url}</guid><category>{html.escape(cat, quote=False)}</category><pubDate>{format_datetime(d)}</pubDate><description><![CDATA[{desc}]]></description></item>")
     xml = f'<?xml version="1.0" encoding="UTF-8"?><rss version="2.0" xmlns:atom="http://www.w3.org/2005/Atom"><channel><title>{title}</title><link>{SITE}{t["home"]}</link><atom:link href="{SITE}{base}feed.xml" rel="self" type="application/rss+xml"/><description>{html.escape(t["hero_p"])}</description><language>{lang}</language>{"".join(items)}</channel></rss>'
     path = os.path.join(OUT, (base + "feed.xml").lstrip("/"))
@@ -261,12 +286,12 @@ def main():
     assert len(PFR) == len(PEN) and len(TFR) == len(TEN), "FR/EN content must match"
     urls = []
     for lang, pages, other, tips, otips in (("fr", PFR, PEN, TFR, TEN), ("en", PEN, PFR, TEN, TFR)):
-        urls.append(home(lang, pages, tips))
+        urls.append(home(lang, pages, tips, otips))
         for p, o in zip(pages, other):
             urls.append(pillar(lang, p, o["slug"]))
         urls += tip_pages(lang, tips, otips)
         urls += extra_pages(lang)
-        rss(lang, tips)
+        rss(lang, tips, otips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))
     os.makedirs(os.path.join(OUT, "admin"), exist_ok=True)
