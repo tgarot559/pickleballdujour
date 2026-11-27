@@ -114,7 +114,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 <footer class="foot"><div class="wrap cols">
 <div><h4>Pickleball du Jour</h4><p>{t['foot_p']}</p></div>
 <div><h4>{t['guides']}</h4><ul>{''.join(f'<li><a href="{h}">{esc(n)}</a></li>' for n,h in [x for x in t['nav'] if x[1] not in ('/progresser/', '/seances/')][:5])}</ul></div>
-<div><h4>{t['name']}</h4><ul><li><a href="{t['news']}">{t['news_t']}</a></li><li><a href="{t['about']}">{t['about_t']}</a></li><li><a href="{t['legal']}">{t['legal_t']}</a></li><li><a href="{alt_path}">{'English version' if lang=='fr' else 'Version française'}</a></li></ul></div>
+<div><h4>{t['name']}</h4><ul><li><a href="{t['news']}">{t['news_t']}</a></li><li><a href="{t['about']}">{t['about_t']}</a></li>{'<li><a href="/avis/">Avis des joueurs</a></li>' if lang == "fr" else ""}<li><a href="{t['legal']}">{t['legal_t']}</a></li><li><a href="{alt_path}">{'English version' if lang=='fr' else 'Version française'}</a></li></ul></div>
 </div><div class="wrap"><p class="note" style="color:#a9bcd8;margin-top:24px">© {TODAY.year} Pickleball du Jour</p></div></footer>
 {tabbar(lang, path)}
 <script>{{const b=document.getElementById('mb'),n=document.getElementById('nv');b.addEventListener('click',()=>{{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o)}})}}</script>
@@ -182,8 +182,49 @@ def seances_page():
 <p class="lead">12 séances courtes, du joueur de tournoi au débutant. Le principe animé sur le terrain, un exercice avec son objectif, une voix qui vous guide et les sous-titres.</p>
 <a class="quizlink" href="/progresser/"><b>Quelle séance pour vous ?</b> Faites votre bilan en 2 minutes : il vous indique la séance à suivre en premier →</a>
 {"".join(secs)}
-<p class="note">Ces séances donnent des conseils de joueur ; elles ne remplacent pas un entraîneur diplômé.</p></div>'''
+<p class="note">Ces séances donnent des conseils de joueur ; elles ne remplacent pas un entraîneur diplômé.</p></div>''' + avis_block("seances")
     write(path, layout("fr", path, "Séances vidéo de pickleball : 30 secondes pour progresser", "12 séances vidéo de pickleball de 30 secondes, du débutant au joueur de tournoi : service, dink, drop, reset, stacking, erne. Avec exercice et objectif chiffré.", body, "/en/", [crld] + lds))
+    return path
+
+
+STATS_API = "https://pickleballdujour-stats.thierry-garot-17.workers.dev"
+AVIS_NOTE = "Avis déposés par des joueurs et relus avant publication. Nous publions les avis positifs comme négatifs, sans contrepartie et sans les modifier. Ne sont écartés que les avis injurieux, hors sujet ou publicitaires."
+
+
+def avis_block(where, full=False):
+    """Bloc avis : liste des avis publiés + formulaire. Reste caché tant que le service des avis ne répond pas."""
+    return f'''<section class="band avisband" id="avis" hidden><div class="wrap">
+<h2 style="margin-top:0">Ce qu'en disent les joueurs</h2>
+<div class="avisstat" id="avstat"></div><div class="avisgrid" id="avlist"></div>
+<details class="avisform"{' open' if full else ''}><summary>Donner mon avis</summary>
+<form id="avf" novalidate>
+<div class="avrow"><label>Prénom <input name="nom" maxlength="40" autocomplete="given-name" required></label><label>Ville <input name="ville" maxlength="40" autocomplete="address-level2"></label></div>
+<label>Votre niveau <select name="niveau"><option value="">Je préfère ne pas dire</option><option>Découverte</option><option>Initié</option><option>Confirmé</option><option>Avancé</option></select></label>
+<fieldset class="stars"><legend>Votre note</legend><div class="sr">{"".join(f'<input type="radio" name="note" id="n{i}" value="{i}"{" checked" if i == 5 else ""}><label for="n{i}" title="{i} sur 5">★</label>' for i in range(5, 0, -1))}</div></fieldset>
+<label>Votre avis <textarea name="texte" rows="4" minlength="20" maxlength="600" required placeholder="Ce qui vous a été utile, ce qui manque…"></textarea></label>
+<input name="site" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
+<label class="chk"><input type="checkbox" name="accord" required> J'accepte que mon avis soit publié sur le site avec mon prénom et ma ville.</label>
+<button class="btn" type="submit">Envoyer mon avis</button><p class="avmsg" id="avmsg" aria-live="polite"></p>
+</form></details>
+<p class="note">{AVIS_NOTE}{'' if full else ' <a href="/avis/">Tous les avis</a>'}</p>
+</div></section>
+<script>{{const A='{STATS_API}',S=document.getElementById('avis'),F=document.getElementById('avf'),M=document.getElementById('avmsg');
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]));
+fetch(A+'/avis/publics').then(r=>{{if(!r.ok)throw 0;return r.json()}}).then(d=>{{S.hidden=false;const a=d.avis||[];
+if(a.length){{const m=a.reduce((x,y)=>x+y.note,0)/a.length;document.getElementById('avstat').innerHTML='<b>'+m.toFixed(1).replace('.',',')+' / 5</b> · '+a.length+' avis';}}
+else document.getElementById('avstat').textContent='Soyez le premier à donner votre avis.';
+document.getElementById('avlist').innerHTML=a.slice(0,{60 if full else 6}).map(x=>'<figure class="avis"><div class="st" aria-label="'+x.note+' sur 5">'+'★'.repeat(x.note)+'<span>'+'★'.repeat(5-x.note)+'</span></div><blockquote>'+esc(x.texte)+'</blockquote><figcaption>'+esc(x.nom)+(x.ville?', '+esc(x.ville):'')+(x.niveau?' · '+esc(x.niveau):'')+'</figcaption></figure>').join('')}}).catch(()=>{{}});
+F.addEventListener('submit',async e=>{{e.preventDefault();const f=new FormData(F);const d={{nom:f.get('nom'),ville:f.get('ville'),niveau:f.get('niveau'),note:+f.get('note'),texte:f.get('texte'),site:f.get('site'),accord:!!f.get('accord'),page:location.pathname}};
+if((d.nom||'').trim().length<2){{M.textContent='Indiquez votre prénom.';return}}if((d.texte||'').trim().length<20){{M.textContent='Votre avis doit faire au moins 20 caractères.';return}}if(!d.accord){{M.textContent='Cochez la case d’accord pour la publication.';return}}
+M.textContent='Envoi…';try{{const r=await fetch(A+'/avis',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(d)}});
+if(r.status===429){{M.textContent='Vous avez déjà envoyé plusieurs avis aujourd’hui. Merci !';return}}if(!r.ok)throw 0;F.reset();M.textContent='Merci ! Votre avis sera publié après relecture.';window.pbj&&pbj('avis_envoye','{where}')}}catch(x){{M.textContent='L’envoi n’a pas fonctionné. Réessayez dans un instant.'}}}})}}</script>'''
+
+
+def avis_page():
+    path = "/avis/"
+    cr, crld = crumbs("fr", [("Avis", None)])
+    body = f'<div class="wrap page">{cr}<h1>Les avis des joueurs</h1><p class="lead">Ce que les joueurs pensent de Pickleball du Jour : conseils, séances, bilan, tournois. Vous aussi, dites-nous ce qui vous aide et ce qui manque.</p></div>' + avis_block("page-avis", True)
+    write(path, layout("fr", path, "Avis des joueurs sur Pickleball du Jour", "Les avis des joueurs sur Pickleball du Jour, relus avant publication, et le formulaire pour donner le vôtre.", body, "/en/", [crld]))
     return path
 
 
@@ -294,6 +335,7 @@ def home(lang, pages, tips, otips):
 </div></section>
 <section class="band"><div class="wrap"><h2 style="margin-top:0">{t["guides"]}</h2><div class="grid">{guides}</div></div></section>
 <section class="band tint"><div class="wrap"><h2 style="margin-top:0">{t["all_tips"]}</h2><div class="grid">{latest}</div><p><a href="{base}">{t["all_tips"]} →</a></p></div></section>
+{avis_block("accueil") if lang == "fr" else ""}
 <section class="band"><div class="wrap two"><div><h2 style="margin-top:0">{t["events"]}</h2><div class="tbl"><table><tbody>{ev}</tbody></table></div><p><a href="{cal}">{t["see_cal"]} →</a></p></div>
 <div class="price best"><h2 style="margin-top:0">{t["newsband_h"]}</h2><p>{t["newsband_p"]}</p><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil-bas')">{t["cta"]}</a></div></div></section>
 <script>{{const D={data};const L=new Date(2026,10,27);const n=Math.floor((new Date().setHours(0,0,0,0)-L.getTime())/864e5);const i=((n%D.length)+D.length)%D.length;const x=D[i];
@@ -352,6 +394,7 @@ def main():
         if lang == "fr":
             urls.append(quiz_page())
             urls.append(seances_page())
+            urls.append(avis_page())
         rss(lang, tips, otips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))

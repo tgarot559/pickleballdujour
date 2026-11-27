@@ -6,6 +6,8 @@ const ADMIN_HASH = "__ADMIN_HASH__";
 const ORIGINS = ["https://pickleballdujour.fr", "https://www.pickleballdujour.fr"];
 
 const SCHEMA = [
+  "CREATE TABLE IF NOT EXISTS avis (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, nom TEXT, ville TEXT, niveau TEXT, note INTEGER, texte TEXT, statut TEXT, vid TEXT, page TEXT)",
+  "CREATE INDEX IF NOT EXISTS avis_statut ON avis(statut)",
   "CREATE TABLE IF NOT EXISTS hits (ts INTEGER, day TEXT, path TEXT, lang TEXT, ref TEXT, ref_host TEXT, src TEXT, utm TEXT, country TEXT, city TEXT, device TEXT, vid TEXT, ev TEXT, ev_val TEXT)",
   "CREATE INDEX IF NOT EXISTS hits_day ON hits(day)",
 ];
@@ -84,12 +86,47 @@ async function stats(url, env) {
   return { days, since, views: tot.views, visitors: tot.visitors, series, pages, sources, refs, utm, countries, cities, devices, langs, events, live };
 }
 
+// ---------- Avis des joueurs : dépôt public, modération dans la console, publication ----------
+const clean = (v, n) => String(v || "").replace(/[\u0000-\u001f<>]/g, " ").replace(/\s+/g, " ").trim().slice(0, n);
+async function avisDepot(req, env) {
+  let b = {};
+  try { b = JSON.parse(await req.text() || "{}"); } catch (e) { return [400, { error: "format" }]; }
+  if (b.site) return [200, { ok: true }];                       // champ piège anti-robots
+  const nom = clean(b.nom, 40), ville = clean(b.ville, 40), niveau = clean(b.niveau, 20), texte = clean(b.texte, 600), note = Math.round(+b.note);
+  if (nom.length < 2 || texte.length < 20 || !(note >= 1 && note <= 5) || b.accord !== true) return [400, { error: "champs" }];
+  const ip = req.headers.get("CF-Connecting-IP") || "", day = new Date().toISOString().slice(0, 10);
+  const vid = (await sha(ip + "|avis|" + day)).slice(0, 16);
+  const [{ n }] = (await env.DB.prepare("SELECT COUNT(*) n FROM avis WHERE vid=?").bind(vid).all()).results;
+  if (n >= 3) return [429, { error: "limite" }];
+  await env.DB.prepare("INSERT INTO avis (ts,nom,ville,niveau,note,texte,statut,vid,page) VALUES (?,?,?,?,?,?,?,?,?)")
+    .bind(Date.now(), nom, ville, niveau, note, texte, "attente", vid, clean(b.page, 120)).run();
+  return [200, { ok: true }];
+}
+
 export default {
   async fetch(req, env, ctx) {
     const url = new URL(req.url), h = cors(req);
     if (req.method === "OPTIONS") return new Response(null, { headers: h });
     if (url.pathname === "/setup") { for (const s of SCHEMA) await env.DB.prepare(s).run(); return json({ ok: true }, h); }
     if (url.pathname === "/hit" && req.method === "POST") { ctx.waitUntil(hit(req, env).catch(() => {})); return new Response(null, { status: 204, headers: h }); }
+    if (url.pathname === "/avis" && req.method === "POST") { const [st, d] = await avisDepot(req, env); return json(d, h, st); }
+    if (url.pathname === "/avis/publics") {
+      const r = await env.DB.prepare("SELECT id, ts, nom, ville, niveau, note, texte FROM avis WHERE statut='publie' ORDER BY ts DESC LIMIT 60").all();
+      return json({ avis: r.results }, { ...h, "Cache-Control": "public, max-age=120" });
+    }
+    if (url.pathname.startsWith("/avis/admin")) {
+      const k = url.searchParams.get("k") || "";
+      if (!k || (await sha(k)) !== ADMIN_HASH) return json({ error: "code" }, h, 401);
+      if (req.method === "POST") {
+        let b = {}; try { b = JSON.parse(await req.text() || "{}"); } catch (e) {}
+        const id = Math.round(+b.id);
+        if (b.action === "supprimer") await env.DB.prepare("DELETE FROM avis WHERE id=?").bind(id).run();
+        else if (["publie", "refuse", "attente"].includes(b.action)) await env.DB.prepare("UPDATE avis SET statut=? WHERE id=?").bind(b.action, id).run();
+        return json({ ok: true }, h);
+      }
+      const r = await env.DB.prepare("SELECT id, ts, nom, ville, niveau, note, texte, statut, page FROM avis ORDER BY (statut='attente') DESC, ts DESC LIMIT 200").all();
+      return json({ avis: r.results }, h);
+    }
     if (url.pathname === "/stats") {
       const k = url.searchParams.get("k") || "";
       if (!k || (await sha(k)) !== ADMIN_HASH) return json({ error: "code" }, h, 401);
