@@ -297,6 +297,8 @@ def main():
     os.makedirs(os.path.join(OUT, "admin"), exist_ok=True)
     shutil.copy(os.path.join(ROOT, "static", "admin.html"), os.path.join(OUT, "admin", "index.html"))
     shutil.copytree(os.path.join(ROOT, "static", "img"), os.path.join(OUT, "img"))
+    if os.path.isdir(os.path.join(ROOT, "static", "livret")):
+        shutil.copytree(os.path.join(ROOT, "static", "livret"), os.path.join(OUT, "livret"))
     with open(os.path.join(OUT, "manifest.webmanifest"), "w") as f:
         json.dump({"name": "Pickleball du Jour", "short_name": "Pickleball", "start_url": "/", "display": "standalone", "background_color": "#ffffff", "theme_color": "#1f5fbf",
                    "icons": [{"src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, f)
