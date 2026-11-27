@@ -310,6 +310,10 @@ def main():
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))
     os.makedirs(os.path.join(OUT, "admin"), exist_ok=True)
     shutil.copy(os.path.join(ROOT, "static", "admin.html"), os.path.join(OUT, "admin", "index.html"))
+    for short in ("inscription", "en/signup"):
+        os.makedirs(os.path.join(OUT, short), exist_ok=True)
+        with open(os.path.join(OUT, short, "index.html"), "w") as f:
+            f.write(f'<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url={NL_URL}"><link rel="canonical" href="{SITE}/newsletter/"><title>Inscription · Pickleball du Jour</title></head><body><script>location.replace("{NL_URL}")</script><p><a href="{NL_URL}">Continuer vers l\'inscription</a></p></body></html>')
     shutil.copytree(os.path.join(ROOT, "static", "img"), os.path.join(OUT, "img"))
     if os.path.isdir(os.path.join(ROOT, "static", "livret")):
         shutil.copytree(os.path.join(ROOT, "static", "livret"), os.path.join(OUT, "livret"))
