@@ -135,3 +135,17 @@ code,pre{overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap}
 .signup p{margin:6px 0 0;color:#dbe6ff;font-size:15px;max-width:34em}
 .signup .btn{flex:none}
 @media(max-width:820px){.signup .btn{width:100%;text-align:center}}
+/* Mon coach */
+.coach fieldset{border:1px solid var(--line);border-radius:14px;padding:12px 16px 14px;margin:0 0 14px;background:var(--card)}
+.coach legend{font-weight:700;padding:0 6px;display:flex;gap:10px;align-items:center}
+.coach legend span{display:inline-grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--court);color:#fff;font-size:13px;flex:none}
+.coach label{display:flex;gap:10px;align-items:flex-start;padding:7px 4px;cursor:pointer;line-height:1.35}
+.coach input{accent-color:var(--court);width:18px;height:18px;margin-top:1px;flex:none}
+.cerr{color:#c0392b;font-weight:600}
+.cax{margin:0 0 14px}.cax:hover{transform:none}.cax p{color:var(--ink);font-size:16px;margin:.5em 0 0}
+.cue{background:var(--tint);border-radius:10px;padding:8px 12px}
+.cwk{border-left:5px solid var(--ball);padding:2px 0 2px 16px;margin:18px 0}.cwk h3{margin:.2em 0 .4em}.cwk li{margin:0 0 10px}
+.cg{display:block;font-size:14px;color:var(--soft);margin-top:3px}
+.cact{display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.coachband{border:2px solid var(--court)}
+@media print{.top,.tabbar,.foot,.np,.crumbs,.answer,.meta{display:none!important}.cres{display:block}body{background:#fff;color:#000}.page h1{font-size:28px}}

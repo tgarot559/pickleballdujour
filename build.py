@@ -20,7 +20,7 @@ AUTHOR = {"@type": "Person", "name": "Thierry Garot", "url": "https://thierrygar
 
 T = {
  "fr": {"name": "Pickleball du Jour", "lang": "fr", "home": "/", "tips": "conseils", "tips_t": "Conseils", "tip_of_day": "Le conseil du jour",
-        "nav": [("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/")],
+        "nav": [("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/"), ("Mon coach", "/mon-coach-pickleball/")],
         "news": "/newsletter/", "news_t": "Newsletter", "other": "EN", "faq": "Questions fréquentes", "short": "En bref", "try": "À essayer",
         "read": "Lire le conseil", "all_tips": "Tous les conseils", "guides": "Les guides de fond", "updated": "Mis à jour le",
         "by": "Par Thierry Garot, joueur de pickleball", "tip_n": "Conseil n°", "home_crumb": "Accueil",
@@ -32,7 +32,7 @@ T = {
         "date_fmt": lambda d: f"{d.day} {['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][d.month-1]} {d.year}",
         "events": "Les prochains grands rendez-vous", "see_cal": "Voir tout le calendrier", "world": "Dans le monde"},
  "en": {"name": "Pickleball du Jour", "lang": "en", "home": "/en/", "tips": "tips", "tips_t": "Tips", "tip_of_day": "Tip of the day",
-        "nav": [("Get started", "/en/how-to-start-pickleball/"), ("Rules", "/en/pickleball-rules/"), ("Paddles", "/en/choosing-a-pickleball-paddle/"), ("Tournaments", "/en/pickleball-tournaments/"), ("World", "/en/pickleball-around-the-world/"), ("Tips", "/en/tips/")],
+        "nav": [("Get started", "/en/how-to-start-pickleball/"), ("Rules", "/en/pickleball-rules/"), ("Paddles", "/en/choosing-a-pickleball-paddle/"), ("Tournaments", "/en/pickleball-tournaments/"), ("World", "/en/pickleball-around-the-world/"), ("Tips", "/en/tips/"), ("My coach", "/en/pickleball-coach/")],
         "news": "/en/newsletter/", "news_t": "Newsletter", "other": "FR", "faq": "Frequently asked questions", "short": "In short", "try": "Try this",
         "read": "Read the tip", "all_tips": "All tips", "guides": "In-depth guides", "updated": "Updated",
         "by": "By Thierry Garot, pickleball player", "tip_n": "Tip #", "home_crumb": "Home",
@@ -250,6 +250,7 @@ def home(lang, pages, tips, otips):
 <div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
 </div></section>
 <section class="band"><div class="wrap"><h2 style="margin-top:0">{t["guides"]}</h2><div class="grid">{guides}</div></div></section>
+<section class="band"><div class="wrap"><a class="card coachband" href="{pre}/{'mon-coach-pickleball' if lang=='fr' else 'pickleball-coach'}/"><span class="k">{'Joueurs confirmés' if lang=='fr' else 'Intermediate & advanced'}</span><h3>{'Mon coach pickleball : votre plan de 4 semaines en 2 minutes' if lang=='fr' else 'My pickleball coach: your 4-week plan in 2 minutes'}</h3><p>{'10 questions sur votre jeu, vos 3 axes de progrès et des exercices mesurables. Gratuit.' if lang=='fr' else '10 questions about your game, your 3 areas to work on and measurable drills. Free.'} →</p></a></div></section>
 <section class="band tint"><div class="wrap"><h2 style="margin-top:0">{t["all_tips"]}</h2><div class="grid">{latest}</div><p><a href="{base}">{t["all_tips"]} →</a></p></div></section>
 <section class="band"><div class="wrap two"><div><h2 style="margin-top:0">{t["events"]}</h2><div class="tbl"><table><tbody>{ev}</tbody></table></div><p><a href="{cal}">{t["see_cal"]} →</a></p></div>
 <div class="price best"><h2 style="margin-top:0">{t["newsband_h"]}</h2><p>{t["newsband_p"]}</p><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil-bas')">{t["cta"]}</a></div></div></section>
@@ -270,6 +271,62 @@ def extra_pages(lang):
         write(e["path"], layout(lang, e["path"], e["title"], e["desc"], body, e["alt"], [crld]))
         out.append(e["path"])
     return out
+
+
+def coach_page(lang, tips):
+    from content import coach as C
+    t, u = T[lang], C.UI[lang]
+    o = C.UI["en" if lang == "fr" else "fr"]
+    pre = "" if lang == "fr" else "/en"
+    path, alt = f"{pre}/{u['slug']}/", ("/en/" if lang == "fr" else "/") + o["slug"] + "/"
+    base = f"{pre}/{t['tips']}/"
+    cr, crld = crumbs(lang, [(u["h1"], None)])
+    fq, fqld = faq_html(lang, C.FAQ[lang])
+    qs = C.QUESTIONS[lang]
+    form = "".join(
+        f'<fieldset><legend><span>{i+1}</span>{esc(q["q"])}</legend>' +
+        "".join(f'<label><input type="radio" name="q{i}" value="{j}"> {esc(lab)}</label>' for j, (lab, _) in enumerate(q["o"])) +
+        "</fieldset>" for i, q in enumerate(qs))
+    fiches = "".join(f'<h3 id="fiche-{k+1}">{esc(h)}</h3>{b}' for k, (h, b) in enumerate(C.FICHES[lang]))
+    data = json.dumps({"axes": C.AXES[lang], "qs": [[w for _, w in q["o"]] for q in qs], "order": C.ORDER, "def": C.DEFAULT, "ui": u,
+                       "tips": {x[0]: x[2] for x in tips}, "base": base}, ensure_ascii=False)
+    art = {"@context": "https://schema.org", "@type": "WebApplication", "name": u["h1"], "description": u["desc"], "inLanguage": lang, "applicationCategory": "SportsApplication",
+           "operatingSystem": "Web", "offers": {"@type": "Offer", "price": "0", "priceCurrency": "EUR"}, "url": SITE + path, "author": AUTHOR}
+    body = f'''<div class="wrap page">{cr}<div class="read">
+<p class="meta">{esc(u["kicker"])} · {t["updated"]} {t["date_fmt"](TODAY)} · {t["by"]}</p>
+<h1>{esc(u["h1"])}</h1>
+<div class="answer"><strong>{t["short"]}</strong>{esc(u["answer"])}</div>
+<h2 class="np">{esc(u["start"])}</h2>
+<form class="coach np" id="cf">{form}<p class="cerr" id="ce" hidden>{esc(u["missing"])}</p><button class="btn" type="submit">{esc(u["go"])} →</button></form>
+<div id="cr" class="cres" hidden></div>
+<div class="np">{signup(lang, "coach")}
+<h2>{esc(u["fiches_h"])}</h2>{fiches}
+{fq}</div>
+</div></div>
+<script>{{const C={data};const U=C.ui,F=document.getElementById('cf'),R=document.getElementById('cr');
+const goal=(d,l)=>{{const v=d.t[l];return d.n?v+'/'+d.n:(d.low?U.max+' '+v:U.best+' '+v)}};
+function plan(a){{const lv=a[0],single=a[1]==2||a[8]==3,sc={{}};C.order.forEach(k=>sc[k]=0);
+a.forEach((v,i)=>{{const w=C.qs[i][v]||{{}};for(const k in w)sc[k]+=w[k]}});if(single)sc.team=-1;
+let top=C.order.filter(k=>sc[k]>0).sort((x,y)=>sc[y]-sc[x]).slice(0,3);const strong=!top.length;
+for(const k of C.def.concat(C.order)){{if(top.length>=3)break;if(!top.includes(k)&&!(single&&k=='team'))top.push(k)}}
+let h='<h2>'+U.res_h+'</h2>'+(strong?'<p>'+U.strong+'</p>':'');
+top.forEach((k,i)=>{{const x=C.axes[k];h+='<div class="card cax"><span class="k">'+(i+1)+' · '+x.t+'</span><p><b>'+U.why+' :</b> '+x.why+'</p><p class="cue"><b>'+U.cue+' :</b> '+x.cue+'</p><p class="np"><b>'+U.read+' :</b> '+x.tips.filter(s=>C.tips[s]).map(s=>'<a href="'+C.base+s+'/">'+C.tips[s]+'</a>').join(' · ')+'</p></div>'}});
+h+='<h2>'+U.plan_h+'</h2><p>'+U.plan_p+'</p>';
+top.forEach((k,i)=>{{const x=C.axes[k];h+='<div class="cwk"><h3>'+U.week+' '+(i+1)+' · '+x.t+'</h3><ol>'+x.d.map(d=>'<li>'+d.x+'<span class="cg">'+U.goal+' : <b>'+goal(d,lv)+'</b> · '+U.s1+' : ____ · '+U.s2+' : ____</span></li>').join('')+'</ol></div>'}});
+h+='<div class="cwk"><h3>'+U.w4+'</h3><p>'+U.w4p+'</p><ol>'+top.map(k=>{{const d=C.axes[k].d[0];return '<li>'+d.x+'<span class="cg">'+U.goal+' : <b>'+goal(d,lv)+'</b> · '+U.week+' 1 : ____ · '+U.week+' 4 : ____</span></li>'}}).join('')+'</ol></div>';
+h+='<p class="np cact"><button class="btn" type="button" id="cp">'+U.print+'</button> <button class="btn ghost" type="button" id="cs">'+U.share+'</button> <a href="#" id="ca">'+U.again+'</a></p>';
+R.innerHTML=h;R.hidden=false;F.hidden=true;
+document.getElementById('cp').onclick=()=>print();
+document.getElementById('cs').onclick=e=>{{navigator.clipboard&&navigator.clipboard.writeText(location.href).then(()=>e.target.textContent=U.copied)}};
+document.getElementById('ca').onclick=e=>{{e.preventDefault();R.hidden=true;F.hidden=false;history.replaceState(null,'',location.pathname);F.scrollIntoView()}};
+return top}}
+F.addEventListener('submit',e=>{{e.preventDefault();const a=C.qs.map((_,i)=>{{const r=F.querySelector('input[name=q'+i+']:checked');return r?+r.value:-1}});
+if(a.includes(-1)){{document.getElementById('ce').hidden=false;return}}document.getElementById('ce').hidden=true;
+history.replaceState(null,'','#r='+a.join(''));const top=plan(a);R.scrollIntoView({{behavior:'smooth'}});window.pbj&&pbj('coach_plan',top.join(','))}});
+const m=location.hash.match(/^#r=(\\d{{10}})$/);if(m){{const a=m[1].split('').map(Number);if(a.every((v,i)=>v<C.qs[i].length)){{a.forEach((v,i)=>{{const r=F.querySelector('input[name=q'+i+'][value="'+v+'"]');if(r)r.checked=true}});plan(a)}}}}
+}}</script>'''
+    write(path, layout(lang, path, u["title"], u["desc"], body, alt, [art, crld, fqld]))
+    return path
 
 
 def rss(lang, tips, otips):
@@ -306,6 +363,7 @@ def main():
             urls.append(pillar(lang, p, o["slug"]))
         urls += tip_pages(lang, tips, otips)
         urls += extra_pages(lang)
+        urls.append(coach_page(lang, tips))
         rss(lang, tips, otips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))
@@ -334,6 +392,7 @@ def main():
     llms = ["# Pickleball du Jour", "", "> Site indépendant du pickleball en français (et en anglais) créé par Thierry Garot, joueur de pickleball en France. Un conseil pratique chaque jour, des guides complets (règles FFT 2026, terrain, raquettes, débuter, pickleball ou padel), le calendrier des tournois en France et dans le monde.", "", "## Guides (FR)"]
     llms += [f"- [{p['h1']}]({SITE}/{p['slug']}/): {p['answer']}" for p in PFR]
     llms += ["", "## Guides (EN)"] + [f"- [{p['h1']}]({SITE}/en/{p['slug']}/): {p['answer']}" for p in PEN]
+    llms += ["", "## Mon coach pickleball (joueurs confirmés)", f"- [Mon coach pickleball]({SITE}/mon-coach-pickleball/): diagnostic en 10 questions, 3 axes de progrès et plan de 4 semaines avec exercices mesurables.", f"- [My pickleball coach]({SITE}/en/pickleball-coach/): 10-question diagnostic, 3 areas to work on and a 4-week plan with measurable drills."]
     llms += ["", "## Conseils du jour", f"- [Tous les conseils]({SITE}/conseils/)", f"- [All tips]({SITE}/en/tips/)"]
     with open(os.path.join(OUT, "tournois.json"), "w") as f:
         json.dump(tdata(), f, ensure_ascii=False)
