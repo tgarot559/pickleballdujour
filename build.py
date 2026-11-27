@@ -44,7 +44,7 @@ T = {
 }
 
 FONTS = '<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Archivo:wght@700;800&family=Inter:wght@400;600;700&display=swap" rel="stylesheet">'
-ICON = '<svg width="30" height="30" viewBox="0 0 30 30" aria-hidden="true"><circle cx="15" cy="15" r="14" fill="#d6f03f"/><g fill="#1f5fbf"><circle cx="10" cy="10" r="2.2"/><circle cx="18" cy="9" r="2.2"/><circle cx="21" cy="16" r="2.2"/><circle cx="14" cy="16" r="2.2"/><circle cx="9" cy="19" r="2.2"/><circle cx="16" cy="22" r="2.2"/></g></svg>'
+ICON = '<svg viewBox="0 0 512 512" width="36" height="36" aria-hidden="true"><rect x="0" y="0" width="512" height="512" rx="122.88" fill="#1f5fbf"/><clipPath id="lg"><rect x="0" y="0" width="512" height="327.68"/></clipPath><line x1="85.7" y1="206.3" x2="45.8" y2="183.3" stroke="#d6f03f" stroke-width="28.2" stroke-linecap="round"/><line x1="157.7" y1="134.4" x2="134.7" y2="94.5" stroke="#d6f03f" stroke-width="28.2" stroke-linecap="round"/><line x1="256.0" y1="108.0" x2="256.0" y2="62.0" stroke="#d6f03f" stroke-width="28.2" stroke-linecap="round"/><line x1="354.3" y1="134.4" x2="377.3" y2="94.5" stroke="#d6f03f" stroke-width="28.2" stroke-linecap="round"/><line x1="426.3" y1="206.3" x2="466.2" y2="183.3" stroke="#d6f03f" stroke-width="28.2" stroke-linecap="round"/><g clip-path="url(#lg)"><circle cx="256.0" cy="304.64" r="153.6" fill="#d6f03f"/><circle cx="191.5" cy="258.6" r="18.4" fill="#a9c21a"/><circle cx="263.7" cy="230.9" r="18.4" fill="#a9c21a"/><circle cx="325.1" cy="277.0" r="18.4" fill="#a9c21a"/><circle cx="240.6" cy="307.7" r="18.4" fill="#a9c21a"/><circle cx="305.2" cy="350.7" r="18.4" fill="#a9c21a"/><circle cx="194.6" cy="350.7" r="18.4" fill="#a9c21a"/><circle cx="259.1" cy="389.1" r="18.4" fill="#a9c21a"/></g><rect x="51.2" y="327.68" width="409.6" height="56.32" rx="14.08" fill="#ffffff"/><line x1="102.4" y1="338.9" x2="102.4" y2="372.7" stroke="#1f5fbf" stroke-width="6.1"/><line x1="153.6" y1="338.9" x2="153.6" y2="372.7" stroke="#1f5fbf" stroke-width="6.1"/><line x1="204.8" y1="338.9" x2="204.8" y2="372.7" stroke="#1f5fbf" stroke-width="6.1"/><line x1="256.0" y1="338.9" x2="256.0" y2="372.7" stroke="#1f5fbf" stroke-width="6.1"/><line x1="307.2" y1="338.9" x2="307.2" y2="372.7" stroke="#1f5fbf" stroke-width="6.1"/><line x1="358.4" y1="338.9" x2="358.4" y2="372.7" stroke="#1f5fbf" stroke-width="6.1"/><line x1="409.6" y1="338.9" x2="409.6" y2="372.7" stroke="#1f5fbf" stroke-width="6.1"/><rect x="112.64" y="419.84000000000003" width="286.72" height="17.92" rx="8.704" fill="#ffffff" opacity=".55"/></svg>'
 
 
 def esc(s):
@@ -80,7 +80,8 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website"):
 <link rel="alternate" hreflang="x-default" href="{fr_url}">
 <meta property="og:type" content="{og_type}"><meta property="og:title" content="{esc(title)}"><meta property="og:description" content="{esc(desc)}"><meta property="og:url" content="{url}"><meta property="og:site_name" content="Pickleball du Jour"><meta property="og:locale" content="{'fr_FR' if lang=='fr' else 'en_GB'}">
 <meta name="theme-color" content="#1f5fbf">
-<link rel="icon" href="/favicon.svg" type="image/svg+xml">
+<link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest">
+<meta property="og:image" content="{SITE}/img/og.png"><meta name="twitter:card" content="summary_large_image">
 {FONTS}
 <link rel="stylesheet" href="/style.css">
 {lds}
@@ -88,7 +89,8 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website"):
 <body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{t['home']}">{ICON}<span>Pickleball <b>du Jour</b></span></a>
-<nav class="nav" aria-label="Menu">{nav}<a href="{t['news']}"><strong>{t['news_t']}</strong></a><a class="lang" href="{alt_path}" hreflang="{'en' if lang=='fr' else 'fr'}">{t['other']}</a></nav>
+<button class="menubtn" id="mb" aria-expanded="false" aria-controls="nv"><span></span><span></span><span></span><b>Menu</b></button>
+<nav class="nav" id="nv" aria-label="Menu">{nav}<a href="{t['news']}"><strong>{t['news_t']}</strong></a><a class="lang" href="{alt_path}" hreflang="{'en' if lang=='fr' else 'fr'}">{t['other']}</a></nav>
 </div></header>
 <main>{body}</main>
 <footer class="foot"><div class="wrap cols">
@@ -96,6 +98,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website"):
 <div><h4>{t['guides']}</h4><ul>{''.join(f'<li><a href="{h}">{esc(n)}</a></li>' for n,h in t['nav'][:5])}</ul></div>
 <div><h4>{t['name']}</h4><ul><li><a href="{t['news']}">{t['news_t']}</a></li><li><a href="{t['about']}">{t['about_t']}</a></li><li><a href="{t['legal']}">{t['legal_t']}</a></li><li><a href="{alt_path}">{'English version' if lang=='fr' else 'Version française'}</a></li></ul></div>
 </div><div class="wrap"><p class="note" style="color:#a9bcd8;margin-top:24px">© {TODAY.year} Pickleball du Jour</p></div></footer>
+<script>{{const b=document.getElementById('mb'),n=document.getElementById('nv');b.addEventListener('click',()=>{{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o)}})}}</script>
 </body></html>'''
 
 
@@ -240,8 +243,11 @@ def main():
         urls += tip_pages(lang, tips, otips)
         urls += extra_pages(lang)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
-    with open(os.path.join(OUT, "favicon.svg"), "w") as f:
-        f.write(ICON.replace('width="30" height="30" ', 'xmlns="http://www.w3.org/2000/svg" '))
+    shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))
+    shutil.copytree(os.path.join(ROOT, "static", "img"), os.path.join(OUT, "img"))
+    with open(os.path.join(OUT, "manifest.webmanifest"), "w") as f:
+        json.dump({"name": "Pickleball du Jour", "short_name": "Pickleball", "start_url": "/", "display": "standalone", "background_color": "#ffffff", "theme_color": "#1f5fbf",
+                   "icons": [{"src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, f)
     with open(os.path.join(OUT, "CNAME"), "w") as f:
         f.write("pickleballdujour.fr\n")
     sm = "".join(f"<url><loc>{SITE}{u}</loc><lastmod>{TODAY.isoformat()}</lastmod></url>" for u in urls)
