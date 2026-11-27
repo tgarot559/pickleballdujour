@@ -244,8 +244,9 @@ def home(lang, pages, tips, otips):
     cal = "/tournois-pickleball/" if lang == "fr" else "/en/pickleball-tournaments/"
     body = f'''<section class="hero"><div class="wrap">
 <div><h1>{t["hero_h"]}</h1><p>{t["hero_p"]}</p>
+<p style="margin:18px 0 22px"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a></p>
 <div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · {esc(tip[1])}</span><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
-<p style="margin-top:22px"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a></p></div>
+</div>
 <div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
 </div></section>
 <section class="band"><div class="wrap"><h2 style="margin-top:0">{t["guides"]}</h2><div class="grid">{guides}</div></div></section>
