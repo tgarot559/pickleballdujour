@@ -20,7 +20,7 @@ AUTHOR = {"@type": "Person", "name": "Thierry Garot", "url": "https://thierrygar
 
 T = {
  "fr": {"name": "Pickleball du Jour", "lang": "fr", "home": "/", "tips": "conseils", "tips_t": "Conseils", "tip_of_day": "Le conseil du jour",
-        "nav": [("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/")],
+        "nav": [("Progresser", "/progresser/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/")],
         "news": "/newsletter/", "news_t": "Newsletter", "other": "EN", "faq": "Questions fréquentes", "short": "En bref", "try": "À essayer",
         "read": "Lire le conseil", "all_tips": "Tous les conseils", "guides": "Les guides de fond", "updated": "Mis à jour le",
         "by": "Par Thierry Garot, joueur de pickleball", "tip_n": "Conseil n°", "home_crumb": "Accueil",
@@ -67,6 +67,7 @@ def tabbar(lang, path):
     items = [(pre + "/", "Accueil" if lang == "fr" else "Home", '<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/>'),
              (pre + ("/conseils/" if lang == "fr" else "/tips/"), "Conseils" if lang == "fr" else "Tips", '<circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/>'),
              ("/tournois-pickleball/" if lang == "fr" else "/en/pickleball-tournaments/", "Tournois" if lang == "fr" else "Events", '<path d="M8 4h8v4a4 4 0 0 1-8 0zM6 5H4v2a3 3 0 0 0 3 3M18 5h2v2a3 3 0 0 1-3 3M12 12v4M8 20h8M10 16h4v4h-4z"/>'),
+             *([("/progresser/", "Progresser", '<path d="M4 20V14M10 20V9M16 20V4M22 20H2"/>')] if lang == "fr" else []),
              (pre + "/newsletter/", "Newsletter", '<rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/>')]
     out = []
     for href, lab, ic in items:
@@ -111,7 +112,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 <main>{body}</main>
 <footer class="foot"><div class="wrap cols">
 <div><h4>Pickleball du Jour</h4><p>{t['foot_p']}</p></div>
-<div><h4>{t['guides']}</h4><ul>{''.join(f'<li><a href="{h}">{esc(n)}</a></li>' for n,h in t['nav'][:5])}</ul></div>
+<div><h4>{t['guides']}</h4><ul>{''.join(f'<li><a href="{h}">{esc(n)}</a></li>' for n,h in [x for x in t['nav'] if x[1] != '/progresser/'][:5])}</ul></div>
 <div><h4>{t['name']}</h4><ul><li><a href="{t['news']}">{t['news_t']}</a></li><li><a href="{t['about']}">{t['about_t']}</a></li><li><a href="{t['legal']}">{t['legal_t']}</a></li><li><a href="{alt_path}">{'English version' if lang=='fr' else 'Version française'}</a></li></ul></div>
 </div><div class="wrap"><p class="note" style="color:#a9bcd8;margin-top:24px">© {TODAY.year} Pickleball du Jour</p></div></footer>
 {tabbar(lang, path)}
@@ -143,6 +144,21 @@ def signup(lang, where):
         h, txt, btn = "Get the tips every Sunday", "The week's tips with their diagrams, upcoming tournaments, and the drill booklet free when you sign up. Written in French for now.", "Sign up for free"
     return (f'<aside class="signup"><div><b>{h}</b><p>{txt}</p></div>'
             f'<a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj(\'clic_inscription\',\'{where}\')">{btn} →</a></aside>')
+
+
+def quizlink(lang):
+    if lang != "fr":
+        return ""
+    return '<a class="quizlink" href="/progresser/" onclick="window.pbj&&pbj(\'clic_quiz\',\'conseil\')"><b>Quel conseil pour vous ?</b> Faites votre bilan en 2 minutes : niveau, axes de progrès et les conseils à travailler en premier →</a>'
+
+
+def quiz_page():
+    path = "/progresser/"
+    cr, crld = crumbs("fr", [("Progresser", None)])
+    frag = open(os.path.join(ROOT, "static", "quiz.html"), encoding="utf-8").read()
+    body = frag.replace('<div class="wrap page qz">', '<div class="wrap page qz">' + cr, 1)
+    write(path, layout("fr", path, "Progresser au pickleball : votre bilan en 2 minutes", "8 questions, 2 minutes, sans inscription : votre niveau estimé, vos points forts, vos axes de progrès et les conseils à travailler en premier.", body, "/en/", [crld]))
+    return path
 
 
 def faq_html(lang, faq):
@@ -210,6 +226,7 @@ def tip_pages(lang, tips, other):
 <figure class="scene">{scenes.svg(fkey, lang, cat, title)}<figcaption>{scenes.LEGEND[lang] if scenes.INDEX.get(fkey, -1) not in scenes.SPECIAL else ""}</figcaption></figure>
 {body}
 <div class="drill"><b>{t["try"]}{" :" if lang=="fr" else ":"}</b> {esc(drill)}</div>
+{quizlink(lang)}
 {signup(lang, "conseil")}
 <p style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">{prev_l}{next_l}</p>
 </div></div>'''
@@ -244,7 +261,7 @@ def home(lang, pages, tips, otips):
     cal = "/tournois-pickleball/" if lang == "fr" else "/en/pickleball-tournaments/"
     body = f'''<section class="hero"><div class="wrap">
 <div><h1>{t["hero_h"]}</h1><p>{t["hero_p"]}</p>
-<p style="margin:18px 0 22px"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a></p>
+<p style="margin:18px 0 22px"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a>{' <a class="btn ghost" href="/progresser/" onclick="window.pbj&&pbj(\'clic_quiz\',\'accueil\')">Faire mon bilan</a>' if lang == "fr" else ""}</p>
 <div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · {esc(tip[1])}</span><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
 </div>
 <div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
@@ -306,6 +323,8 @@ def main():
             urls.append(pillar(lang, p, o["slug"]))
         urls += tip_pages(lang, tips, otips)
         urls += extra_pages(lang)
+        if lang == "fr":
+            urls.append(quiz_page())
         rss(lang, tips, otips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))

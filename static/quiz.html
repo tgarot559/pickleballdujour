@@ -1,0 +1,198 @@
+<style>
+.qz{max-width:640px}
+.qz h1{font-size:clamp(28px,7vw,40px);margin:8px 0 12px}
+.qz h2{font-size:clamp(22px,5.5vw,28px);margin:6px 0 16px;line-height:1.15}
+.qkick{font-weight:800;font-size:14px;color:var(--court);text-transform:uppercase;letter-spacing:.06em}
+.qlead{color:var(--soft);font-size:18px}
+.qz .btn{min-height:52px;font-size:17px;padding:14px 24px}
+.qz .btn.qblue{background:var(--court);color:#fff!important}
+.qz .btn[hidden]{display:none}
+.qlink{background:none;border:0;color:var(--soft);font:700 16px Inter,sans-serif;padding:10px 0;min-height:44px;cursor:pointer}
+.qbar{height:8px;background:var(--line);border-radius:99px;overflow:hidden;margin:4px 0 18px}
+.qbar i{display:block;height:100%;background:var(--court);border-radius:99px;transition:width .25s}
+.qstep{font-size:14px;color:var(--soft);font-weight:600}
+.qopts{display:flex;flex-direction:column;gap:10px;margin:0 0 18px;padding:0;list-style:none}
+.qopt{width:100%;text-align:left;background:var(--bg);border:2px solid var(--line);border-radius:16px;padding:14px 16px;min-height:56px;font:600 17px Inter,sans-serif;color:var(--ink);cursor:pointer;display:flex;gap:12px;align-items:center}
+.qopt:hover{border-color:var(--court)}
+.qopt[aria-pressed=true]{border-color:var(--court);background:var(--tint)}
+.qck{flex:none;width:24px;height:24px;border-radius:7px;border:2px solid var(--line);display:grid;place-items:center;font-size:15px;color:#fff}
+.qopt[aria-pressed=true] .qck{background:var(--court);border-color:var(--court)}
+.qhint{font-size:14px;color:var(--soft);margin:-8px 0 14px}
+.qnav{display:flex;justify-content:space-between;align-items:center;gap:12px}
+.qcard{border:1px solid var(--line);border-radius:18px;padding:18px;margin:14px 0}
+.qcard h3{margin:0 0 10px;font:800 19px Archivo,Inter,sans-serif}
+.qcard ul{margin:0;padding-left:20px}.qcard li{margin:6px 0}
+.qprofile{background:var(--court);color:#fff;border-radius:22px;padding:22px}
+.qprofile h2{color:#fff;margin:4px 0 8px}.qprofile p{margin:0;color:#dbe6ff}.qprofile .qkick{color:var(--ball)}
+.qtip{display:block;border:2px solid var(--line);border-radius:14px;padding:14px 16px;margin:10px 0;text-decoration:none;color:var(--ink)}
+.qtip:hover{border-color:var(--court)}
+.qtip small{display:block;color:var(--court);font-weight:700;font-size:13px;text-transform:uppercase;letter-spacing:.05em}
+.qtip b{display:block;font-size:18px;margin:2px 0}.qtip span{color:var(--soft);font-size:15px}
+.qcta{background:var(--tint);border-radius:18px;padding:18px;margin:18px 0}.qcta p{margin:0 0 12px}
+.qnote{font-size:13px;color:var(--soft);margin-top:22px}
+</style>
+<div class="wrap page qz">
+
+<section id="intro">
+  <div class="qkick">Progresser</div>
+  <h1>Votre bilan pickleball en 2 minutes</h1>
+  <p class="qlead">8 questions, sans inscription. Vous obtenez votre niveau estimé, vos points forts, vos axes de progrès et les trois conseils à travailler en premier.</p>
+  <p><button class="btn qblue" id="start" type="button">Commencer le bilan</button></p>
+  <p class="qnote">Vos réponses restent sur votre téléphone : elles ne sont ni envoyées ni enregistrées.</p>
+</section>
+
+<section id="quiz" hidden>
+  <div class="qstep" id="stepTxt"></div>
+  <div class="qbar"><i id="barFill"></i></div>
+  <h2 id="qTitle"></h2>
+  <p class="qhint" id="qHint"></p>
+  <ul class="qopts" id="opts"></ul>
+  <div class="qnav">
+    <button class="qlink" id="back" type="button">← Retour</button>
+    <button class="btn" id="next" type="button" hidden>Continuer</button>
+  </div>
+</section>
+
+<section id="result" hidden>
+  <div class="qprofile">
+    <div class="qkick">Votre niveau estimé</div>
+    <h2 id="rLevel"></h2>
+    <p id="rLevelTxt"></p>
+  </div>
+  <div class="qcard"><h3>Vos points forts</h3><ul id="rStrengths"></ul></div>
+  <div class="qcard"><h3>Vos axes de progrès</h3><ul id="rAxes"></ul></div>
+  <div class="qcard"><h3>Vos trois conseils à travailler</h3><p class="qhint" style="margin:0">Chacun a son schéma de terrain et un exercice à faire à la prochaine séance.</p><div id="rTips"></div></div>
+  <div class="qcta" id="rTourney" hidden>
+    <p><b>Vous visez un tournoi ?</b> Trouvez ceux qui ont lieu près de chez vous, des K25 de clubs aux championnats.</p>
+    <a class="btn qblue" href="/tournois-pickleball/#recherche">Trouver un tournoi</a>
+    <p style="margin:12px 0 0;font-size:15px">Pour suivre votre classement et vos points FFT, <a href="https://carnetpickle.fr/" rel="noopener" target="_blank">Mon carnet pickle</a> le fait très bien.</p>
+  </div>
+  <div class="qcta">
+    <p><b>Continuez sur votre lancée.</b> Chaque dimanche, les conseils de la semaine avec leurs schémas, et le livret de tous les exercices offert dès l'inscription. Gratuit.</p>
+    <a class="btn" id="rSignup" href="/inscription/" onclick="window.pbj&&pbj('clic_inscription','quiz')">Recevoir les conseils chaque dimanche</a>
+  </div>
+  <p><button class="qlink" id="again" type="button">↺ Refaire le bilan</button></p>
+  <p class="qnote">Ce bilan donne un repère, pas un classement officiel DUPR ou FFT. Ce sont des conseils de joueur : ils ne remplacent pas un entraîneur diplômé.</p>
+</section>
+
+</div>
+<script>
+{
+const Q = [
+ {id:'exp', t:'Depuis quand jouez-vous ?', o:['Moins de 3 mois','3 à 12 mois','1 à 2 ans','Plus de 2 ans']},
+ {id:'freq', t:'Combien de fois par semaine ?', o:["Moins d'une fois",'Une fois','2 ou 3 fois','4 fois ou plus']},
+ {id:'fmt', t:'Vous jouez surtout…', o:['En double','En simple','Les deux']},
+ {id:'lvl', t:'Connaissez-vous votre niveau ?', h:'Classement FFT ou DUPR, si vous en avez un.', o:['Non','Débutant','3.0','3.5','4.0','4.5 et plus']},
+ {id:'can', t:'Cochez ce que vous réussissez déjà', h:'Plusieurs réponses possibles, aucune obligatoire.', multi:9, o:['Servir profond 8 fois sur 10',"Tenir 10 dinks d'affilée",'Faire retomber le troisième coup dans la cuisine','Remettre une balle rapide en balle lente (le reset)','Accélérer au bon moment']},
+ {id:'tech', t:'Votre difficulté technique', h:'2 réponses au plus.', multi:2, o:['Le service','Le retour','Le dink','Le troisième coup','La volée au filet','Le reset','La prise de raquette']},
+ {id:'tac', t:'Votre difficulté dans le jeu', h:'2 réponses au plus.', multi:2, o:['Monter au filet','Le placement et l’entente en double','Choisir quand accélérer','Jouer dehors avec le vent','Rester concentré']},
+ {id:'goal', t:'Votre objectif pour les 3 prochains mois', o:['Me faire plaisir et progresser','Jouer mon premier tournoi','Gagner des matchs en tournoi','Préparer un championnat']},
+];
+const TIPS = {
+ 'service-profond':['Service','Servez profond, pas fort'],
+ 'retour-et-monter':['Retour','Après le retour, montez à la cuisine'],
+ 'troisieme-coup-drop':['Stratégie',"Le troisième coup, c'est le drop"],
+ 'raquette-haute':['Technique','Raquette haute, toujours'],
+ 'patience-dink':['Stratégie',"Le dink, c'est de la patience"],
+ 'communiquer-double':['Double','Trois mots qui sauvent un double'],
+ 'pieds-cuisine':['Règles',"Attention à l'élan après une volée"],
+ 'viser-pieds':['Stratégie','Visez les pieds, pas la tête'],
+ 'echauffement':['Santé',"Cinq minutes d'échauffement"],
+ 'score-annonce':['Règles','Annoncez le score à voix haute'],
+ 'revers-dink':['Technique','Dinkez sur le revers adverse'],
+ 'lob-prudence':['Stratégie','Le lob, oui, mais rarement'],
+ 'reset':['Technique','Apprenez le reset'],
+ 'balles-interieur-exterieur':['Matériel','Prenez la bonne balle'],
+ 'grip-continental':['Technique','Une seule prise pour tout jouer'],
+ 'milieu-terrain':['Stratégie','Ne restez pas au milieu'],
+ 'partenaire-ensemble':['Double','Bougez comme si vous étiez attachés'],
+ 'speed-up':['Stratégie','Accélérez la bonne balle'],
+ 'vent-exterieur':['Extérieur','Jouez avec le vent'],
+ 'mental-point':['Mental','Un point à la fois'],
+ 'ernes':['Avancé',"L'erne, l'arme des joueurs audacieux"],
+ 'raquette-legere':['Matériel','Débutant ? Prenez léger'],
+ 'cible-centre':['Double','Dans le doute, jouez au centre'],
+ 'chaussures':['Santé','Les chaussures avant la raquette'],
+};
+const MAP_TECH = [['service-profond'],['retour-et-monter'],['patience-dink','revers-dink'],['troisieme-coup-drop'],['raquette-haute','pieds-cuisine'],['reset'],['grip-continental']];
+const MAP_TAC = [['retour-et-monter','milieu-terrain'],['communiquer-double','partenaire-ensemble','cible-centre'],['speed-up','viser-pieds','lob-prudence'],['vent-exterieur','balles-interieur-exterieur'],['mental-point']];
+const LEVELS = [
+ {n:'Découverte', d:'Vous posez les bases : les règles, le bon matériel, les premiers échanges. Tout va vite à ce stade.', tips:['echauffement','raquette-legere','score-annonce'], axes:['Comprendre les règles et le score','Servir profond avant de servir fort','Choisir un matériel adapté']},
+ {n:'Initié', d:'Vous jouez des matchs. La prochaine marche : monter au filet au bon moment et le tenir.', tips:['retour-et-monter','troisieme-coup-drop','communiquer-double'], axes:['Monter à la cuisine après le retour','Réussir le troisième coup amorti',"Parler à votre partenaire en double"]},
+ {n:'Confirmé', d:'Vous construisez le point. Ce qui fera la différence : la patience au filet et le jeu sous pression.', tips:['patience-dink','reset','speed-up'], axes:['Tenir les échanges de dinks','Remettre la balle en jeu sous pression','Choisir la bonne balle à accélérer']},
+ {n:'Avancé', d:'Vous gagnez sur les détails : placement, timing, prise de risque mesurée.', tips:['reset','speed-up','ernes'], axes:['Varier et surprendre au filet','Défendre les accélérations','Gérer le mental dans les points serrés']},
+];
+const STRENGTH = ['Votre service profond met l’adversaire en difficulté dès le premier coup','Vous avez la patience du dink, le cœur du jeu','Votre troisième coup vous ouvre la porte du filet','Vous savez calmer le jeu sous pression avec le reset','Vous sentez le bon moment pour accélérer'];
+
+let i = 0; const A = {};
+const $ = id => document.getElementById(id);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const track = (e, v) => { try { window.pbj && window.pbj(e, v || ''); } catch (x) {} };
+
+function show(id){ ['intro','quiz','result'].forEach(s => $(s).hidden = s !== id); window.scrollTo(0,document.querySelector('.qz').offsetTop-90); }
+
+function render(){
+  const q = Q.at(i), multi = q.multi, sel = A[q.id] || (multi ? [] : null);
+  $('stepTxt').textContent = 'Question ' + (i + 1) + ' sur ' + Q.length;
+  $('barFill').style.width = (i / Q.length * 100) + '%';
+  $('qTitle').textContent = q.t;
+  $('qHint').textContent = q.h || ''; $('qHint').hidden = !q.h;
+  $('opts').innerHTML = q.o.map((o, k) => {
+    const on = multi ? sel.includes(k) : sel === k;
+    return `<li><button type="button" class="qopt" data-k="${k}" aria-pressed="${on}">${multi ? '<span class="qck" aria-hidden="true">' + (on ? '✓' : '') + '</span>' : ''}${esc(o)}</button></li>`;
+  }).join('');
+  $('next').hidden = !multi;
+  $('next').textContent = (multi && sel.length === 0) ? 'Passer' : 'Continuer';
+  $('back').style.visibility = 'visible';
+}
+
+$('opts').addEventListener('click', e => {
+  const b = e.target.closest('.qopt'); if (!b) return;
+  const q = Q.at(i), k = +b.dataset.k;
+  if (q.multi) {
+    const s = A[q.id] || [];
+    const at = s.indexOf(k);
+    if (at >= 0) s.splice(at, 1); else if (s.length < q.multi) s.push(k);
+    A[q.id] = s; render();
+  } else { A[q.id] = k; advance(); }
+});
+$('next').addEventListener('click', () => { const q = Q.at(i); if (!A[q.id]) A[q.id] = []; advance(); });
+$('back').addEventListener('click', () => { if (i === 0) show('intro'); else { i--; render(); } });
+$('start').addEventListener('click', () => { i = 0; show('quiz'); render(); track('quiz_debut'); });
+$('again').addEventListener('click', () => { for (const k in A) delete A[k]; i = 0; show('quiz'); render(); track('quiz_debut', 'refait'); });
+
+function advance(){ if (i < Q.length - 1) { i++; render(); } else result(); }
+
+function result(){
+  const can = A.can || [];
+  const pts = (A.exp || 0) + Math.min(A.freq || 0, 2) + can.length;
+  let lv = pts <= 3 ? 0 : pts <= 6 ? 1 : pts <= 9 ? 2 : 3;
+  const decl = A.lvl || 0;
+  if (decl >= 1) lv = [0, 0, 1, 2, 3, 3].at(decl);
+  const L = LEVELS.at(lv);
+
+  const tech = A.tech || [], tac = A.tac || [];
+  const axes = tech.map(k => Q.at(5).o.at(k)).concat(tac.map(k => Q.at(6).o.at(k)));
+  const axesOut = (axes.length ? axes : L.axes).slice(0, 3);
+
+  const picks = [];
+  const add = s => { if (!picks.includes(s)) picks.push(s); };
+  tech.forEach(k => MAP_TECH.at(k).forEach(add));
+  tac.forEach(k => MAP_TAC.at(k).forEach(add));
+  if (lv === 0) ['echauffement','chaussures','raquette-legere','score-annonce'].forEach(add);
+  L.tips.forEach(add);
+  const tips = (lv < 3 ? picks.filter(s => s !== 'ernes') : picks).slice(0, 3);
+
+  $('rLevel').textContent = L.n;
+  $('rLevelTxt').textContent = L.d;
+  const st = can.map(k => STRENGTH.at(k)).slice(0, 2);
+  $('rStrengths').innerHTML = st.length ? st.map(s => `<li>${esc(s)}</li>`).join('') : '<li>Vous avez déjà le plus important : vous jouez et vous voulez progresser. Les points forts viendront vite avec les conseils ci-dessous.</li>';
+  $('rAxes').innerHTML = axesOut.map(s => `<li>${esc(s)}</li>`).join('');
+  $('rTips').innerHTML = tips.map(s => { const t = TIPS[s]; return `<a class="qtip" href="/conseils/${s}/" onclick="window.pbj&&pbj('quiz_clic_conseil','${s}')"><small>${esc(t[0])}</small><b>${esc(t[1])}</b><span>Lire le conseil et son exercice →</span></a>`; }).join('');
+  $('rTourney').hidden = !(A.goal >= 1);
+  $('barFill').style.width = '100%';
+  show('result');
+  track('quiz_fin', L.n);
+}
+}
+</script>
