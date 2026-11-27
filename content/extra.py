@@ -11,7 +11,7 @@ NEWS_FR = """
 <h2>Ce que vous recevez</h2>
 <ul><li>Les conseils de la semaine, avec leur exercice à essayer</li><li>Les tournois à venir, des grands rendez-vous aux K25 de clubs</li><li>Les changements de règles et l'actu en France et dans le monde, quand il y en a</li></ul>
 <div class="drill" style="margin:28px 0"><strong>Offert : le livret d'exercices.</strong> Tous les exercices du site réunis dans un PDF, chacun avec son schéma de terrain. À imprimer ou à garder sur le téléphone. <a href="/livret/exercices-pickleball.pdf" download onclick="window.pbj&&pbj('telechargement_livret','fr')">Télécharger le livret (PDF)</a></div>
-<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Je m'inscris</h2><div id="brevo-form"><p>L'inscription ouvre dans quelques jours. En attendant, le conseil du jour est déjà en ligne chaque matin : <a href="/conseils/">tous les conseils</a>.</p></div></div>
+<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Je m'inscris</h2><div id="nl-form"><p>Laissez votre prénom et votre adresse sur la page d'inscription : vous recevez le livret d'exercices tout de suite, puis la lettre chaque dimanche matin.</p><p><a class="btn" href="https://thierry-garot.tinypages.co/newsletter-pickleball-du-jour" onclick="window.pbj&&pbj('clic_inscription','fr')">Je m'inscris gratuitement →</a></p></div></div>
 <p class="note">Votre adresse sert uniquement à envoyer la lettre. Elle n'est jamais revendue.</p>
 """
 
@@ -20,7 +20,7 @@ NEWS_EN = """
 <h2>What you get</h2>
 <ul><li>The week's tips, each with a drill to try</li><li>Upcoming tournaments in France, from the big events to club K25s</li><li>Rule changes and news from France and worldwide, when there are any</li></ul>
 <div class="drill" style="margin:28px 0"><strong>Free: the drill booklet.</strong> Every drill from the site in one PDF, each with its court diagram. Print it or keep it on your phone. <a href="/livret/pickleball-drills.pdf" download onclick="window.pbj&&pbj('telechargement_livret','en')">Download the booklet (PDF)</a></div>
-<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Sign up</h2><div id="brevo-form"><p>Sign-ups open in a few days. In the meantime, the tip of the day is online every morning: <a href="/en/tips/">all tips</a>.</p></div></div>
+<div id="inscription" class="price best" style="margin:28px 0"><h2 style="margin-top:0">Sign up</h2><div id="nl-form"><p>The Sunday letter is written in French for now. You can still sign up: the drill booklet is available in English right here on this page.</p><p><a class="btn" href="https://thierry-garot.tinypages.co/newsletter-pickleball-du-jour" onclick="window.pbj&&pbj('clic_inscription','en')">Sign up for free →</a></p></div></div>
 <p class="note">Your address is only used to send the letter. It is never sold.</p>
 """
 
