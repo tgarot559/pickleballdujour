@@ -133,6 +133,18 @@ def fill(body, lang):
     return body.replace("{{COURT}}", court_svg(lang)).replace("{{PADDLE}}", paddle_svg(lang)).replace("{{SERVE}}", serve_svg(lang))
 
 
+NL_URL = "https://thierry-garot.tinypages.co/newsletter-pickleball-du-jour"
+
+
+def signup(lang, where):
+    if lang == "fr":
+        h, txt, btn = "Recevez les conseils chaque dimanche", "Les conseils de la semaine avec leurs schémas, les tournois à venir, et le livret d'exercices offert dès l'inscription. Gratuit.", "Je m'inscris gratuitement"
+    else:
+        h, txt, btn = "Get the tips every Sunday", "The week's tips with their diagrams, upcoming tournaments, and the drill booklet free when you sign up. Written in French for now.", "Sign up for free"
+    return (f'<aside class="signup"><div><b>{h}</b><p>{txt}</p></div>'
+            f'<a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj(\'clic_inscription\',\'{where}\')">{btn} →</a></aside>')
+
+
 def faq_html(lang, faq):
     t = T[lang]
     items = "".join(f"<details><summary>{esc(q)}</summary><p>{esc(a)}</p></details>" for q, a in faq)
@@ -163,6 +175,7 @@ def pillar(lang, p, other_slug):
 <h1>{esc(p["h1"])}</h1>
 <div class="answer"><strong>{t["short"]}</strong>{esc(p["answer"])}</div>
 {fill(p["body"], lang)}
+{signup(lang, "guide")}
 {fq}
 <div class="drill"><b>{t["tip_of_day"]}{" :" if lang=="fr" else ":"}</b> <a href="{pre}/{t["tips"]}/">{t["all_tips"]} →</a></div>
 </div>
@@ -197,6 +210,7 @@ def tip_pages(lang, tips, other):
 <figure class="scene">{scenes.svg(fkey, lang, cat, title)}<figcaption>{scenes.LEGEND[lang] if scenes.INDEX.get(fkey, -1) not in scenes.SPECIAL else ""}</figcaption></figure>
 {body}
 <div class="drill"><b>{t["try"]}{" :" if lang=="fr" else ":"}</b> {esc(drill)}</div>
+{signup(lang, "conseil")}
 <p style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">{prev_l}{next_l}</p>
 </div></div>'''
         if has_png:
@@ -231,13 +245,13 @@ def home(lang, pages, tips, otips):
     body = f'''<section class="hero"><div class="wrap">
 <div><h1>{t["hero_h"]}</h1><p>{t["hero_p"]}</p>
 <div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · {esc(tip[1])}</span><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
-<p style="margin-top:22px"><a class="btn" href="{t["news"]}">{t["cta"]}</a></p></div>
+<p style="margin-top:22px"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a></p></div>
 <div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
 </div></section>
 <section class="band"><div class="wrap"><h2 style="margin-top:0">{t["guides"]}</h2><div class="grid">{guides}</div></div></section>
 <section class="band tint"><div class="wrap"><h2 style="margin-top:0">{t["all_tips"]}</h2><div class="grid">{latest}</div><p><a href="{base}">{t["all_tips"]} →</a></p></div></section>
 <section class="band"><div class="wrap two"><div><h2 style="margin-top:0">{t["events"]}</h2><div class="tbl"><table><tbody>{ev}</tbody></table></div><p><a href="{cal}">{t["see_cal"]} →</a></p></div>
-<div class="price best"><h2 style="margin-top:0">{t["newsband_h"]}</h2><p>{t["newsband_p"]}</p><a class="btn" href="{t["news"]}">{t["cta"]}</a></div></div></section>
+<div class="price best"><h2 style="margin-top:0">{t["newsband_h"]}</h2><p>{t["newsband_p"]}</p><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil-bas')">{t["cta"]}</a></div></div></section>
 <script>{{const D={data};const L=new Date(2026,10,27);const n=Math.floor((new Date().setHours(0,0,0,0)-L.getTime())/864e5);const i=((n%D.length)+D.length)%D.length;const x=D[i];
 document.getElementById('tod-t').textContent=x[2];document.getElementById('tod-s').textContent=x[3];document.getElementById('tod-a').href=x[0];const im=document.getElementById('tod-img');im.src=x[4];im.alt=x[2];document.getElementById('tod-ia').href=x[0];}}</script>'''
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Pickleball du Jour", "url": SITE + t["home"], "inLanguage": lang,
