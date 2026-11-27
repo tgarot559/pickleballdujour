@@ -8,6 +8,7 @@ from content.tips_fr import TIPS as TFR
 from content.pages_en import PAGES as PEN
 from content.tips_en import TIPS as TEN
 from content.extra import EXTRA, TOURNEYS
+from content.seances import SESSIONS
 from finder import finder_html, data as tdata
 import scenes
 
@@ -20,7 +21,7 @@ AUTHOR = {"@type": "Person", "name": "Thierry Garot", "url": "https://thierrygar
 
 T = {
  "fr": {"name": "Pickleball du Jour", "lang": "fr", "home": "/", "tips": "conseils", "tips_t": "Conseils", "tip_of_day": "Le conseil du jour",
-        "nav": [("Progresser", "/progresser/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/")],
+        "nav": [("Progresser", "/progresser/"), ("Séances", "/seances/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/")],
         "news": "/newsletter/", "news_t": "Newsletter", "other": "EN", "faq": "Questions fréquentes", "short": "En bref", "try": "À essayer",
         "read": "Lire le conseil", "all_tips": "Tous les conseils", "guides": "Les guides de fond", "updated": "Mis à jour le",
         "by": "Par Thierry Garot, joueur de pickleball", "tip_n": "Conseil n°", "home_crumb": "Accueil",
@@ -112,7 +113,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 <main>{body}</main>
 <footer class="foot"><div class="wrap cols">
 <div><h4>Pickleball du Jour</h4><p>{t['foot_p']}</p></div>
-<div><h4>{t['guides']}</h4><ul>{''.join(f'<li><a href="{h}">{esc(n)}</a></li>' for n,h in [x for x in t['nav'] if x[1] != '/progresser/'][:5])}</ul></div>
+<div><h4>{t['guides']}</h4><ul>{''.join(f'<li><a href="{h}">{esc(n)}</a></li>' for n,h in [x for x in t['nav'] if x[1] not in ('/progresser/', '/seances/')][:5])}</ul></div>
 <div><h4>{t['name']}</h4><ul><li><a href="{t['news']}">{t['news_t']}</a></li><li><a href="{t['about']}">{t['about_t']}</a></li><li><a href="{t['legal']}">{t['legal_t']}</a></li><li><a href="{alt_path}">{'English version' if lang=='fr' else 'Version française'}</a></li></ul></div>
 </div><div class="wrap"><p class="note" style="color:#a9bcd8;margin-top:24px">© {TODAY.year} Pickleball du Jour</p></div></footer>
 {tabbar(lang, path)}
@@ -158,6 +159,31 @@ def quiz_page():
     frag = open(os.path.join(ROOT, "static", "quiz.html"), encoding="utf-8").read()
     body = frag.replace('<div class="wrap page qz">', '<div class="wrap page qz">' + cr, 1)
     write(path, layout("fr", path, "Progresser au pickleball : votre bilan en 2 minutes", "8 questions, 2 minutes, sans inscription : votre niveau estimé, vos points forts, vos axes de progrès et les conseils à travailler en premier.", body, "/en/", [crld]))
+    return path
+
+
+LEVEL_NAMES = [("avance", "Avancé", "#c8371e", "Pour les joueurs de tournoi qui gagnent sur les détails."),
+               ("confirme", "Confirmé", "#0e3a78", "On construit le point : patience, reset, accélérations."),
+               ("initie", "Initié", "#1f5fbf", "On joue des matchs : monter au filet et s'organiser en double."),
+               ("decouverte", "Découverte", "#2a8a57", "Les bases pour bien commencer : service et règles.")]
+
+
+def seances_page():
+    path = "/seances/"
+    cr, crld = crumbs("fr", [("Séances", None)])
+    secs, lds = [], []
+    for key, name, col, blurb in LEVEL_NAMES:
+        cards = "".join(f'''<article class="sv" id="{x["slug"]}"><video src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="none" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"></video><div class="svm"><h3>{esc(x["title"])}</h3><p>{x["dur"]} s · {esc(x["goal"])}</p></div></article>''' for x in SESSIONS if x["level"] == key)
+        secs.append(f'<section class="svl"><h2><span class="svb" style="background:{col}">{name}</span></h2><p class="note">{esc(blurb)}</p><div class="svg">{cards}</div></section>')
+    for x in SESSIONS:
+        lds.append({"@context": "https://schema.org", "@type": "VideoObject", "name": x["title"], "description": x["desc"], "thumbnailUrl": SITE + "/seances/" + x["slug"] + ".jpg",
+                    "contentUrl": SITE + "/seances/" + x["slug"] + ".mp4", "uploadDate": "2026-11-27", "duration": f"PT{x['dur']}S", "inLanguage": "fr"})
+    body = f'''<div class="wrap page">{cr}<h1>Séances vidéo&nbsp;: 30 secondes pour progresser</h1>
+<p class="lead">12 séances courtes, du joueur de tournoi au débutant. Le principe animé sur le terrain, un exercice avec son objectif, une voix qui vous guide et les sous-titres.</p>
+<a class="quizlink" href="/progresser/"><b>Quelle séance pour vous ?</b> Faites votre bilan en 2 minutes : il vous indique la séance à suivre en premier →</a>
+{"".join(secs)}
+<p class="note">Ces séances donnent des conseils de joueur ; elles ne remplacent pas un entraîneur diplômé.</p></div>'''
+    write(path, layout("fr", path, "Séances vidéo de pickleball : 30 secondes pour progresser", "12 séances vidéo de pickleball de 30 secondes, du débutant au joueur de tournoi : service, dink, drop, reset, stacking, erne. Avec exercice et objectif chiffré.", body, "/en/", [crld] + lds))
     return path
 
 
@@ -325,6 +351,7 @@ def main():
         urls += extra_pages(lang)
         if lang == "fr":
             urls.append(quiz_page())
+            urls.append(seances_page())
         rss(lang, tips, otips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))
@@ -335,6 +362,8 @@ def main():
         with open(os.path.join(OUT, short, "index.html"), "w") as f:
             f.write(f'<!DOCTYPE html><html lang="fr"><head><meta charset="utf-8"><meta name="robots" content="noindex"><meta http-equiv="refresh" content="0;url={NL_URL}"><link rel="canonical" href="{SITE}/newsletter/"><title>Inscription · Pickleball du Jour</title></head><body><script>location.replace("{NL_URL}")</script><p><a href="{NL_URL}">Continuer vers l\'inscription</a></p></body></html>')
     shutil.copytree(os.path.join(ROOT, "static", "img"), os.path.join(OUT, "img"))
+    if os.path.isdir(os.path.join(ROOT, "static", "seances")):
+        shutil.copytree(os.path.join(ROOT, "static", "seances"), os.path.join(OUT, "seances"), dirs_exist_ok=True)
     if os.path.isdir(os.path.join(ROOT, "static", "livret")):
         shutil.copytree(os.path.join(ROOT, "static", "livret"), os.path.join(OUT, "livret"))
     with open(os.path.join(OUT, "manifest.webmanifest"), "w") as f:

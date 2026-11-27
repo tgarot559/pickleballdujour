@@ -139,3 +139,10 @@ code,pre{overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap}
 .quizlink{display:block;border:0;background:var(--tint);border-radius:16px;padding:14px 18px;margin:18px 0;text-decoration:none;color:var(--ink)}
 .quizlink b{display:block;font:800 18px Archivo,Inter,sans-serif;margin-bottom:2px;color:var(--court)}
 .quizlink:hover{outline:2px solid var(--court)}
+
+.svl{margin-top:34px}.svl h2{margin:0 0 4px}
+.svb{display:inline-block;color:#fff;font:700 16px Inter,sans-serif;border-radius:999px;padding:6px 16px}
+.svg{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(100%,300px),1fr));gap:16px;margin-top:12px}
+.sv{background:var(--card);border:1px solid var(--line);border-radius:18px;overflow:hidden;scroll-margin-top:90px}
+.sv video{width:100%;aspect-ratio:16/9;display:block;background:#0e3a78}
+.svm{padding:12px 16px 16px}.svm h3{margin:0 0 4px;font-size:19px}.svm p{margin:0;color:var(--soft);font-size:15px}

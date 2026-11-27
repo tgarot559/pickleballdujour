@@ -62,6 +62,7 @@
   <div class="qcard"><h3>Vos points forts</h3><ul id="rStrengths"></ul></div>
   <div class="qcard"><h3>Vos axes de progrès</h3><ul id="rAxes"></ul></div>
   <div class="qcard"><h3>Vos trois conseils à travailler</h3><p class="qhint" style="margin:0">Chacun a son schéma de terrain et un exercice à faire à la prochaine séance.</p><div id="rTips"></div></div>
+  <div class="qcard" id="rSession"></div>
   <div class="qcta" id="rTourney" hidden>
     <p><b>Vous visez un tournoi ?</b> Trouvez ceux qui ont lieu près de chez vous, des K25 de clubs aux championnats.</p>
     <a class="btn qblue" href="/tournois-pickleball/#recherche">Trouver un tournoi</a>
@@ -122,6 +123,10 @@ const LEVELS = [
  {n:'Confirmé', d:'Vous construisez le point. Ce qui fera la différence : la patience au filet et le jeu sous pression.', tips:['patience-dink','reset','speed-up'], axes:['Tenir les échanges de dinks','Remettre la balle en jeu sous pression','Choisir la bonne balle à accélérer']},
  {n:'Avancé', d:'Vous gagnez sur les détails : placement, timing, prise de risque mesurée.', tips:['reset','speed-up','ernes'], axes:['Varier et surprendre au filet','Défendre les accélérations','Gérer le mental dans les points serrés']},
 ];
+const SESS = {'d1-service-profond':'Le service, simple et profond','d2-deux-rebonds':'La règle des deux rebonds','d3-la-cuisine':'La cuisine : pas de volée dedans','i1-retour-et-monter':'Retour long, puis on monte','i2-le-drop':'Le troisième coup : le drop','i3-parler-en-double':'En double, on se parle','c1-dink-patient':'Le dink, avec patience','c2-le-reset':'Le reset sous pression','c3-accelerer':'Accélérer la bonne balle','a1-stacking':'Le stacking en double','a2-erne':"L'erne, sans toucher la cuisine",'a3-bloquer':'Bloquer une accélération'};
+const SESS_TECH = ['d1-service-profond','i1-retour-et-monter','c1-dink-patient','i2-le-drop','d3-la-cuisine','c2-le-reset',null];
+const SESS_TAC = ['i1-retour-et-monter','i3-parler-en-double','c3-accelerer',null,null];
+const SESS_LVL = ['d1-service-profond','i2-le-drop','c2-le-reset','a1-stacking'];
 const STRENGTH = ['Votre service profond met l’adversaire en difficulté dès le premier coup','Vous avez la patience du dink, le cœur du jeu','Votre troisième coup vous ouvre la porte du filet','Vous savez calmer le jeu sous pression avec le reset','Vous sentez le bon moment pour accélérer'];
 
 let i = 0; const A = {};
@@ -189,6 +194,11 @@ function result(){
   $('rStrengths').innerHTML = st.length ? st.map(s => `<li>${esc(s)}</li>`).join('') : '<li>Vous avez déjà le plus important : vous jouez et vous voulez progresser. Les points forts viendront vite avec les conseils ci-dessous.</li>';
   $('rAxes').innerHTML = axesOut.map(s => `<li>${esc(s)}</li>`).join('');
   $('rTips').innerHTML = tips.map(s => { const t = TIPS[s]; return `<a class="qtip" href="/conseils/${s}/" onclick="window.pbj&&pbj('quiz_clic_conseil','${s}')"><small>${esc(t[0])}</small><b>${esc(t[1])}</b><span>Lire le conseil et son exercice →</span></a>`; }).join('');
+  let ss = null;
+  for (const k of tech) { ss = ss || SESS_TECH.at(k); }
+  for (const k of tac) { ss = ss || SESS_TAC.at(k); }
+  ss = ss || SESS_LVL.at(lv);
+  $('rSession').innerHTML = `<h3>Votre séance vidéo</h3><a href="/seances/#${ss}" style="display:block;text-decoration:none;color:inherit" onclick="window.pbj&&pbj('quiz_clic_seance','${ss}')"><img src="/seances/${ss}.jpg" alt="" style="width:100%;border-radius:12px;display:block"><b style="display:block;margin-top:10px;font-size:18px">${esc(SESS[ss])}</b><span style="color:var(--soft);font-size:15px">30 secondes, avec un exercice à faire →</span></a>`;
   $('rTourney').hidden = !(A.goal >= 1);
   $('barFill').style.width = '100%';
   show('result');
