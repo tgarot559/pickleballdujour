@@ -354,7 +354,7 @@ PAGES = [
 "faq": [
 ("Combien coûte un cours de pickleball ?", "Les tarifs varient selon la ville, le club et la formule (collectif, particulier, stage). Les clubs associatifs proposent souvent une adhésion annuelle qui inclut des séances encadrées."),
 ("Faut-il une licence pour prendre des cours ?", "Dans un club affilié à la FFT, une licence est en général demandée avec l'adhésion. Pour une séance découverte, ce n'est souvent pas nécessaire."),
-("Je suis prof ou je gère un club : comment apparaître dans l'annuaire ?", "Remplissez le formulaire « Faites-vous recenser » sur cette page. C'est gratuit, et chaque fiche est relue avant publication."),
+("Je suis prof ou je gère un club : comment apparaître dans l'annuaire ?", "Remplissez le formulaire « Ajoutez votre fiche » sur cette page. C'est gratuit, et chaque fiche est relue avant publication."),
 ],
 },
 {

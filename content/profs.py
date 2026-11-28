@@ -45,7 +45,7 @@ TXT = {
 }
 
 FORM = {
- "fr": {"h": "Vous êtes prof, club ou salle ? Faites-vous recenser", "p": "C'est gratuit. Chaque fiche est relue avant d'apparaître sur la carte.",
+ "fr": {"h": "Vous êtes prof, club ou salle ? Ajoutez votre fiche", "p": "C'est gratuit. Chaque fiche est relue avant d'apparaître sur la carte.",
         "nom": "Nom (vous ou votre structure)", "type": "Vous êtes", "t1": "Prof ou entraîneur", "t2": "Club ou association", "t3": "Salle ou complexe",
         "ville": "Ville", "cp": "Code postal", "url": "Site, page ou réseau social", "email": "E-mail de contact", "email_n": "jamais publié : seulement pour vous joindre",
         "niv": "Pour qui ?", "niv_ph": "Débutants, enfants, compétition…", "dip": "Diplôme ou qualification", "dip_ph": "DE tennis, initiateur, module pickleball FFT…",
@@ -53,7 +53,7 @@ FORM = {
         "ok": "Je confirme que ces informations sont exactes et j'accepte qu'elles soient publiées (sauf l'e-mail).", "send": "Envoyer ma fiche",
         "thanks": "Merci ! Votre fiche sera publiée après relecture.", "err": "L'envoi n'a pas fonctionné. Écrivez-nous à contact@pickleballdujour.fr.",
         "e_nom": "Indiquez un nom.", "e_ville": "Indiquez la ville.", "e_mail": "Indiquez un e-mail valide pour qu'on puisse vous joindre.", "e_ok": "Cochez la case de confirmation."},
- "en": {"h": "Are you a coach, club or venue? Get listed", "p": "It's free. Every listing is checked before it appears on the map.",
+ "en": {"h": "Are you a coach, club or venue? Add your listing", "p": "It's free. Every listing is checked before it appears on the map.",
         "nom": "Name (you or your organisation)", "type": "You are", "t1": "Coach", "t2": "Club or association", "t3": "Venue",
         "ville": "Town", "cp": "Postcode", "url": "Website, page or social profile", "email": "Contact e-mail", "email_n": "never published: only to reach you",
         "niv": "Who for?", "niv_ph": "Beginners, kids, competition…", "dip": "Qualification", "dip_ph": "State tennis diploma, FFT pickleball module…",

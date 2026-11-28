@@ -324,7 +324,7 @@ PAGES = [
 "faq": [
 ("How much does a pickleball lesson cost?", "Prices depend on the town, the club and the format (group, private, camp). Associations often offer a yearly membership that includes coached sessions."),
 ("Do I need a licence to take lessons?", "FFT-affiliated clubs usually ask for a licence with membership. Taster sessions often don't."),
-("I'm a coach or run a club: how do I get listed?", "Fill in the “Get listed” form on this page. It's free, and every listing is checked before publication."),
+("I'm a coach or run a club: how do I get listed?", "Fill in the “Add your listing” form on this page. It's free, and every listing is checked before publication."),
 ],
 },
 {

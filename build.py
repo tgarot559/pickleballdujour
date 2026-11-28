@@ -346,12 +346,12 @@ def pillar(lang, p, other_slug):
     related = [x for x in (PFR if lang == "fr" else PEN) if x["slug"] != p["slug"]][:6]
     rel = "".join(f'<a class="card" href="{pre}/{x["slug"]}/"><span class="k">{esc(x["kicker"])}</span><h3>{esc(x["h1"])}</h3></a>' for x in related)
     body = f'''<div class="wrap page">{cr}<div class="read">
-<p class="meta">{esc(p["kicker"])} · {t["updated"]} {t["date_fmt"](TODAY)} · {t["by"]}</p>
 <h1>{esc(p["h1"])}</h1>
 <div class="answer"><strong>{t["short"]}</strong>{esc(p["answer"])}</div>
 {fill(p["body"], lang)}
 {signup(lang, "guide")}
 {fq}
+<p class="meta byline">{esc(p["kicker"])} · {t["updated"]} <time datetime="{TODAY.isoformat()}">{t["date_fmt"](TODAY)}</time> · {t["by"]}</p>
 <div class="drill"><b>{t["tip_of_day"]}{" :" if lang=="fr" else ":"}</b> <a href="{pre}/{t["tips"]}/">{t["all_tips"]} →</a></div>
 </div>
 <h2>{t["guides"]}</h2><div class="grid">{rel}</div></div>'''
@@ -379,12 +379,12 @@ def tip_pages(lang, tips, other):
         art = {"@context": "https://schema.org", "@type": "Article", "headline": title, "description": summary, "inLanguage": lang, "articleSection": cat,
                "datePublished": tdate, "dateModified": TODAY.isoformat(), "author": AUTHOR, "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": SITE}}
         b = f'''<div class="wrap page">{cr}<div class="read">
-<p class="meta">{t["tip_n"]}{i+1} · {esc(cat)} · {t["by"]}</p>
 <h1>{esc(title)}</h1>
 <div class="answer"><strong>{t["short"]}</strong>{esc(summary)}</div>
 <figure class="scene">{scenes.svg(fkey, lang, cat, title)}<figcaption>{scenes.LEGEND[lang] if scenes.INDEX.get(fkey, -1) not in scenes.SPECIAL else ""}</figcaption></figure>
 {body}
 <div class="drill"><b>{t["try"]}{" :" if lang=="fr" else ":"}</b> {esc(drill)}</div>
+<p class="meta byline">{t["tip_n"]}{i+1} · {esc(cat)} · {t["by"]}</p>
 {quizlink(lang)}
 {signup(lang, "conseil")}
 <p style="display:flex;justify-content:space-between;gap:16px;flex-wrap:wrap">{prev_l}{next_l}</p>
