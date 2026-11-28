@@ -1,4 +1,8 @@
 TIPS = [
+("simple-retour-profond", "Simple", "En simple, retournez long et montez",
+ "En simple, vous couvrez seul tout le terrain. Un retour profond vous donne le temps d'arriver au filet avant le troisième coup du serveur.",
+ "<p>La règle des deux rebonds vaut aussi en simple : le serveur doit laisser rebondir votre retour. Si ce retour tombe près de sa ligne de fond, il frappe de loin et vous avez le temps d'avancer. Un retour court fait l'inverse : c'est lui qui avance, et vous êtes encore au fond quand il attaque.</p><p>Visez plutôt le coin de son revers, avec de la marge sur les lignes. Puis montez jusqu'à la ligne de cuisine sans vous arrêter en route.</p><p>Une fois devant, ne restez pas pile au centre. Décalez-vous d'un pas du côté où vous avez envoyé la balle, car son passing le plus court part le long de cette ligne.</p>",
+ "Avec un partenaire au service, faites vingt retours. Comptez ceux qui rebondissent dans les deux derniers mètres, puis ceux où vous touchez la ligne de cuisine avant que son troisième coup passe le filet. Objectif : 12 sur 20 dans chaque série.", "2026-11-28"),
 ("service-profond", "Service", "Servez profond, pas fort",
  "Un service qui tombe près de la ligne de fond repousse le receveur et vous laisse le temps de vous placer. La vitesse compte moins que la profondeur.",
  "<p>Au pickleball, vous n'avez droit qu'à un service. Le rater, c'est offrir la main. Alors visez une zone large, à un mètre de la ligne de fond adverse, plutôt que les lignes.</p><p>Un service profond oblige le receveur à reculer. Son retour sera plus court, et votre troisième coup plus facile à jouer.</p>",

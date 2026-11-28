@@ -242,6 +242,14 @@ def scene(i, lang):
         o += cross(0.4, KB + 2.4, LIME)
         o += cross(5.7, KB + 2.4, LIME)
         o += bubble(CW / 2, CL - 1.0, ("Appuis latéraux et freinages", "Side steps and sudden stops"), lang, LIME)
+    elif i == 24:  # simple : retour profond puis monter
+        o += zone(3.6, 0, CW, 2.2, LIME, ("Coin revers", "Backhand corner"), lang, at=(4.85, -0.55))
+        o += player(1.5, -0.6, ("Serveur", "Server"), "them", lang)
+        o += player(4.6, CL + 0.6, YOU, "us", lang)
+        o += arrow(4.6, CL + 0.2, 4.8, 0.9, "ball", -0.08)
+        o += bounce(4.8, 0.9)
+        o += arrow(4.3, CL - 0.3, 3.7, KB + 0.5, "move")
+        o += label(1.8, KB + 1.6, ("Décalé côté balle", "Shade to the ball"), lang, 11.5, LIME)
     else:
         return None
     return o
@@ -304,13 +312,13 @@ SPECIAL = {13: balls, 14: grip, 21: weight}
 ORDER = ["service-profond", "retour-et-monter", "troisieme-coup-drop", "raquette-haute", "patience-dink", "communiquer-double",
          "pieds-cuisine", "viser-pieds", "echauffement", "score-annonce", "revers-dink", "lob-prudence", "reset",
          "balles-interieur-exterieur", "grip-continental", "milieu-terrain", "partenaire-ensemble", "speed-up", "vent-exterieur",
-         "mental-point", "ernes", "raquette-legere", "cible-centre", "chaussures"]
+         "mental-point", "ernes", "raquette-legere", "cible-centre", "chaussures", "simple-retour-profond"]
 INDEX = {k: n for n, k in enumerate(ORDER)}
 
 FALLBACK = {  # used for new tips without a dedicated drawing, by category
     "Service": 0, "Retour": 1, "Stratégie": 2, "Technique": 3, "Double": 22, "Règles": 6, "Santé": 8, "Extérieur": 18,
     "Mental": 19, "Avancé": 20, "Return": 1, "Strategy": 2, "Technique ": 3, "Doubles": 22, "Rules": 6, "Health": 8,
-    "Outdoor": 18, "Advanced": 20, "Serve": 0,
+    "Outdoor": 18, "Advanced": 20, "Serve": 0, "Simple": 24, "Singles": 24,
 }
 
 

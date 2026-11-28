@@ -1,4 +1,8 @@
 TIPS = [
+("singles-deep-return", "Singles", "In singles, return deep and move up",
+ "In singles, you cover the whole court alone. A deep return gives you time to reach the net before the server's third shot.",
+ "<p>The two-bounce rule applies in singles too: the server has to let your return bounce. If it lands near their baseline, they hit from far back and you have time to move forward. A short return does the opposite: they move up, and you're still at the back when they attack.</p><p>Aim for their backhand corner, with some margin inside the lines. Then go all the way to the kitchen line without stopping halfway.</p><p>Once there, don't stand dead center. Shift one step toward the side you hit to, because their shortest passing shot goes down that line.</p>",
+ "With a partner serving, hit twenty returns. Count how many bounce in the last two metres, then how many times you reach the kitchen line before their third shot crosses the net. Goal: 12 out of 20 in each count.", "2026-11-28"),
 ("serve-deep", "Serve", "Serve deep, not hard",
  "A serve landing near the baseline pushes the receiver back and buys you time. Depth matters more than pace.",
  "<p>You only get one serve. Missing it hands over the serve. So aim for a big zone about three feet inside the opponent's baseline rather than for the lines.</p><p>A deep serve forces the receiver back. Their return will be shorter, and your third shot easier.</p>",
