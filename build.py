@@ -23,7 +23,7 @@ AUTHOR = {"@type": "Person", "@id": "https://thierrygarot.fr/#person", "name": "
 
 T = {
  "fr": {"name": "Pickleball du Jour", "lang": "fr", "home": "/", "tips": "conseils", "tips_t": "Conseils", "tip_of_day": "Le conseil du jour",
-        "nav": [("Progresser", "/progresser/"), ("Séances", "/seances/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/")],
+        "nav": [("Progresser", "/progresser/"), ("Séances", "/seances/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/"), ("Avis", "/avis/")],
         "news": "/newsletter/", "news_t": "Newsletter", "other": "EN", "faq": "Questions fréquentes", "short": "En bref", "try": "À essayer",
         "read": "Lire le conseil", "all_tips": "Tous les conseils", "guides": "Les guides de fond", "updated": "Mis à jour le",
         "by": "Par <a href=\"https://thierrygarot.fr/\" rel=\"author\">Thierry Garot</a>, joueur de pickleball", "tip_n": "Conseil n°", "home_crumb": "Accueil",
@@ -109,6 +109,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 <body>
 <header class="top"><div class="wrap">
 <a class="logo" href="{t['home']}">{ICON}<span>Pickleball <b>du Jour</b></span></a>
+<a class="langtop" href="{alt_path}" hreflang="{'en' if lang=='fr' else 'fr'}" aria-label="{'English version' if lang=='fr' else 'Version française'}">{t['other']}</a>
 <button class="menubtn" id="mb" aria-expanded="false" aria-controls="nv"><span></span><span></span><span></span><b>Menu</b></button>
 <nav class="nav" id="nv" aria-label="Menu">{nav}<a href="{t['news']}"><strong>{t['news_t']}</strong></a><a class="lang" href="{alt_path}" hreflang="{'en' if lang=='fr' else 'fr'}">{t['other']}</a></nav>
 </div></header>
@@ -121,6 +122,22 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 {tabbar(lang, path)}
 <script>{{const b=document.getElementById('mb'),n=document.getElementById('nv');b.addEventListener('click',()=>{{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o)}})}}</script>
 <script>{{const A='https://pickleballdujour-stats.thierry-garot-17.workers.dev/hit';window.pbj=function(e,v){{try{{const q=new URLSearchParams(location.search);const d=JSON.stringify({{p:location.pathname,r:e?'':document.referrer,l:navigator.language,w:innerWidth,u:q.get('utm_source')||'',e:e||'',v:v||''}});if(navigator.sendBeacon)navigator.sendBeacon(A,d);else fetch(A,{{method:'POST',body:d,keepalive:true}})}}catch(x){{}}}};pbj();document.addEventListener('click',ev=>{{const a=ev.target.closest('a');if(!a)return;if(a.pathname&&/newsletter/.test(a.pathname)&&a.host===location.host)pbj('clic_newsletter',location.pathname)}})}}</script>
+<script>{{(function(){{if(document.documentElement.lang!=='fr')return;const K='pbj_avis',P=location.pathname;let st={{}};try{{st=JSON.parse(localStorage.getItem(K)||'{{}}')}}catch(e){{}}
+const save=()=>{{try{{localStorage.setItem(K,JSON.stringify(st))}}catch(e){{}}}};
+if(P.startsWith('/avis')){{const n=new URLSearchParams(location.search).get('note');if(n){{const r=document.getElementById('n'+n);if(r)r.checked=true;const f=document.getElementById('avf');if(f)setTimeout(()=>f.scrollIntoView({{behavior:'smooth',block:'start'}}),400)}}}}
+let pv=0;try{{pv=+(sessionStorage.getItem('pbj_pv')||0)+1;sessionStorage.setItem('pbj_pv',pv)}}catch(e){{}}
+let ok=pv>=2;const o=window.pbj;window.pbj=function(e,v){{if(e==='avis_envoye'){{st.done=1;save()}}if(e&&/^(lecture_seance|quiz_resultat)$/.test(e))ok=true;return o&&o(e,v)}};
+const blocked=()=>st.done||(st.t&&Date.now()-st.t<30*864e5)||P.startsWith('/avis')||P.startsWith('/admin');
+if(blocked())return;let shown=false;
+function show(){{if(shown||!ok||blocked())return;shown=true;st.t=Date.now();save();pbj('avis_toast','vu');
+const d=document.createElement('div');d.className='avtoast';d.setAttribute('role','dialog');d.setAttribute('aria-label','Donner votre avis');
+d.innerHTML='<button class="avx" aria-label="Fermer">×</button><b>Le site vous est utile ?</b><span>Dites-le en 30 secondes, ça aide les autres joueurs.</span><div class="avst">'+[1,2,3,4,5].map(i=>'<a href="/avis/?note='+i+'#avis" aria-label="'+i+' sur 5">★</a>').join('')+'</div>';
+document.body.appendChild(d);requestAnimationFrame(()=>d.classList.add('in'));
+d.querySelector('.avx').onclick=()=>{{d.remove();pbj('avis_toast','ferme')}};d.querySelectorAll('.avst a').forEach(a=>a.onclick=()=>pbj('avis_toast','clic'))}}
+const mobile=matchMedia('(hover:none)').matches;
+if(!mobile)document.addEventListener('mouseout',e=>{{if(!e.relatedTarget&&e.clientY<=0)show()}});
+setTimeout(function tick(){{if(ok)show();else setTimeout(tick,5000)}},mobile?25000:60000);
+}})()}}</script>
 </body></html>'''
 
 
