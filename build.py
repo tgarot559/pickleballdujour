@@ -170,16 +170,57 @@ LEVEL_NAMES = [("avance", "Avancé", "#c8371e", "Pour les joueurs de tournoi qui
                ("decouverte", "Découverte", "#2a8a57", "Les bases pour bien commencer : service et règles.")]
 
 
+def ucf(s): return s[:1].upper() + s[1:]
+
+LEVEL_LABEL = {k: n for k, n, c, b in LEVEL_NAMES}
+LEVEL_COL = {k: c for k, n, c, b in LEVEL_NAMES}
+VIDEO_SM = {}
+
+
+def seance_pages():
+    out = []
+    for i, x in enumerate(SESSIONS):
+        path = f"/seances/{x['slug']}/"
+        lab, col = LEVEL_LABEL[x["level"]], LEVEL_COL[x["level"]]
+        cr, crld = crumbs("fr", [("Séances", "/seances/"), (x["title"], None)])
+        same = [y for y in SESSIONS if y["level"] == x["level"] and y["slug"] != x["slug"]]
+        others = "".join(f'<a class="card svc" href="/seances/{y["slug"]}/"><img src="/seances/{y["slug"]}.jpg" alt="" loading="lazy" width="640" height="360"><h3>{esc(y["title"])}</h3><p>{y["dur"]} s · {esc(y["goal"])}</p></a>' for y in same)
+        transcript = " ".join([x["intro"], x["desc"], x["exo"], x["outro"]])
+        prev_, next_ = SESSIONS[i - 1] if i else None, SESSIONS[i + 1] if i + 1 < len(SESSIONS) else None
+        nav = (f'<a href="/seances/{prev_["slug"]}/">← {esc(prev_["title"])}</a>' if prev_ else "<span></span>") + (f'<a href="/seances/{next_["slug"]}/">{esc(next_["title"])} →</a>' if next_ else "")
+        body = f'''<div class="wrap page sp">{cr}
+<p><span class="svb" style="background:{col}">Niveau {lab}</span></p>
+<h1>{esc(x["title"])}</h1>
+<p class="lead">Une séance vidéo de {x["dur"]} secondes : le principe animé sur le terrain, puis un exercice avec son objectif.</p>
+<video class="spv" src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="metadata" crossorigin="anonymous" width="1280" height="720" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video>
+<h2>Le principe</h2><p>{esc(x["desc"])}</p>
+<h2>L'exercice</h2><p>{esc(ucf(x["exo"].replace("Exercice : ", "", 1)))}</p><p class="spgoal"><b>{esc(x["goal"])}</b></p>
+<h2>À retenir</h2><p>{esc(ucf(x["outro"].replace("Retenez : ", "", 1)))}</p>
+<details class="sptr"><summary>Transcription de la vidéo</summary><p>{esc(transcript)}</p></details>
+<a class="quizlink" href="/progresser/"><b>Pas sûr de votre niveau ?</b> Le bilan en 2 minutes vous indique la séance à suivre en premier →</a>
+<h2>Autres séances niveau {lab}</h2><div class="grid">{others}</div>
+<p class="spnav">{nav}</p>
+<p><a href="/seances/">Toutes les séances vidéo →</a></p>
+<p class="note">Ces séances donnent des conseils de joueur ; elles ne remplacent pas un entraîneur diplômé.</p></div>'''
+        ld = {"@context": "https://schema.org", "@type": "VideoObject", "name": x["title"], "description": x["desc"], "thumbnailUrl": SITE + "/seances/" + x["slug"] + ".jpg",
+              "contentUrl": SITE + "/seances/" + x["slug"] + ".mp4", "uploadDate": x.get("date", "2026-11-27"), "duration": f"PT{x['dur']}S", "inLanguage": "fr",
+              "transcript": transcript, "educationalLevel": lab, "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": SITE}}
+        title = f"{x['title']} : séance vidéo de pickleball ({lab})"
+        desc = f"Séance vidéo de {x['dur']} s, niveau {lab}. {x['desc']}"[:158]
+        write(path, layout("fr", path, title, desc, body, "/en/", [crld, ld], "video.other", f"/seances/{x['slug']}.jpg"))
+        VIDEO_SM[path] = x
+        out.append(path)
+    return out
+
+
 def seances_page():
     path = "/seances/"
     cr, crld = crumbs("fr", [("Séances", None)])
     secs, lds = [], []
     for key, name, col, blurb in LEVEL_NAMES:
-        cards = "".join(f'''<article class="sv" id="{x["slug"]}"><video src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="none" crossorigin="anonymous" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video><div class="svm"><h3>{esc(x["title"])}</h3><p>{x["dur"]} s · {esc(x["goal"])}</p></div></article>''' for x in SESSIONS if x["level"] == key)
+        cards = "".join(f'''<article class="sv" id="{x["slug"]}"><video src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="none" crossorigin="anonymous" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video><div class="svm"><h3><a href="/seances/{x["slug"]}/">{esc(x["title"])}</a></h3><p>{x["dur"]} s · {esc(x["goal"])}</p></div></article>''' for x in SESSIONS if x["level"] == key)
         secs.append(f'<section class="svl"><h2><span class="svb" style="background:{col}">{name}</span></h2><p class="note">{esc(blurb)}</p><div class="svg">{cards}</div></section>')
-    for x in SESSIONS:
-        lds.append({"@context": "https://schema.org", "@type": "VideoObject", "name": x["title"], "description": x["desc"], "thumbnailUrl": SITE + "/seances/" + x["slug"] + ".jpg",
-                    "contentUrl": SITE + "/seances/" + x["slug"] + ".mp4", "uploadDate": x.get("date", "2026-11-27"), "duration": f"PT{x['dur']}S", "inLanguage": "fr"})
+    lds.append({"@context": "https://schema.org", "@type": "ItemList", "name": "Séances vidéo de pickleball", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": SITE + "/seances/" + x["slug"] + "/", "name": x["title"]} for i, x in enumerate(SESSIONS)]})
     body = f'''<div class="wrap page">{cr}<h1>Séances vidéo&nbsp;: 30 secondes pour progresser</h1>
 <p class="lead">{len(SESSIONS)} séances courtes, du joueur de tournoi au débutant. Le principe animé sur le terrain, un exercice avec son objectif, une voix qui vous guide et les sous-titres.</p>
 <a class="quizlink" href="/progresser/"><b>Quelle séance pour vous ?</b> Faites votre bilan en 2 minutes : il vous indique la séance à suivre en premier →</a>
@@ -397,6 +438,7 @@ def main():
         if lang == "fr":
             urls.append(quiz_page())
             urls.append(seances_page())
+            urls += seance_pages()
             urls.append(avis_page())
         rss(lang, tips, otips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
@@ -425,9 +467,15 @@ def main():
     open(os.path.join(OUT, ".nojekyll"), "w").close()
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n  Strict-Transport-Security: max-age=31536000\n\n/img/*\n  Cache-Control: public, max-age=2592000\n\n/style.css\n  Cache-Control: public, max-age=86400\n")
-    sm = "".join(f"<url><loc>{SITE}{u}</loc><lastmod>{TODAY.isoformat()}</lastmod></url>" for u in urls)
+    def vsm(u):
+        x = VIDEO_SM.get(u)
+        if not x: return ""
+        return (f"<video:video><video:thumbnail_loc>{SITE}/seances/{x['slug']}.jpg</video:thumbnail_loc><video:title>{esc(x['title'])}</video:title>"
+                f"<video:description>{esc(x['desc'])}</video:description><video:content_loc>{SITE}/seances/{x['slug']}.mp4</video:content_loc><video:duration>{x['dur']}</video:duration>"
+                f"<video:publication_date>{x.get('date', '2026-11-27')}</video:publication_date><video:family_friendly>yes</video:family_friendly></video:video>")
+    sm = "".join(f"<url><loc>{SITE}{u}</loc><lastmod>{TODAY.isoformat()}</lastmod>{vsm(u)}</url>" for u in urls)
     with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
-        f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>')
+        f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:video="http://www.google.com/schemas/sitemap-video/1.1">{sm}</urlset>')
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
         f.write(f"User-agent: *\nAllow: /\nDisallow: /admin/\n\nUser-agent: Bingbot\nAllow: /\nDisallow: /admin/\n\nUser-agent: GPTBot\nAllow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /\n\nUser-agent: Claude-SearchBot\nAllow: /\n\nUser-agent: Claude-User\nAllow: /\n\nUser-agent: PerplexityBot\nAllow: /\n\nUser-agent: Perplexity-User\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nUser-agent: Applebot-Extended\nAllow: /\n\nUser-agent: MistralAI-User\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
     llms = ["# Pickleball du Jour", "", "> Site indépendant du pickleball en français (et en anglais) créé par Thierry Garot, joueur de pickleball en France. Un conseil pratique chaque jour, des guides complets (règles FFT 2026, terrain, raquettes, débuter, pickleball ou padel), le calendrier des tournois en France et dans le monde.", "", "## Guides (FR)"]
@@ -435,7 +483,7 @@ def main():
     llms += ["", "## Guides (EN)"] + [f"- [{p['h1']}]({SITE}/en/{p['slug']}/): {p['answer']}" for p in PEN]
     llms += ["", "## Conseils du jour", f"- [Tous les conseils]({SITE}/conseils/): un conseil pratique publié chaque matin, avec un schéma de terrain et un exercice mesurable", f"- [All tips]({SITE}/en/tips/)"]
     llms += ["", "## Progresser", f"- [Bilan de niveau en 2 minutes]({SITE}/progresser/): 8 questions sans inscription ; niveau estimé (Découverte, Initié, Confirmé, Avancé), points forts, axes de progrès, conseils et séance vidéo recommandés"]
-    llms += ["", "## Séances vidéo (30 secondes, par niveau)"] + [f"- [{x['title']}]({SITE}/seances/#{x['slug']}): niveau {dict(avance='Avancé', confirme='Confirmé', initie='Initié', decouverte='Découverte')[x['level']]}, {x['dur']} s. {x['desc']}" for x in SESSIONS]
+    llms += ["", "## Séances vidéo (30 secondes, par niveau)"] + [f"- [{x['title']}]({SITE}/seances/{x['slug']}/): niveau {dict(avance='Avancé', confirme='Confirmé', initie='Initié', decouverte='Découverte')[x['level']]}, {x['dur']} s. {x['desc']}" for x in SESSIONS]
     llms += ["", "## Tournois", f"- [Trouver un tournoi près de chez soi]({SITE}/tournois-pickleball/#recherche): tournois homologués FFT (K25 à K1000) et tournois de clubs, recherche par ville ou position, mis à jour chaque semaine"]
     llms += ["", "## Autres", f"- [Avis des joueurs]({SITE}/avis/)", f"- [Newsletter gratuite du dimanche]({SITE}/newsletter/)", f"- [À propos]({SITE}/a-propos/)"]
     with open(os.path.join(OUT, "tournois.json"), "w") as f:

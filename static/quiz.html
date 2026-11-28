@@ -198,7 +198,7 @@ function result(){
   for (const k of tech) { ss = ss || SESS_TECH.at(k); }
   for (const k of tac) { ss = ss || SESS_TAC.at(k); }
   ss = ss || SESS_LVL.at(lv);
-  $('rSession').innerHTML = `<h3>Votre séance vidéo</h3><a href="/seances/#${ss}" style="display:block;text-decoration:none;color:inherit" onclick="window.pbj&&pbj('quiz_clic_seance','${ss}')"><img src="/seances/${ss}.jpg" alt="" style="width:100%;border-radius:12px;display:block"><b style="display:block;margin-top:10px;font-size:18px">${esc(SESS[ss])}</b><span style="color:var(--soft);font-size:15px">30 secondes, avec un exercice à faire →</span></a>`;
+  $('rSession').innerHTML = `<h3>Votre séance vidéo</h3><a href="/seances/${ss}/" style="display:block;text-decoration:none;color:inherit" onclick="window.pbj&&pbj('quiz_clic_seance','${ss}')"><img src="/seances/${ss}.jpg" alt="" style="width:100%;border-radius:12px;display:block"><b style="display:block;margin-top:10px;font-size:18px">${esc(SESS[ss])}</b><span style="color:var(--soft);font-size:15px">30 secondes, avec un exercice à faire →</span></a>`;
   $('rTourney').hidden = !(A.goal >= 1);
   $('barFill').style.width = '100%';
   show('result');

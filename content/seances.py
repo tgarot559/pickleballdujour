@@ -7,7 +7,10 @@ SESSIONS = [
   "dur": 33,
   "goal": "Objectif 6 / 10",
   "desc": "Le service se fait à la cuillère, sous la taille, en diagonale. La balle doit passer la cuisine : si elle touche la ligne de la cuisine, c'est faute. Visez plutôt le fond du terrain, l'adversaire restera loin du filet.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau découverte. Aujourd'hui : un service simple et profond.",
+  "exo": "Exercice : dix services, en visant le dernier tiers du terrain. Comptez ceux qui y tombent. Objectif : six sur dix.",
+  "outro": "Retenez : à la cuillère, en diagonale, et profond."
  },
  {
   "slug": "d2-deux-rebonds",
@@ -16,7 +19,10 @@ SESSIONS = [
   "dur": 30,
   "goal": "Objectif 8 / 10",
   "desc": "Le service doit rebondir avant d'être retourné. Le retour doit rebondir lui aussi, avant d'être joué. Ensuite seulement, vous avez le droit de volleyer.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau découverte. Aujourd'hui : la règle des deux rebonds.",
+  "exo": "Exercice : à deux, échangez en laissant rebondir les deux premières balles, puis volleyez. Dix échanges sans oublier un rebond.",
+  "outro": "Retenez : un rebond de chaque côté, puis la volée est permise."
  },
  {
   "slug": "d3-la-cuisine",
@@ -25,7 +31,10 @@ SESSIONS = [
   "dur": 36,
   "goal": "Objectif 9 / 10",
   "desc": "La cuisine, c'est la zone de deux mètres treize de chaque côté du filet. Vous pouvez y entrer, mais pas y frapper de volée. Volée depuis la ligne : c'est bon. Un pied dedans, même sur la ligne : faute. Si la balle a rebondi, vous pouvez entrer pour la jouer.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau découverte. Aujourd'hui : la zone de la cuisine.",
+  "exo": "Exercice : à la ligne de cuisine, votre partenaire vous envoie dix balles. Volleyez sans jamais poser un pied dans la zone. Objectif : neuf sur dix.",
+  "outro": "Retenez : jamais de volée les pieds dans la cuisine."
  },
  {
   "slug": "d4-annoncer-le-score",
@@ -34,7 +43,10 @@ SESSIONS = [
   "dur": 35,
   "goal": "Objectif 10 / 10",
   "desc": "En double, le serveur annonce trois chiffres avant de servir. D'abord les points de son équipe, puis ceux de l'adversaire, puis un ou deux, selon le serveur. Seule l'équipe qui sert marque des points. En début de partie, on annonce zéro, zéro, deux.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau découverte. Aujourd'hui : annoncer le score en double.",
+  "exo": "Exercice : jouez dix points, et annoncez le score à voix haute avant chaque service. Votre partenaire vérifie. Objectif : dix annonces justes.",
+  "outro": "Retenez : nos points, leurs points, puis le serveur."
  },
  {
   "slug": "d5-rester-au-fond",
@@ -43,7 +55,10 @@ SESSIONS = [
   "dur": 35,
   "goal": "Objectif 8 / 10",
   "desc": "Après votre service, ne montez pas tout de suite. Le retour doit rebondir chez vous : restez derrière la ligne de fond. Si vous avancez trop tôt, la balle arrive dans vos pieds. Laissez-la rebondir, jouez-la, puis avancez.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau découverte. Aujourd'hui : où se placer après son service.",
+  "exo": "Exercice : servez, restez au fond, laissez rebondir le retour et renvoyez-le profond. Dix fois. Objectif : huit retours bien joués.",
+  "outro": "Retenez : après le service, on attend le rebond au fond."
  },
  {
   "slug": "d6-echange-regulier",
@@ -52,7 +67,10 @@ SESSIONS = [
   "dur": 32,
   "goal": "Objectif 15 / 15",
   "desc": "Au début, le plus important, c'est de remettre la balle. Visez le milieu du terrain adverse, assez haut au-dessus du filet, et assez long. Une balle simple et régulière vaut mieux qu'un coup risqué.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau découverte. Aujourd'hui : tenir l'échange depuis le fond.",
+  "exo": "Exercice : depuis le fond, échangez avec votre partenaire. Comptez les balles d'affilée. Objectif : quinze balles sans faute.",
+  "outro": "Retenez : au milieu, assez haut, assez long."
  },
  {
   "slug": "i1-retour-et-monter",
@@ -61,7 +79,10 @@ SESSIONS = [
   "dur": 34,
   "goal": "Objectif 7 / 10",
   "desc": "Quand vous retournez le service, jouez long, vers le fond. La balle met du temps à traverser : profitez-en pour monter jusqu'à la ligne de cuisine. Votre partenaire y est déjà. À deux au filet, vous avez l'avantage.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau initié. Aujourd'hui : retourner, puis monter au filet.",
+  "exo": "Exercice : votre partenaire sert, vous retournez long et vous montez. Dix fois. Arrêtez-vous à la ligne, raquette devant vous. Objectif : sept retours au fond.",
+  "outro": "Retenez : retour long, et on monte."
  },
  {
   "slug": "i2-le-drop",
@@ -70,7 +91,10 @@ SESSIONS = [
   "dur": 31,
   "goal": "Objectif 6 / 10",
   "desc": "Le drop, c'est une balle douce qui retombe dans la cuisine adverse. Geste de bas en haut : on pousse, on ne frappe pas. Il oblige l'adversaire à jouer vers le haut, et vous laisse le temps d'avancer.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau initié. Aujourd'hui : le troisième coup amorti, le drop.",
+  "exo": "Exercice : depuis la ligne de fond, dix drops. Comptez ceux qui tombent dans la cuisine. Objectif : six sur dix.",
+  "outro": "Retenez : balle douce, et on avance."
  },
  {
   "slug": "i3-parler-en-double",
@@ -79,7 +103,10 @@ SESSIONS = [
   "dur": 30,
   "goal": "Objectif 10 / 10",
   "desc": "En double, la balle au milieu est la plus dangereuse : chacun croit que l'autre va la jouer. Annoncez à voix haute. J'ai, quand vous la prenez. À toi, pour votre partenaire. Laisse, si elle sort.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau initié. Aujourd'hui : se parler en double.",
+  "exo": "Exercice : votre adversaire envoie dix balles au milieu. Annoncez chaque balle avant de la jouer. Zéro balle sans un mot.",
+  "outro": "Retenez : j'ai, à toi, laisse."
  },
  {
   "slug": "i4-dink-croise",
@@ -88,7 +115,10 @@ SESSIONS = [
   "dur": 33,
   "goal": "Objectif 8 / 10",
   "desc": "Pour dinker, préférez la diagonale. Le filet est plus bas au centre, et la distance est plus longue : vous avez plus de marge. Le dink droit, le long de la ligne, est plus court et passe au-dessus de la partie haute du filet.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau initié. Aujourd'hui : le dink croisé.",
+  "exo": "Exercice : en diagonale, avec votre partenaire, jouez dix dinks croisés qui retombent dans la cuisine. Objectif : huit sur dix.",
+  "outro": "Retenez : en diagonale, on a plus de marge."
  },
  {
   "slug": "i5-bouger-ensemble",
@@ -97,7 +127,10 @@ SESSIONS = [
   "dur": 35,
   "goal": "Objectif 10 / 10",
   "desc": "En double, imaginez une corde de trois mètres entre vous et votre partenaire. Quand la balle part sur un côté, vous glissez tous les deux de ce côté. Vous ne laissez jamais un trou au milieu.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau initié. Aujourd'hui : se déplacer avec son partenaire.",
+  "exo": "Exercice : votre adversaire envoie dix balles, tantôt à gauche, tantôt à droite. Glissez ensemble à chaque balle, sans laisser le milieu ouvert. Objectif : dix déplacements à deux.",
+  "outro": "Retenez : une corde entre vous, on bouge ensemble."
  },
  {
   "slug": "i6-viser-le-milieu",
@@ -106,7 +139,10 @@ SESSIONS = [
   "dur": 33,
   "goal": "Objectif 7 / 10",
   "desc": "En cas de doute, jouez au milieu. Le filet y est plus bas, la balle reste dans le terrain, et les deux adversaires hésitent : qui va la prendre ? Une balle au milieu provoque souvent une faute, ou un coup faible.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau initié. Aujourd'hui : jouer au milieu des deux adversaires.",
+  "exo": "Exercice : à quatre, jouez dix balles en visant toujours le milieu, entre les deux adversaires. Comptez celles qui passent au centre. Objectif : sept.",
+  "outro": "Retenez : dans le doute, au milieu."
  },
  {
   "slug": "c1-dink-patient",
@@ -115,7 +151,10 @@ SESSIONS = [
   "dur": 32,
   "goal": "Objectif 20 / 20",
   "desc": "Le dink, c'est une balle douce jouée depuis la ligne de cuisine, qui retombe dans la cuisine adverse. Le but n'est pas de gagner tout de suite. Gardez la balle basse, en diagonale, et attendez la faute, ou la balle trop haute.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau confirmé. Aujourd'hui : le dink patient.",
+  "exo": "Exercice : en diagonale, enchaînez vingt dinks sans faute avec votre partenaire. Une faute, et on repart à zéro.",
+  "outro": "Retenez : bas, en diagonale, et patient."
  },
  {
   "slug": "c2-le-reset",
@@ -124,7 +163,10 @@ SESSIONS = [
   "dur": 37,
   "goal": "Objectif 6 / 10",
   "desc": "Vous êtes au milieu du terrain, et l'adversaire accélère sur vous. Ne contrez pas plus fort. Raquette ouverte, geste court : amortissez, pour que la balle retombe dans sa cuisine. C'est le reset. Vous revenez au neutre, et vous pouvez avancer.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau confirmé. Aujourd'hui : le reset sous pression.",
+  "exo": "Exercice : votre partenaire, à la cuisine, accélère sur vous. Depuis le milieu du terrain, renvoyez chaque balle dans sa cuisine. Dix balles, objectif six.",
+  "outro": "Retenez : on absorbe, on ne renvoie pas plus fort."
  },
  {
   "slug": "c3-accelerer",
@@ -133,7 +175,10 @@ SESSIONS = [
   "dur": 35,
   "goal": "Objectif 8 / 10",
   "desc": "En échange de dinks, n'accélérez pas n'importe quelle balle. Si elle reste basse, sous le filet, continuez à dinker. Si elle monte au-dessus du filet, accélérez, vers les pieds ou la hanche de l'adversaire.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau confirmé. Aujourd'hui : choisir la balle à accélérer.",
+  "exo": "Exercice : dinkez avec votre partenaire, et accélérez seulement quand la balle monte au-dessus du filet. Comptez vos bons choix sur dix. Objectif : huit.",
+  "outro": "Retenez : balle basse, on dinke. Balle haute, on accélère."
  },
  {
   "slug": "c4-drive-ou-drop",
@@ -142,7 +187,10 @@ SESSIONS = [
   "dur": 36,
   "goal": "Objectif 8 / 10",
   "desc": "Au troisième coup, regardez où sont les adversaires. S'ils sont déjà au filet, jouez le drop, dans leur cuisine. Si le relanceur est encore au fond, ou si le retour est court, frappez un drive, long et appuyé, puis enchaînez.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau confirmé. Aujourd'hui : choisir entre drive et drop.",
+  "exo": "Exercice : votre partenaire retourne, puis monte ou reste au fond. Choisissez drive ou drop selon sa place. Dix balles, objectif huit bons choix.",
+  "outro": "Retenez : au filet, drop. Au fond, drive."
  },
  {
   "slug": "c5-viser-les-pieds",
@@ -151,7 +199,10 @@ SESSIONS = [
   "dur": 32,
   "goal": "Objectif 6 / 10",
   "desc": "Une attaque vers la tête se renvoie facilement. Une attaque dans les pieds oblige l'adversaire à jouer vers le haut, et vous offre la balle suivante. Visez bas, sur la hanche ou sur les lacets.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau confirmé. Aujourd'hui : attaquer bas, dans les pieds.",
+  "exo": "Exercice : votre partenaire vous sert une balle haute à la cuisine. Attaquez dans ses pieds. Dix balles, objectif six attaques basses.",
+  "outro": "Retenez : on attaque bas, jamais à hauteur de raquette."
  },
  {
   "slug": "c6-lob-offensif",
@@ -160,7 +211,10 @@ SESSIONS = [
   "dur": 34,
   "goal": "Objectif 6 / 10",
   "desc": "Pendant l'échange de dinks, si les adversaires se penchent vers le filet, ils ne peuvent plus reculer vite. Un lob haut et long, côté revers, les oblige à courir en arrière. Ne le jouez pas trop souvent : c'est la surprise qui fait sa force.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau confirmé. Aujourd'hui : le lob offensif.",
+  "exo": "Exercice : dinkez avec votre partenaire, et glissez un lob quand il s'approche trop du filet. Dix lobs, objectif six au fond du terrain.",
+  "outro": "Retenez : haut, long, côté revers, et rarement."
  },
  {
   "slug": "a1-stacking",
@@ -169,7 +223,10 @@ SESSIONS = [
   "dur": 37,
   "goal": "Objectif 8 / 10",
   "desc": "Le stacking, c'est un placement en double. Au service, les deux partenaires se placent du même côté, puis l'un traverse juste après la frappe. Chacun garde ainsi son côté préféré. Attention : l'ordre de service, lui, ne change pas.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau avancé. Aujourd'hui : le stacking.",
+  "exo": "Exercice : jouez dix points en stacking. Après chaque service et chaque retour, vérifiez que chacun est bien de son côté. Objectif : huit points bien placés.",
+  "outro": "Retenez : même côté, puis on traverse. L'ordre de service ne change pas."
  },
  {
   "slug": "a2-erne",
@@ -178,7 +235,10 @@ SESSIONS = [
   "dur": 33,
   "goal": "Objectif 6 / 10",
   "desc": "L'erne, c'est une volée jouée à côté de la cuisine, en dehors du terrain. Vous contournez la zone, ou vous sautez par-dessus son coin, et vous frappez près du filet. C'est légal tant que vous ne touchez pas la cuisine.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau avancé. Aujourd'hui : l'erne.",
+  "exo": "Exercice : votre partenaire dinke le long de la ligne de côté. Sortez du terrain et volleyez, sans jamais toucher la cuisine. Dix essais, objectif six.",
+  "outro": "Retenez : on contourne la cuisine, jamais dedans."
  },
  {
   "slug": "a3-bloquer",
@@ -187,7 +247,10 @@ SESSIONS = [
   "dur": 35,
   "goal": "Objectif 7 / 10",
   "desc": "Au filet, l'adversaire peut accélérer à tout moment. Gardez la raquette haute, devant la poitrine, entre chaque coup. Sur l'accélération, ne frappez pas : bloquez, avec un geste court, et renvoyez la balle bas, dans ses pieds.",
-  "date": "2026-11-27"
+  "date": "2026-11-27",
+  "intro": "Niveau avancé. Aujourd'hui : bloquer une accélération au filet.",
+  "exo": "Exercice : votre partenaire accélère sur vous sans prévenir, depuis la cuisine. Bloquez dix balles, raquette haute. Objectif : sept balles remises en jeu.",
+  "outro": "Retenez : raquette haute, et on bloque."
  },
  {
   "slug": "a4-interception",
@@ -196,7 +259,10 @@ SESSIONS = [
   "dur": 34,
   "goal": "Objectif 6 / 10",
   "desc": "Quand l'adversaire dinke en diagonale vers votre partenaire, vous pouvez traverser et intercepter la balle de volée. Partez au moment où il frappe, attaquez au milieu, et votre partenaire couvre votre côté.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau avancé. Aujourd'hui : intercepter la balle de votre partenaire.",
+  "exo": "Exercice : votre partenaire et un adversaire dinkent en diagonale. Traversez et interceptez au bon moment. Dix essais, objectif six.",
+  "outro": "Retenez : on part à sa frappe, et le partenaire couvre."
  },
  {
   "slug": "a5-tour-du-poteau",
@@ -205,7 +271,10 @@ SESSIONS = [
   "dur": 34,
   "goal": "Objectif 5 / 10",
   "desc": "Quand une balle très croisée vous sort du terrain, vous n'êtes pas obligé de passer au-dessus du filet. Vous pouvez la jouer par le côté, autour du poteau, même très bas. C'est légal, tant que la balle retombe dans le terrain adverse.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau avancé. Aujourd'hui : le tour du poteau.",
+  "exo": "Exercice : votre partenaire joue un dink très croisé qui vous sort du terrain. Courez et jouez autour du poteau. Dix essais, objectif cinq dans le terrain.",
+  "outro": "Retenez : quand la balle vous sort, passez par le côté."
  },
  {
   "slug": "a6-deplacer-et-finir",
@@ -214,6 +283,9 @@ SESSIONS = [
   "dur": 33,
   "goal": "Objectif 6 / 10",
   "desc": "Ne cherchez pas le coup gagnant tout de suite. Déplacez l'adversaire avec un dink croisé large, puis un dink droit. Il doit courir, et le milieu s'ouvre. C'est là que vous accélérez.",
-  "date": "2026-11-28"
+  "date": "2026-11-28",
+  "intro": "Niveau avancé. Aujourd'hui : construire le point en dink.",
+  "exo": "Exercice : enchaînez trois dinks pour déplacer votre partenaire, croisé, droit, croisé, puis accélérez au centre. Dix séquences, objectif six.",
+  "outro": "Retenez : on déplace, puis on finit au centre."
  }
 ]
