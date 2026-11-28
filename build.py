@@ -17,6 +17,8 @@ OUT = os.path.join(ROOT, "docs")
 SITE = "https://pickleballdujour.fr"
 LAUNCH = datetime.date(2026, 11, 27)
 TODAY = datetime.date.today()
+import hashlib as _h
+CSSV = _h.md5(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "style.css"), "rb").read()).hexdigest()[:8]
 AUTHOR = {"@type": "Person", "name": "Thierry Garot", "url": "https://thierrygarot.fr/", "sameAs": ["https://www.linkedin.com/in/thierry-garot"]}
 
 T = {
@@ -100,7 +102,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest">
 <meta property="og:image" content="{SITE}{og_img}"><meta name="twitter:card" content="summary_large_image">
 {FONTS}
-<link rel="stylesheet" href="/style.css">
+<link rel="stylesheet" href="/style.css?v={CSSV}">
 <link rel="alternate" type="application/rss+xml" title="Pickleball du Jour" href="{t['home'].rstrip('/')}/{t['tips']}/feed.xml">
 {lds}
 </head>
@@ -318,10 +320,11 @@ def home(lang, pages, tips, otips):
     t = T[lang]
     pre = "" if lang == "fr" else "/en"
     base = f"{pre}/{t['tips']}/"
-    idx = (TODAY - LAUNCH).days % len(tips)
+    fresh = len(tips[0]) > 6 and tips[0][6] == TODAY.isoformat()
+    idx = 0 if fresh else (TODAY - LAUNCH).days % len(tips)
     tip = tips[idx]
     fk = lambda j: tips[j][0] if lang == "fr" else otips[j][0]
-    data = json.dumps([[f"{base}{x[0]}/", x[1], x[2], x[3], f"/img/scenes/{fk(j)}-{lang}.png"] for j, x in enumerate(tips)], ensure_ascii=False)
+    data = json.dumps([[f"{base}{x[0]}/", x[1], x[2], x[3], f"/img/scenes/{fk(j)}-{lang}.png", x[6] if len(x) > 6 else ""] for j, x in enumerate(tips)], ensure_ascii=False)
     guides = "".join(f'<a class="card" href="{pre}/{p["slug"]}/"><span class="k">{esc(p["kicker"])}</span><h3>{esc(p["h1"])}</h3><p>{esc(p["desc"])}</p></a>' for p in pages)
     latest = "".join(f'<a class="card" href="{base}{x[0]}/"><span class="k">{esc(x[1])}</span><h3>{esc(x[2])}</h3><p>{esc(x[3])}</p></a>' for x in tips[:6])
     ev = "".join(f'<tr><td class="n">{esc(e["label"][lang])}</td><td>{esc(e["name"][lang])}</td><td>{esc(e["place"])}</td></tr>' for e in TOURNEYS[:5])
@@ -329,7 +332,7 @@ def home(lang, pages, tips, otips):
     body = f'''<section class="hero"><div class="wrap">
 <div><h1>{t["hero_h"]}</h1><p>{t["hero_p"]}</p>
 <p class="herocta"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a>{'<a class="btn ghost" href="/progresser/" onclick="window.pbj&&pbj(\'clic_quiz\',\'accueil\')">Faire mon bilan</a>' if lang == "fr" else ""}</p>
-<div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · {esc(tip[1])}</span><p class="tdate" id="tod-d"></p><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
+<div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · <span id="tod-c">{esc(tip[1])}</span></span><p class="tdate" id="tod-d"></p><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
 </div>
 <div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
 </div></section>
@@ -338,7 +341,7 @@ def home(lang, pages, tips, otips):
 {avis_block("accueil") if lang == "fr" else ""}
 <section class="band"><div class="wrap two"><div><h2 style="margin-top:0">{t["events"]}</h2><div class="tbl"><table><tbody>{ev}</tbody></table></div><p><a href="{cal}">{t["see_cal"]} →</a></p></div>
 <div class="price best"><h2 style="margin-top:0">{t["newsband_h"]}</h2><p>{t["newsband_p"]}</p><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil-bas')">{t["cta"]}</a></div></div></section>
-<script>{{const D={data};const L=new Date(2026,10,27);const n=Math.floor((new Date().setHours(0,0,0,0)-L.getTime())/864e5);const i=((n%D.length)+D.length)%D.length;const x=D[i];
+<script>{{const D={data};const L=new Date(2026,10,27);const T=new Date();const iso=T.getFullYear()+'-'+String(T.getMonth()+1).padStart(2,'0')+'-'+String(T.getDate()).padStart(2,'0');const n=Math.floor((new Date().setHours(0,0,0,0)-L.getTime())/864e5);const i=D[0][5]===iso?0:((n%D.length)+D.length)%D.length;const x=D[i];document.getElementById('tod-c').textContent=x[1];
 document.getElementById('tod-t').textContent=x[2];document.getElementById('tod-s').textContent=x[3];document.getElementById('tod-a').href=x[0];const im=document.getElementById('tod-img');im.src=x[4];im.alt=x[2];document.getElementById('tod-ia').href=x[0];const dd=new Date().toLocaleDateString('{"fr-FR" if lang == "fr" else "en-GB"}',{{weekday:'long',day:'numeric',month:'long',year:'numeric'}});document.getElementById('tod-d').textContent=dd.charAt(0).toUpperCase()+dd.slice(1);}}</script>'''
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Pickleball du Jour", "url": SITE + t["home"], "inLanguage": lang,
            "description": t["hero_p"], "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": SITE, "founder": AUTHOR}}]

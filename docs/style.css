@@ -169,6 +169,6 @@ code,pre{overflow-wrap:anywhere;word-break:break-word;white-space:pre-wrap}
 .stars input:focus-visible+label{outline:2px solid var(--court);border-radius:6px}
 .avmsg{margin:0;font-weight:600}
 
-.herocta{display:flex;flex-wrap:wrap;gap:14px;margin:18px 0 22px}
+.herocta{display:flex;flex-wrap:wrap;gap:18px 14px;margin:20px 0 26px}
 .tipcard .tdate{margin:10px 0 2px;font-size:15px;font-weight:600;color:#55657c}
 .tipcard .tdate:empty{display:none}
