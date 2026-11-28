@@ -173,17 +173,17 @@ def seances_page():
     cr, crld = crumbs("fr", [("Séances", None)])
     secs, lds = [], []
     for key, name, col, blurb in LEVEL_NAMES:
-        cards = "".join(f'''<article class="sv" id="{x["slug"]}"><video src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="none" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"></video><div class="svm"><h3>{esc(x["title"])}</h3><p>{x["dur"]} s · {esc(x["goal"])}</p></div></article>''' for x in SESSIONS if x["level"] == key)
+        cards = "".join(f'''<article class="sv" id="{x["slug"]}"><video src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="none" crossorigin="anonymous" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video><div class="svm"><h3>{esc(x["title"])}</h3><p>{x["dur"]} s · {esc(x["goal"])}</p></div></article>''' for x in SESSIONS if x["level"] == key)
         secs.append(f'<section class="svl"><h2><span class="svb" style="background:{col}">{name}</span></h2><p class="note">{esc(blurb)}</p><div class="svg">{cards}</div></section>')
     for x in SESSIONS:
         lds.append({"@context": "https://schema.org", "@type": "VideoObject", "name": x["title"], "description": x["desc"], "thumbnailUrl": SITE + "/seances/" + x["slug"] + ".jpg",
-                    "contentUrl": SITE + "/seances/" + x["slug"] + ".mp4", "uploadDate": "2026-11-27", "duration": f"PT{x['dur']}S", "inLanguage": "fr"})
+                    "contentUrl": SITE + "/seances/" + x["slug"] + ".mp4", "uploadDate": x.get("date", "2026-11-27"), "duration": f"PT{x['dur']}S", "inLanguage": "fr"})
     body = f'''<div class="wrap page">{cr}<h1>Séances vidéo&nbsp;: 30 secondes pour progresser</h1>
-<p class="lead">12 séances courtes, du joueur de tournoi au débutant. Le principe animé sur le terrain, un exercice avec son objectif, une voix qui vous guide et les sous-titres.</p>
+<p class="lead">{len(SESSIONS)} séances courtes, du joueur de tournoi au débutant. Le principe animé sur le terrain, un exercice avec son objectif, une voix qui vous guide et les sous-titres.</p>
 <a class="quizlink" href="/progresser/"><b>Quelle séance pour vous ?</b> Faites votre bilan en 2 minutes : il vous indique la séance à suivre en premier →</a>
 {"".join(secs)}
 <p class="note">Ces séances donnent des conseils de joueur ; elles ne remplacent pas un entraîneur diplômé.</p></div>''' + avis_block("seances")
-    write(path, layout("fr", path, "Séances vidéo de pickleball : 30 secondes pour progresser", "12 séances vidéo de pickleball de 30 secondes, du débutant au joueur de tournoi : service, dink, drop, reset, stacking, erne. Avec exercice et objectif chiffré.", body, "/en/", [crld] + lds))
+    write(path, layout("fr", path, "Séances vidéo de pickleball : 30 secondes pour progresser", f"{len(SESSIONS)} séances vidéo de pickleball de 30 secondes, du débutant au joueur de tournoi : service, score, dink, drop, reset, lob, stacking, erne, interception. Avec exercice et objectif chiffré.", body, "/en/", [crld] + lds))
     return path
 
 
