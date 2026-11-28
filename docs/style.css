@@ -1,3 +1,8 @@
+@font-face{font-family:Archivo;font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/archivo-latin-700-normal.woff2) format('woff2')}
+@font-face{font-family:Archivo;font-style:normal;font-weight:800;font-display:swap;src:url(/fonts/archivo-latin-800-normal.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:400;font-display:swap;src:url(/fonts/inter-latin-400-normal.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:600;font-display:swap;src:url(/fonts/inter-latin-600-normal.woff2) format('woff2')}
+@font-face{font-family:Inter;font-style:normal;font-weight:700;font-display:swap;src:url(/fonts/inter-latin-700-normal.woff2) format('woff2')}
 /* VOICE   everyday learning media: clear, warm, a player talking to players
    IDEA    the court itself: blue playing surface, white lines, the lime ball
    PICTURE drawn court from above with the kitchen marked, ball arcs over the net
