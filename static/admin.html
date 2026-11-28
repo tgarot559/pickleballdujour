@@ -66,6 +66,23 @@ table{width:100%;border-collapse:collapse;font-size:14px}td,th{text-align:left;p
 .av .acts button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 16px;font:700 14px Inter,sans-serif;min-height:40px;cursor:pointer}
 .av .acts .pub{background:var(--ball);color:#0f1c2e;border-color:var(--ball)}
 #avn{background:var(--ball);color:#0f1c2e;border-radius:99px;padding:0 7px;font-size:12px}#avn:empty{display:none}
+.kpi .d{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;padding:1px 7px;border-radius:99px;vertical-align:middle}
+.d.up{background:color-mix(in srgb,#1f8a4c 16%,transparent);color:#1f8a4c}.d.dn{background:color-mix(in srgb,#c0392b 14%,transparent);color:#c0392b}.d.eq{background:var(--bg);color:var(--soft)}
+.kpi small{display:block;color:var(--soft);font-size:12px;margin-top:2px}
+.sum{background:var(--deep);color:#fff;border-radius:16px;padding:14px 16px;margin-bottom:14px;font-size:15px;line-height:1.55}.sum b{color:var(--ball)}
+.sbars{display:flex;align-items:flex-end;gap:3px;height:170px}
+.sbars .c{flex:1;display:flex;flex-direction:column-reverse;height:100%;cursor:pointer;border-radius:4px 4px 0 0;overflow:hidden}
+.sbars .c i{display:block;width:100%}.sbars .c.sel{outline:2px solid var(--ink);outline-offset:1px}
+.sbars .c .pv{background:repeating-linear-gradient(45deg,var(--line) 0 3px,transparent 3px 6px)}
+.leg{display:flex;flex-wrap:wrap;gap:6px 14px;margin-top:10px;font-size:13px;color:var(--soft)}.leg span{display:inline-flex;align-items:center;gap:6px}.leg i{width:11px;height:11px;border-radius:3px;display:inline-block}
+.chd{min-height:1.5em;font-size:14px;margin-top:8px}
+.goals{display:grid;grid-template-columns:repeat(auto-fit,minmax(9.5em,1fr));gap:10px}
+.goal{background:var(--bg);border:1px solid var(--line);border-radius:14px;padding:12px}.goal b{display:block;font:800 26px/1 Archivo,Inter,sans-serif}.goal span{font-size:13px;color:var(--soft)}
+.mini{display:flex;align-items:flex-end;gap:2px;height:110px}.mini div{flex:1;background:var(--court);border-radius:3px 3px 0 0;min-height:2px}.mini div.top{background:var(--ball)}
+.maxis{display:flex;justify-content:space-between;color:var(--soft);font-size:11px;margin-top:4px}
+td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
+.tool{display:flex;gap:8px;flex-wrap:wrap;align-items:center;justify-content:space-between}
+.ghost{background:transparent;border:1px solid var(--line);color:var(--ink);border-radius:999px;padding:8px 14px;font:600 14px Inter,sans-serif;min-height:40px;cursor:pointer}
 </style>
 </head>
 <body>
@@ -74,18 +91,35 @@ table{width:100%;border-collapse:collapse;font-size:14px}td,th{text-align:left;p
 <main>
 <div class="gate" id="gate" hidden><h2>Accès à la console</h2><p class="muted">Entrez le code d'accès. Il reste enregistré sur cet appareil.</p><form id="gf"><label for="gc" class="muted">Code d'accès</label><input id="gc" type="password" autocomplete="current-password"><button class="btn" type="submit">Ouvrir</button></form><p class="muted" id="gerr"></p></div>
 <div id="app">
-<div class="per" id="per"><button data-d="1">Aujourd'hui</button><button data-d="7" class="on">7 jours</button><button data-d="30">30 jours</button><button data-d="90">90 jours</button><button data-d="365">1 an</button></div>
+<div class="tool"><div class="per" id="per"><button data-d="1">Aujourd'hui</button><button data-d="7" class="on">7 jours</button><button data-d="30">30 jours</button><button data-d="90">90 jours</button><button data-d="365">1 an</button></div><button class="ghost" id="csv" type="button">Exporter (tableur)</button></div>
 <p class="muted" id="state"></p>
 <section id="vue" class="on">
-<div class="kpis"><div class="kpi"><b id="kv">–</b><span>visiteurs uniques</span></div><div class="kpi"><b id="kp">–</b><span>pages vues</span></div><div class="kpi"><b id="kpv">–</b><span>pages par visiteur</span></div><div class="kpi"><b id="kia">–</b><span>visiteurs venus d'une IA</span></div></div>
-<div class="card"><h3>Visiteurs par jour</h3><div class="bars" id="chart"></div><div class="axis"><span id="a0"></span><span id="a1"></span></div></div>
+<div class="sum" id="sum">Chargement du résumé…</div>
+<div class="kpis">
+<div class="kpi"><b id="kv">–</b><span>visiteurs uniques</span><em id="dv"></em></div>
+<div class="kpi"><b id="kp">–</b><span>pages vues</span><em id="dp"></em></div>
+<div class="kpi"><b id="kpv">–</b><span>pages par visiteur</span></div>
+<div class="kpi"><b id="kdur">–</b><span>temps moyen sur une page</span><small id="kscr"></small></div>
+<div class="kpi"><b id="kbn">–</b><span>repartent après 1 page</span></div>
+<div class="kpi"><b id="kia">–</b><span>visiteurs venus d'une IA</span></div>
+</div>
+<div class="card"><h3>Visiteurs par jour, selon leur origine</h3><div class="sbars" id="chart"></div><div class="axis"><span id="a0"></span><span id="a1"></span></div><div class="leg" id="leg"></div><p class="chd muted" id="chd">Touchez une barre pour voir le détail du jour.</p></div>
+<div class="card"><h3>Objectifs</h3><p class="muted" style="margin-top:-4px">Ce que les visiteurs font vraiment sur le site, comparé à la période précédente.</p><div class="goals" id="goals"></div></div>
+<div class="two"><div class="card"><h3>Canaux d'arrivée</h3><ul class="rank" id="vchan"></ul></div><div class="card"><h3>Pages d'entrée</h3><ul class="rank" id="vland"></ul></div></div>
 <div class="two"><div class="card"><h3>D'où viennent les visiteurs</h3><ul class="rank" id="vsrc"></ul></div><div class="card"><h3>Pages les plus lues</h3><ul class="rank" id="vpages"></ul></div></div>
 <div class="card"><h3>En direct : dernières visites</h3><div class="scroll"><table><thead><tr><th>Heure</th><th>Page</th><th>Origine</th><th>Lieu</th><th>Appareil</th></tr></thead><tbody id="live"></tbody></table></div></div>
 </section>
 <section id="orig"><h2>Origines</h2><p class="muted">Moteurs de recherche, assistants IA (ChatGPT, Perplexity, Claude, Gemini…), réseaux sociaux, e-mails et sites qui envoient des visiteurs.</p>
+<div class="card"><h3>Par canal</h3><ul class="rank" id="ochan"></ul></div>
 <div class="two"><div class="card"><h3>Par source</h3><ul class="rank" id="osrc"></ul></div><div class="card"><h3>Liens exacts</h3><ul class="rank" id="orefs"></ul></div></div><div class="card"><h3>Campagnes (utm_source)</h3><ul class="rank" id="outm"></ul></div></section>
-<section id="pages"><h2>Pages</h2><div class="card"><ul class="rank" id="ppages"></ul></div></section>
-<section id="pub"><h2>Public</h2><div class="two"><div class="card"><h3>Pays</h3><ul class="rank" id="pc"></ul></div><div class="card"><h3>Villes</h3><ul class="rank" id="pv"></ul></div><div class="card"><h3>Appareils</h3><ul class="rank" id="pd"></ul></div><div class="card"><h3>Langue du navigateur</h3><ul class="rank" id="pl"></ul></div></div></section>
+<section id="pages"><h2>Pages</h2><p class="muted">Temps moyen et lecture (jusqu'où on fait défiler la page) s'affichent dès que les premières visites sont mesurées.</p>
+<div class="kpis"><div class="kpi"><b id="pg_n">–</b><span>pages différentes vues</span></div><div class="kpi"><b id="pg_se">–</b><span>vues des séances vidéo</span></div><div class="kpi"><b id="pg_en">–</b><span>vues en anglais</span></div></div>
+<div class="card"><div class="scroll"><table><thead><tr><th>Page</th><th class="r">Vues</th><th class="r">Visiteurs</th><th class="r">Temps moyen</th><th class="r">Lecture</th></tr></thead><tbody id="ptab"></tbody></table></div></div>
+<div class="card"><h3>Pages d'entrée</h3><ul class="rank" id="pland"></ul></div></section>
+<section id="pub"><h2>Public</h2>
+<div class="two"><div class="card"><h3>Heure des visites (heure de Paris)</h3><div class="mini" id="hrs"></div><div class="maxis"><span>0 h</span><span>6 h</span><span>12 h</span><span>18 h</span><span>23 h</span></div><p class="muted chd" id="hrsb"></p></div>
+<div class="card"><h3>Jours de la semaine</h3><div class="mini" id="wds"></div><div class="maxis"><span>lun</span><span>mar</span><span>mer</span><span>jeu</span><span>ven</span><span>sam</span><span>dim</span></div><p class="muted chd" id="wdsb"></p></div></div>
+<div class="two"><div class="card"><h3>Pays</h3><ul class="rank" id="pc"></ul></div><div class="card"><h3>Villes</h3><ul class="rank" id="pv"></ul></div><div class="card"><h3>Appareils</h3><ul class="rank" id="pd"></ul></div><div class="card"><h3>Langue du navigateur</h3><ul class="rank" id="pl"></ul></div></div></section>
 <section id="rech"><h2>Recherches et actions</h2><p class="muted">Villes cherchées dans « Trouver un tournoi », clics « Autour de moi », clics vers la newsletter et vers les fiches d'inscription des tournois.</p><div class="card"><ul class="rank" id="rev"></ul></div></section>
 <section id="cont"><h2>Contenu et automatisations</h2>
 <div class="kpis"><div class="kpi"><b id="ctips">–</b><span>conseils en ligne</span></div><div class="kpi"><b id="ctour">–</b><span>tournois à venir</span></div><div class="kpi"><b id="clast">–</b><span>dernier conseil</span></div></div>
@@ -114,19 +148,74 @@ let code='';try{code=localStorage.getItem('pbjk')||''}catch(e){}
 const h=location.hash.slice(1);if(h.startsWith('k-')){code=h.slice(2);try{localStorage.setItem('pbjk',code)}catch(e){}history.replaceState(null,'',location.pathname)}
 let days=7;
 const rank=(id,rows,lab)=>{const m=Math.max(1,...rows.map(r=>r.n));$(id).innerHTML=rows.length?rows.map(r=>`<li><span class="bg" style="width:${(r.n/m*100).toFixed(1)}%"></span><span class="k">${esc(lab?lab(r.k):r.k||'(inconnu)')}</span><span class="n">${r.n}</span></li>`).join(''):'<li class="muted">Pas encore de données</li>'};
+const CH={Recherche:'#1f5fbf',IA:'#7c3aed',Réseau:'#e8590c',Direct:'#8a99ad','E-mail':'#0d9488',Messagerie:'#16a34a',Site:'#c99a00'};
+const chan=k=>{k=String(k||'Direct');if(k==='Interne')return 'Direct';const c=k.split(' · ')[0];return CH[c]?c:'Site'};
+const CHL={Recherche:'Moteurs de recherche',IA:'Assistants IA',Réseau:'Réseaux sociaux',Direct:'Accès direct',"E-mail":'E-mails',Messagerie:'Messageries',Site:'Autres sites'};
+const PG={'/':'Accueil','/en/':'Accueil (EN)','/conseils/':'Conseils','/progresser/':'Bilan « Progresser »','/seances/':'Séances vidéo','/tournois-pickleball/':'Tournois','/newsletter/':'Newsletter','/avis/':'Avis','/regles/':'Règles'};
+const pl=p=>PG[p]?`${PG[p]} · ${p}`:p;
+const fmtd=s=>s==null||isNaN(s)?'–':s<60?`${Math.round(s)} s`:`${Math.floor(s/60)} min ${String(Math.round(s%60)).padStart(2,'0')}`;
+const delta=(n,o)=>{if(o==null)return '';if(!o)return n?'<span class="d up">nouveau</span>':'';const p=Math.round((n-o)/o*100);return `<span class="d ${p>0?'up':p<0?'dn':'eq'}">${p>0?'+':''}${p} %</span>`};
+const GL=[['quiz_resultat','bilans « Progresser » faits'],['lecture_seance','séances vidéo lancées'],['clic_newsletter','clics vers la newsletter'],['telechargement_livret','livrets téléchargés'],['recherche_tournoi','recherches de tournoi'],['clic_inscription','clics vers une inscription'],['avis_envoye','avis envoyés']];
+let D=null,SEL=-1;
+function chart(d){const days=[];const s0=new Date(d.since);for(let i=0;i<d.days;i++){days.push(new Date(s0.getTime()+i*864e5).toISOString().slice(0,10))}
+const by={};(d.series||[]).forEach(x=>by[x.day]={t:x.visitors,v:x.views,c:{}});
+if(d.chan_day)d.chan_day.forEach(x=>{const o=by[x.day]||(by[x.day]={t:0,v:0,c:{}});const c=chan(x.cat);o.c[c]=(o.c[c]||0)+x.n});
+const mx=Math.max(1,...days.map(k=>by[k]?.t||0));const order=Object.keys(CH);
+$('chart').innerHTML=days.map((k,i)=>{const o=by[k];if(!o)return `<div class="c" data-i="${i}" style="height:2%"><i style="height:100%;background:var(--line)"></i></div>`;
+const tot=Math.max(1,Object.values(o.c).reduce((a,b)=>a+b,0));const segs=d.chan_day?order.filter(c=>o.c[c]).map(c=>`<i style="height:${(o.c[c]/tot*100).toFixed(1)}%;background:${CH[c]}"></i>`).join(''):`<i style="height:100%;background:var(--court)"></i>`;
+return `<div class="c${i===SEL?' sel':''}" data-i="${i}" title="${k} : ${o.t} visiteurs" style="height:${Math.max(2,o.t/mx*100).toFixed(1)}%">${segs}</div>`}).join('');
+const used=d.chan_day?order.filter(c=>d.chan_day.some(x=>chan(x.cat)===c)):[];$('leg').innerHTML=used.map(c=>`<span><i style="background:${CH[c]}"></i>${CHL[c]}</span>`).join('');
+const f=k=>new Date(k).toLocaleDateString('fr-FR',{day:'numeric',month:'short'});$('a0').textContent=days.length>1?f(days[0]):'';$('a1').textContent=f(days[days.length-1]);
+$('chart').onclick=e=>{const c=e.target.closest('.c');if(!c)return;SEL=+c.dataset.i;const k=days[SEL],o=by[k];document.querySelectorAll('#chart .c').forEach(x=>x.classList.toggle('sel',x===c));
+$('chd').innerHTML=o?`<b>${new Date(k).toLocaleDateString('fr-FR',{weekday:'long',day:'numeric',month:'long'})}</b> : ${o.t} visiteur${o.t>1?'s':''}, ${o.v} pages vues${Object.keys(o.c).length?' · '+order.filter(c=>o.c[c]).map(c=>`${CHL[c]} ${o.c[c]}`).join(', '):''}`:`${f(k)} : aucune visite`}}
+function mini(id,rows,n,lab,out,fmt){const v=Array(n).fill(0);rows.forEach(r=>{if(r.k>=0&&r.k<n)v[r.k]=r.n});const mx=Math.max(1,...v),top=v.indexOf(Math.max(...v));
+$(id).innerHTML=v.map((x,i)=>`<div class="${x&&i===top?'top':''}" title="${lab(i)} : ${x}" style="height:${Math.max(2,x/mx*100).toFixed(1)}%"></div>`).join('');$(out).textContent=Math.max(...v)?`Pic : ${fmt(top)}`:'Pas encore de données'}
+function draw(d){D=d;const pvd=d.prev||null;
+$('kv').textContent=d.visitors;$('kp').textContent=d.views;$('kpv').textContent=d.visitors?(d.views/d.visitors).toFixed(1):'–';
+$('dv').innerHTML=pvd?delta(d.visitors,pvd.visitors):'';$('dp').innerHTML=pvd?delta(d.views,pvd.views):'';
+$('kdur').textContent=fmtd(d.dur);$('kscr').textContent=d.scroll!=null?`page lue à ${d.scroll} % en moyenne`:'';
+$('kbn').textContent=d.bounce!=null?Math.round(d.bounce*100)+' %':'–';
+const chs={};(d.channels||d.sources.map(s=>({k:s.k,n:s.n}))).forEach(r=>{const c=chan(r.k);chs[c]=(chs[c]||0)+r.n});const chr=Object.entries(chs).sort((a,b)=>b[1]-a[1]);const cht=chr.reduce((a,b)=>a+b[1],0)||1;
+const chRows=chr.map(([k,n])=>({k:CHL[k]||k,n}));rank('vchan',chRows,null);rank('ochan',chRows,null);
+document.querySelectorAll('#vchan .n,#ochan .n').forEach((e,i)=>{if(chr[i])e.textContent=`${chr[i][1]} · ${Math.round(chr[i][1]/cht*100)} %`});
+$('kia').textContent=chs.IA||0;
+chart(d);
+const G={},GP={};(d.goals||[]).forEach(r=>G[r.k]=r.n);(d.goals_prev||[]).forEach(r=>GP[r.k]=r.n);
+if(!d.goals){(d.events||[]).forEach(r=>{const e=String(r.k).split(' · ')[0];G[e]=(G[e]||0)+r.n})}
+const T=d.totals||{};
+$('goals').innerHTML=GL.map(([k,l])=>`<div class="goal"><b>${G[k]||0}</b><span>${l}</span> ${d.goals_prev?delta(G[k]||0,GP[k]||0):''}</div>`).join('')+
+(d.totals?`<div class="goal"><b>${T.push||0}</b><span>abonnés aux notifications (total)</span></div><div class="goal"><b>${T.installs||0}</b><span>applis installées (total)</span></div><div class="goal"><b>${T.avis_pub||0}</b><span>avis publiés${T.avis_att?` · ${T.avis_att} en attente`:''}</span></div>`:'');
+rank('vsrc',d.sources.slice(0,8));rank('vpages',d.pages.slice(0,8),pl);rank('osrc',d.sources);rank('orefs',d.refs);rank('outm',d.utm);
+rank('vland',(d.landing||[]).slice(0,8),pl);rank('pland',d.landing||[],pl);
+const PD={};(d.page_dur||[]).forEach(r=>PD[r.k]=r);
+$('ptab').innerHTML=d.pages.map(r=>`<tr><td>${esc(pl(r.k))}</td><td class="r">${r.n}</td><td class="r">${r.u??'–'}</td><td class="r">${PD[r.k]?fmtd(PD[r.k].s):'–'}</td><td class="r">${PD[r.k]?PD[r.k].sc+' %':'–'}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">Pas encore de données</td></tr>';
+$('pg_n').textContent=d.pages.length;$('pg_se').textContent=d.pages.filter(r=>/^\/(en\/)?seances\//.test(r.k)).reduce((a,r)=>a+r.n,0);$('pg_en').textContent=d.pages.filter(r=>/^\/en\//.test(r.k)).reduce((a,r)=>a+r.n,0);
+let RN=null;try{RN=new Intl.DisplayNames(['fr'],{type:'region'})}catch(e){}rank('pc',d.countries,k=>{try{return k&&RN?RN.of(k):k}catch(e){return k}});rank('pv',d.cities);rank('pd',d.devices);rank('pl',d.langs);rank('rev',(d.events||[]).filter(r=>!String(r.k).startsWith('_')));
+const WD=['lun','mar','mer','jeu','ven','sam','dim'];
+if(d.hours){mini('hrs',d.hours,24,i=>i+' h','hrsb',i=>`vers ${i} h`)}else{$('hrsb').textContent='Disponible après la mise à jour du service de comptage.'}
+if(d.wdays){mini('wds',d.wdays.map(r=>({k:(r.k+6)%7,n:r.n})),7,i=>WD[i],'wdsb',i=>['le lundi','le mardi','le mercredi','le jeudi','le vendredi','le samedi','le dimanche'][i])}else{$('wdsb').textContent='Disponible après la mise à jour du service de comptage.'}
+$('live').innerHTML=d.live.map(v=>`<tr><td>${new Date(v.ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</td><td>${esc(pl(v.path))}</td><td>${esc(v.src)}</td><td>${esc(v.city)} ${esc(v.country)}</td><td>${esc(v.device)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">Pas encore de visite enregistrée</td></tr>';
+// résumé en une phrase
+const per=d.days===1?"Aujourd'hui":`Sur ${d.days} jours`;const P=[];
+P.push(`${per} : <b>${d.visitors} visiteur${d.visitors>1?'s':''}</b>${pvd&&pvd.visitors?` (${d.visitors>=pvd.visitors?'+':''}${Math.round((d.visitors-pvd.visitors)/pvd.visitors*100)} % par rapport à la période d'avant)`:''}`);
+if(chr[0])P.push(`ils arrivent surtout par <b>${(CHL[chr[0][0]]||chr[0][0]).toLowerCase()}</b> (${Math.round(chr[0][1]/cht*100)} %)`);
+const tp=d.pages.find(r=>r.k!=='/');if(tp)P.push(`page la plus lue après l'accueil : <b>${esc(PG[tp.k]||tp.k)}</b>`);
+if(G.quiz_resultat)P.push(`<b>${G.quiz_resultat}</b> bilan${G.quiz_resultat>1?'s':''} fait${G.quiz_resultat>1?'s':''}`);
+if(d.hours&&d.hours.length){const h=d.hours.reduce((a,b)=>b.n>a.n?b:a);P.push(`pic de visites vers <b>${h.k} h</b>`)}
+$('sum').innerHTML=d.visitors?P.join(' · ')+'.':`${per} : pas encore de visite enregistrée.`}
 async function load(){if(!code){$('gate').hidden=false;$('state').textContent='';return}
 $('state').textContent='Chargement…';
 try{const r=await fetch(`${API}/stats?days=${days}&k=${encodeURIComponent(code)}`,{cache:'no-store'});
 if(r.status===401){$('gate').hidden=false;$('gerr').textContent='Code incorrect.';$('state').textContent='';return}
-const d=await r.json();$('gate').hidden=true;$('state').textContent=`Depuis le ${new Date(d.since).toLocaleDateString('fr-FR')} · mis à jour ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})}`;
-$('kv').textContent=d.visitors;$('kp').textContent=d.views;$('kpv').textContent=d.visitors?(d.views/d.visitors).toFixed(1):'–';
-$('kia').textContent=d.sources.filter(s=>String(s.k).startsWith('IA')).reduce((a,s)=>a+s.n,0);
-const ser=d.series,mx=Math.max(1,...ser.map(s=>s.visitors));$('chart').innerHTML=ser.map(s=>`<div title="${esc(s.day)} : ${s.visitors} visiteurs, ${s.views} pages" style="height:${(s.visitors/mx*100).toFixed(1)}%"></div>`).join('');
-$('a0').textContent=ser[0]?new Date(ser[0].day).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'';$('a1').textContent=ser.length?new Date(ser[ser.length-1].day).toLocaleDateString('fr-FR',{day:'numeric',month:'short'}):'';
-rank('vsrc',d.sources.slice(0,8));rank('vpages',d.pages.slice(0,8));rank('osrc',d.sources);rank('orefs',d.refs);rank('outm',d.utm);rank('ppages',d.pages);
-rank('pc',d.countries);rank('pv',d.cities);rank('pd',d.devices);rank('pl',d.langs);rank('rev',d.events);
-$('live').innerHTML=d.live.map(v=>`<tr><td>${new Date(v.ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</td><td>${esc(v.path)}</td><td>${esc(v.src)}</td><td>${esc(v.city)} ${esc(v.country)}</td><td>${esc(v.device)}</td></tr>`).join('')||'<tr><td colspan="5" class="muted">Pas encore de visite enregistrée</td></tr>';
-}catch(e){$('state').innerHTML='<span class="warn">Le service de statistiques n\'est pas encore branché. Les onglets Contenu et Liens fonctionnent déjà.</span>'}}
+const d=await r.json();$('gate').hidden=true;
+if(!d.prev){try{const o=await fetch(`${API}/stats?days=${Math.min(365,days*2)}&k=${encodeURIComponent(code)}`,{cache:'no-store'}).then(x=>x.json());
+const old=o.series.filter(x=>x.day<d.since);d.prev={visitors:old.reduce((a,x)=>a+x.visitors,0),views:old.reduce((a,x)=>a+x.views,0)}}catch(e){}}
+$('state').textContent=`Du ${new Date(d.since).toLocaleDateString('fr-FR')} à aujourd'hui · mis à jour à ${new Date().toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'})} · comparaison avec les ${d.days===1?'chiffres d\'hier':d.days+' jours précédents'}`;
+draw(d);
+}catch(e){$('state').innerHTML='<span class="warn">Le service de statistiques ne répond pas pour le moment. Les onglets Contenu et Liens fonctionnent.</span>'}}
+$('csv').addEventListener('click',()=>{if(!D)return;const L=[['Section','Élément','Valeur']];const add=(sec,rows,f)=>rows&&rows.forEach(r=>L.push([sec,f?f(r):r.k,r.n]));
+(D.series||[]).forEach(r=>{L.push(['Jour',r.day+' visiteurs',r.visitors]);L.push(['Jour',r.day+' pages vues',r.views])});add('Source',D.sources);add('Page',D.pages);add('Page d\'entrée',D.landing);add('Pays',D.countries);add('Ville',D.cities);add('Appareil',D.devices);add('Action',(D.events||[]).filter(r=>!String(r.k).startsWith('_')));
+const csv='﻿'+L.map(r=>r.map(c=>`"${String(c??'').replace(/"/g,'""')}"`).join(';')).join('\n');const a=document.createElement('a');a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv'}));a.download=`pickleballdujour-stats-${D.days}j.csv`;a.click()});
 async function content(){try{const t=await fetch('/tournois.json',{cache:'no-store'}).then(r=>r.json());$('ctour').textContent=t.length}catch(e){}
 try{const x=await fetch('/conseils/feed.xml',{cache:'no-store'}).then(r=>r.text());const dm=new DOMParser().parseFromString(x,'text/xml');const it=dm.querySelectorAll('item');$('ctips').textContent=it.length>=30?'30+':it.length;const p=it[0]?.querySelector('pubDate')?.textContent;if(p)$('clast').textContent=new Date(p).toLocaleDateString('fr-FR',{day:'numeric',month:'short'})}catch(e){}
 try{const c=await fetch('https://api.github.com/repos/tgarot559/pickleballdujour/commits?per_page=15').then(r=>r.json());$('commits').innerHTML=c.map(x=>`<li><span class="k">${esc(x.commit.message.split('\n')[0])}</span><span class="n muted">${new Date(x.commit.author.date).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</span></li>`).join('')}catch(e){}}

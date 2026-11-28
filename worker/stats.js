@@ -109,24 +109,46 @@ async function hit(req, env) {
 async function stats(url, env) {
   const days = Math.min(Math.max(+url.searchParams.get("days") || 30, 1), 365);
   const since = new Date(Date.now() - (days - 1) * 864e5).toISOString().slice(0, 10);
-  const q = (sql) => env.DB.prepare(sql).bind(since).all().then(r => r.results);
+  const prev = new Date(Date.now() - (2 * days - 1) * 864e5).toISOString().slice(0, 10);
+  const q = (sql, ...a) => { const st = env.DB.prepare(sql); return (sql.includes("?") ? st.bind(...(a.length ? a : [since])) : st).all().then(r => r.results); };
   const pv = "ev=''";
-  const [tot] = await q(`SELECT COUNT(*) views, COUNT(DISTINCT vid||day) visitors FROM hits WHERE day>=? AND ${pv}`);
-  const [res] = await Promise.all([Promise.all([
-    q(`SELECT day, COUNT(*) views, COUNT(DISTINCT vid) visitors FROM hits WHERE day>=? AND ${pv} GROUP BY day ORDER BY day`),
-    q(`SELECT path k, COUNT(*) n FROM hits WHERE day>=? AND ${pv} GROUP BY path ORDER BY n DESC LIMIT 40`),
-    q(`SELECT src k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} AND src<>'Interne' GROUP BY src ORDER BY n DESC LIMIT 40`),
-    q(`SELECT ref k, COUNT(*) n FROM hits WHERE day>=? AND ${pv} AND ref<>'' AND src<>'Interne' GROUP BY ref ORDER BY n DESC LIMIT 40`),
-    q(`SELECT utm k, COUNT(*) n FROM hits WHERE day>=? AND ${pv} AND utm<>'' GROUP BY utm ORDER BY n DESC LIMIT 20`),
-    q(`SELECT country k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY country ORDER BY n DESC LIMIT 30`),
-    q(`SELECT city||' ('||country||')' k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} AND city<>'' GROUP BY city, country ORDER BY n DESC LIMIT 30`),
-    q(`SELECT device k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY device ORDER BY n DESC`),
-    q(`SELECT lang k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY lang ORDER BY n DESC LIMIT 12`),
-    q(`SELECT ev||' · '||ev_val k, COUNT(*) n FROM hits WHERE day>=? AND ev<>'' GROUP BY ev, ev_val ORDER BY n DESC LIMIT 40`),
-    q(`SELECT ts, path, src, city, country, device FROM hits WHERE day>=? AND ${pv} ORDER BY ts DESC LIMIT 30`),
-  ])]);
-  const [series, pages, sources, refs, utm, countries, cities, devices, langs, events, live] = res;
-  return { days, since, views: tot.views, visitors: tot.visitors, series, pages, sources, refs, utm, countries, cities, devices, langs, events, live };
+  const CAT = "CASE WHEN instr(src,' · ')>0 THEN substr(src,1,instr(src,' · ')-1) ELSE src END";
+  // heure de Paris (UTC+1 l'hiver, +2 l'été)
+  const H = "CAST(strftime('%H', ts/1000, 'unixepoch', CASE WHEN strftime('%m', ts/1000, 'unixepoch') BETWEEN '04' AND '10' THEN '+2 hours' ELSE '+1 hours' END) AS INTEGER)";
+  const FIN = "ev='_fin' AND CAST(ev_val AS INTEGER) BETWEEN 3 AND 1800";
+  const [[tot], [old], res] = await Promise.all([
+    q(`SELECT COUNT(*) views, COUNT(DISTINCT vid||day) visitors FROM hits WHERE day>=? AND ${pv}`),
+    q(`SELECT COUNT(*) views, COUNT(DISTINCT vid||day) visitors FROM hits WHERE day>=? AND day<? AND ${pv}`, prev, since),
+    Promise.all([
+      q(`SELECT day, COUNT(*) views, COUNT(DISTINCT vid) visitors FROM hits WHERE day>=? AND ${pv} GROUP BY day ORDER BY day`),
+      q(`SELECT path k, COUNT(*) n, COUNT(DISTINCT vid||day) u FROM hits WHERE day>=? AND ${pv} GROUP BY path ORDER BY n DESC LIMIT 60`),
+      q(`SELECT src k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} AND src<>'Interne' GROUP BY src ORDER BY n DESC LIMIT 40`),
+      q(`SELECT ref k, COUNT(*) n FROM hits WHERE day>=? AND ${pv} AND ref<>'' AND src<>'Interne' GROUP BY ref ORDER BY n DESC LIMIT 40`),
+      q(`SELECT utm k, COUNT(*) n FROM hits WHERE day>=? AND ${pv} AND utm<>'' GROUP BY utm ORDER BY n DESC LIMIT 20`),
+      q(`SELECT country k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY country ORDER BY n DESC LIMIT 30`),
+      q(`SELECT city||' ('||country||')' k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} AND city<>'' GROUP BY city, country ORDER BY n DESC LIMIT 30`),
+      q(`SELECT device k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY device ORDER BY n DESC`),
+      q(`SELECT lang k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY lang ORDER BY n DESC LIMIT 12`),
+      q(`SELECT ev||CASE WHEN ev_val<>'' THEN ' · '||ev_val ELSE '' END k, COUNT(*) n FROM hits WHERE day>=? AND ev<>'' AND substr(ev,1,1)<>'_' GROUP BY ev, ev_val ORDER BY n DESC LIMIT 60`),
+      q(`SELECT ts, path, src, city, country, device FROM hits WHERE day>=? AND ${pv} ORDER BY ts DESC LIMIT 30`),
+      // nouveautés
+      q(`SELECT day, ${CAT} cat, COUNT(*) n FROM (SELECT vid, day, src, MIN(ts) FROM hits WHERE day>=? AND ${pv} GROUP BY vid, day) GROUP BY day, cat`),
+      q(`SELECT ${CAT} k, COUNT(*) n FROM (SELECT vid, day, src, MIN(ts) FROM hits WHERE day>=? AND ${pv} GROUP BY vid, day) GROUP BY k ORDER BY n DESC`),
+      q(`SELECT path k, COUNT(*) n FROM (SELECT vid, day, path, MIN(ts) FROM hits WHERE day>=? AND ${pv} GROUP BY vid, day) GROUP BY path ORDER BY n DESC LIMIT 30`),
+      q(`SELECT SUM(c=1) one, COUNT(*) n FROM (SELECT COUNT(*) c FROM hits WHERE day>=? AND ${pv} GROUP BY vid, day)`),
+      q(`SELECT ${H} k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY k ORDER BY k`),
+      q(`SELECT CAST(strftime('%w', day) AS INTEGER) k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY k ORDER BY k`),
+      q(`SELECT AVG(CAST(ev_val AS INTEGER)) s, COUNT(*) n, AVG(CAST(substr(ev_val, instr(ev_val,'|')+1) AS INTEGER)) sc FROM hits WHERE day>=? AND ${FIN}`),
+      q(`SELECT path k, ROUND(AVG(CAST(ev_val AS INTEGER))) s, ROUND(AVG(CAST(substr(ev_val, instr(ev_val,'|')+1) AS INTEGER))) sc, COUNT(*) n FROM hits WHERE day>=? AND ${FIN} GROUP BY path HAVING n>=1 ORDER BY n DESC LIMIT 40`),
+      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`),
+      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND day<? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`, prev, since),
+      q(`SELECT (SELECT COUNT(*) FROM push_subs) push, (SELECT COUNT(*) FROM avis WHERE statut='publie') avis_pub, (SELECT COUNT(*) FROM avis WHERE statut='attente') avis_att, (SELECT COUNT(*) FROM hits WHERE ev='appli_invite' AND ev_val='accepted') installs`),
+    ]),
+  ]);
+  const [series, pages, sources, refs, utm, countries, cities, devices, langs, events, live, chan_day, channels, landing, [bn], hours, wdays, [dur], page_dur, goals, goals_prev, [totals]] = res;
+  return { v: 2, days, since, views: tot.views, visitors: tot.visitors, prev: old, series, pages, sources, refs, utm, countries, cities, devices, langs, events, live,
+    chan_day, channels, landing, bounce: bn && bn.n ? bn.one / bn.n : null, hours, wdays, dur: dur && dur.n ? Math.round(dur.s) : null, scroll: dur && dur.n ? Math.round(dur.sc) : null,
+    page_dur, goals, goals_prev, totals };
 }
 
 // ---------- Avis des joueurs : dépôt public, modération dans la console, publication ----------
