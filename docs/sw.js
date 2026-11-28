@@ -1,5 +1,5 @@
 // Service worker de Pickleball du Jour : pages lues disponibles hors connexion, notifications du conseil du jour.
-const V = "64052d0e";
+const V = "3d75fb7e";
 const PAGES = "pbj-pages-v1", STATIC = "pbj-static-" + V;
 const PRECACHE = ["/", "/conseils/", "/seances/", "/progresser/", "/hors-ligne/", "/style.css?v=" + V, "/favicon.svg", "/img/icon-192.png"];
 

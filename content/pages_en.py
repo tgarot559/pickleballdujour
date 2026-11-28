@@ -307,6 +307,27 @@ PAGES = [
 ],
 },
 {
+"slug": "find-a-pickleball-coach",
+"title": "Pickleball coach in France: find lessons near you",
+"h1": "Find a pickleball coach or class in France",
+"desc": "Directory of pickleball lessons in France: clubs, venues and coaches, search by town or near you. Coaches and clubs can get listed for free.",
+"kicker": "Learn",
+"answer": "To take pickleball lessons in France, search your town in the directory below: it separates venues that advertise lessons from places where you can simply play. Otherwise, ask the nearest tennis club: over 1,000 FFT clubs offer pickleball, often with taster sessions.",
+"body": """
+{{PROFS}}
+<h2>Group or private lessons?</h2>
+<p>To start, <b>group lessons</b> are best: you learn the rules, the serve and the dink while playing doubles straight away. <b>Private lessons</b> help later, to fix a specific shot or prepare for a tournament.</p>
+<h2>Who can teach?</h2>
+<p>In France, teaching a sport <b>for pay</b> requires a recognised qualification (such as the state tennis diploma) and a sports instructor card. Volunteers can lead unpaid sessions in their club.</p>
+<p>Between lessons, our <a href="/en/">daily tips</a> tell you what to work on.</p>
+""",
+"faq": [
+("How much does a pickleball lesson cost?", "Prices depend on the town, the club and the format (group, private, camp). Associations often offer a yearly membership that includes coached sessions."),
+("Do I need a licence to take lessons?", "FFT-affiliated clubs usually ask for a licence with membership. Taster sessions often don't."),
+("I'm a coach or run a club: how do I get listed?", "Fill in the “Get listed” form on this page. It's free, and every listing is checked before publication."),
+],
+},
+{
 "slug": "pickleball-around-the-world",
 "title": "Pickleball around the world: numbers, pro tours, World Cup",
 "h1": "Pickleball around the world",

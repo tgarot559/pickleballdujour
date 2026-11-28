@@ -10,6 +10,7 @@ from content.tips_en import TIPS as TEN
 from content.extra import EXTRA, TOURNEYS
 from content.seances import SESSIONS
 from finder import finder_html, data as tdata
+from content.profs import profs_html
 import scenes
 
 ROOT = os.path.dirname(os.path.abspath(__file__))
@@ -24,7 +25,7 @@ AUTHOR = {"@type": "Person", "@id": "https://thierrygarot.fr/#person", "name": "
 
 T = {
  "fr": {"name": "Pickleball du Jour", "lang": "fr", "home": "/", "tips": "conseils", "tips_t": "Conseils", "tip_of_day": "Le conseil du jour",
-        "nav": [("Progresser", "/progresser/"), ("Séances", "/seances/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/"), ("Avis", "/avis/")],
+        "nav": [("Progresser", "/progresser/"), ("Séances", "/seances/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Trouver un prof", "/prof-de-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/"), ("Avis", "/avis/")],
         "news": "/newsletter/", "news_t": "Newsletter", "other": "EN", "faq": "Questions fréquentes", "short": "En bref", "try": "À essayer",
         "read": "Lire le conseil", "all_tips": "Tous les conseils", "guides": "Les guides de fond", "updated": "Mis à jour le",
         "by": "Par <a href=\"https://thierrygarot.fr/\" rel=\"author\">Thierry Garot</a>, joueur de pickleball", "tip_n": "Conseil n°", "home_crumb": "Accueil",
@@ -36,7 +37,7 @@ T = {
         "date_fmt": lambda d: f"{d.day} {['janvier','février','mars','avril','mai','juin','juillet','août','septembre','octobre','novembre','décembre'][d.month-1]} {d.year}",
         "events": "Les prochains grands rendez-vous", "see_cal": "Voir tout le calendrier", "world": "Dans le monde"},
  "en": {"name": "Pickleball du Jour", "lang": "en", "home": "/en/", "tips": "tips", "tips_t": "Tips", "tip_of_day": "Tip of the day",
-        "nav": [("Get started", "/en/how-to-start-pickleball/"), ("Rules", "/en/pickleball-rules/"), ("Paddles", "/en/choosing-a-pickleball-paddle/"), ("Tournaments", "/en/pickleball-tournaments/"), ("World", "/en/pickleball-around-the-world/"), ("Tips", "/en/tips/")],
+        "nav": [("Get started", "/en/how-to-start-pickleball/"), ("Rules", "/en/pickleball-rules/"), ("Paddles", "/en/choosing-a-pickleball-paddle/"), ("Tournaments", "/en/pickleball-tournaments/"), ("Coaches", "/en/find-a-pickleball-coach/"), ("World", "/en/pickleball-around-the-world/"), ("Tips", "/en/tips/")],
         "news": "/en/newsletter/", "news_t": "Newsletter", "other": "FR", "faq": "Frequently asked questions", "short": "In short", "try": "Try this",
         "read": "Read the tip", "all_tips": "All tips", "guides": "In-depth guides", "updated": "Updated",
         "by": "By <a href=\"https://thierrygarot.fr/\" rel=\"author\">Thierry Garot</a>, pickleball player", "tip_n": "Tip #", "home_crumb": "Home",
@@ -179,7 +180,7 @@ def crumbs(lang, items):
 
 
 def fill(body, lang):
-    body = body.replace("{{FINDER}}", finder_html(lang))
+    body = body.replace("{{FINDER}}", finder_html(lang)).replace("{{PROFS}}", profs_html(lang, STATS_API))
     return body.replace("{{COURT}}", court_svg(lang)).replace("{{PADDLE}}", paddle_svg(lang)).replace("{{SERVE}}", serve_svg(lang))
 
 

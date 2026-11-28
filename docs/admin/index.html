@@ -69,7 +69,7 @@ table{width:100%;border-collapse:collapse;font-size:14px}td,th{text-align:left;p
 .av .acts{display:flex;gap:8px;flex-wrap:wrap;margin-top:10px}
 .av .acts button{border:1px solid var(--line);background:var(--bg);color:var(--ink);border-radius:999px;padding:8px 16px;font:700 14px Inter,sans-serif;min-height:40px;cursor:pointer}
 .av .acts .pub{background:var(--ball);color:#0f1c2e;border-color:var(--ball)}
-#avn{background:var(--ball);color:#0f1c2e;border-radius:99px;padding:0 7px;font-size:12px}#avn:empty{display:none}
+#avn{background:var(--ball);color:#0f1c2e;border-radius:99px;padding:0 7px;font-size:12px}#avn:empty{display:none}.cnt{background:var(--ball);color:#0f1c2e;border-radius:99px;padding:0 7px;font-size:12px}.cnt:empty{display:none}
 .kpi .d{display:inline-block;margin-left:6px;font-size:12px;font-weight:700;padding:1px 7px;border-radius:99px;vertical-align:middle}
 .d.up{background:color-mix(in srgb,#1f8a4c 16%,transparent);color:#1f8a4c}.d.dn{background:color-mix(in srgb,#c0392b 14%,transparent);color:#c0392b}.d.eq{background:var(--bg);color:var(--soft)}
 .kpi small{display:block;color:var(--soft);font-size:12px;margin-top:2px}
@@ -91,7 +91,7 @@ td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
 </head>
 <body>
 <header><h1>Pickleball <span>du Jour</span> · console</h1><p id="hsub">Visites, origines, contenus et automatisations</p>
-<nav id="tabs"><button class="on" data-t="vue">Vue d'ensemble</button><button data-t="orig">Origines</button><button data-t="pages">Pages</button><button data-t="pub">Public</button><button data-t="vid">Vidéos</button><button data-t="rech">Recherches</button><button data-t="cont">Contenu</button><button data-t="avis">Avis <span id="avn"></span></button><button data-t="liens">Liens</button></nav></header>
+<nav id="tabs"><button class="on" data-t="vue">Vue d'ensemble</button><button data-t="orig">Origines</button><button data-t="pages">Pages</button><button data-t="pub">Public</button><button data-t="vid">Vidéos</button><button data-t="rech">Recherches</button><button data-t="cont">Contenu</button><button data-t="avis">Avis <span id="avn"></span></button><button data-t="profs">Profs <span id="prn" class="cnt"></span></button><button data-t="liens">Liens</button></nav></header>
 <main>
 <div class="gate" id="gate" hidden><h2>Accès à la console</h2><p class="muted">Entrez le code d'accès. Il reste enregistré sur cet appareil.</p><form id="gf"><label for="gc" class="muted">Code d'accès</label><input id="gc" type="password" autocomplete="current-password"><button class="btn" type="submit">Ouvrir</button></form><p class="muted" id="gerr"></p></div>
 <div id="app">
@@ -135,6 +135,9 @@ td.r,th.r{text-align:right;font-variant-numeric:tabular-nums}
 <section id="avis"><h2>Avis des joueurs</h2><p class="muted">Les avis arrivent ici en attente. Rien n'est publié sur le site sans votre clic sur « Publier ». Écartez seulement les avis injurieux, hors sujet ou publicitaires : la loi demande de publier aussi les avis négatifs.</p>
 <div class="per" id="avf"><button data-s="attente" class="on">En attente</button><button data-s="publie">Publiés</button><button data-s="refuse">Refusés</button></div>
 <div id="avl"></div></section>
+<section id="profs"><h2>Annuaire des profs</h2><p class="muted">Les profs, clubs et salles qui s'inscrivent sur la page « Trouver un prof » arrivent ici. Rien n'apparaît sur le site sans votre clic sur « Publier ». Vérifiez le lien avant de publier.</p>
+<div class="per" id="prf2"><button data-s="attente" class="on">En attente</button><button data-s="publie">Publiés</button><button data-s="refuse">Refusés</button></div>
+<div id="prl"></div></section>
 <section id="liens"><h2>Liens utiles</h2><div class="links">
 <a href="/" target="_blank" rel="noopener"><b>Le site</b><span>pickleballdujour.fr</span></a>
 <a href="/conseils/feed.xml" target="_blank" rel="noopener"><b>Flux RSS français</b><span>Source de la newsletter</span></a>
@@ -162,7 +165,7 @@ const PG={'/':'Accueil','/en/':'Accueil (EN)','/conseils/':'Conseils','/progress
 const pl=p=>PG[p]?`${PG[p]} · ${p}`:p;
 const fmtd=s=>s==null||isNaN(s)?'–':s<60?`${Math.round(s)} s`:`${Math.floor(s/60)} min ${String(Math.round(s%60)).padStart(2,'0')}`;
 const delta=(n,o)=>{if(o==null)return '';if(!o)return n?'<span class="d up">nouveau</span>':'';const p=Math.round((n-o)/o*100);return `<span class="d ${p>0?'up':p<0?'dn':'eq'}">${p>0?'+':''}${p} %</span>`};
-const GL=[['quiz_resultat','bilans « Progresser » faits'],['lecture_seance','séances vidéo lancées'],['clic_newsletter','clics vers la newsletter'],['telechargement_livret','livrets téléchargés'],['recherche_tournoi','recherches de tournoi'],['clic_inscription','clics vers une inscription'],['avis_envoye','avis envoyés']];
+const GL=[['quiz_resultat','bilans « Progresser » faits'],['lecture_seance','séances vidéo lancées'],['clic_newsletter','clics vers la newsletter'],['telechargement_livret','livrets téléchargés'],['recherche_tournoi','recherches de tournoi'],['clic_inscription','clics vers une inscription'],['recherche_prof','recherches de prof'],['inscription_prof','inscriptions de profs'],['avis_envoye','avis envoyés']];
 let D=null,SEL=-1;
 function chart(d){const days=[];const s0=new Date(d.since);for(let i=0;i<d.days;i++){days.push(new Date(s0.getTime()+i*864e5).toISOString().slice(0,10))}
 const by={};(d.series||[]).forEach(x=>by[x.day]={t:x.visitors,v:x.views,c:{}});
@@ -245,10 +248,16 @@ function drawAvis(){const n=AV.filter(a=>a.statut==='attente').length;$('avn').t
 $('avl').innerHTML=L.length?L.map(a=>`<div class="av"><div class="st" aria-label="${a.note} sur 5">${'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.6l2.85 6.05 6.65.82-4.9 4.58 1.28 6.6L12 17.4l-5.88 3.25 1.28-6.6-4.9-4.58 6.65-.82z"/></svg>'.repeat(a.note)}<span style="color:var(--line)">${'<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M12 2.6l2.85 6.05 6.65.82-4.9 4.58 1.28 6.6L12 17.4l-5.88 3.25 1.28-6.6-4.9-4.58 6.65-.82z"/></svg>'.repeat(5-a.note)}</span></div><p>${esc(a.texte)}</p><div class="who">${esc(a.nom)}${a.ville?', '+esc(a.ville):''}${a.niveau?' · '+esc(a.niveau):''} · ${new Date(a.ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}${a.page?' · depuis '+esc(a.page):''}${a.email?` · <a href="mailto:${esc(a.email)}?subject=${encodeURIComponent('Votre avis sur Pickleball du Jour')}">${esc(a.email)}</a>`:''}</div><div class="acts">${a.statut!=='publie'?`<button class="pub" data-id="${a.id}" data-a="publie">Publier</button>`:`<button data-id="${a.id}" data-a="attente">Retirer du site</button>`}${a.statut!=='refuse'?`<button data-id="${a.id}" data-a="refuse">Refuser</button>`:''}<button data-id="${a.id}" data-a="supprimer">Supprimer</button></div></div>`).join(''):'<p class="muted">Aucun avis ici pour le moment.</p>'}
 $('avl').addEventListener('click',async e=>{const b=e.target.closest('button[data-id]');if(!b)return;b.disabled=true;try{await fetch(`${API}/avis/admin?k=${encodeURIComponent(code)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:+b.dataset.id,action:b.dataset.a})});await avis()}catch(x){b.disabled=false}});
 $('avf').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;avs=b.dataset.s;document.querySelectorAll('#avf button').forEach(x=>x.classList.toggle('on',x===b));drawAvis()});
+let prs='attente',PR=[];const PT={prof:'Prof ou entraîneur',club:'Club ou association',salle:'Salle ou complexe'};
+async function profs(){if(!code)return;try{const r=await fetch(`${API}/profs/admin?k=${encodeURIComponent(code)}`,{cache:'no-store'});if(!r.ok)throw 0;PR=(await r.json()).profs||[];drawProfs()}catch(e){$('prl').innerHTML='<p class="muted">Les inscriptions arriveront ici après la mise à jour du service de comptage. En attendant, elles arrivent par e-mail sur contact@pickleballdujour.fr.</p>'}}
+function drawProfs(){$('prn').textContent=PR.filter(a=>a.statut==='attente').length||'';const L=PR.filter(a=>a.statut===prs);const sf=u=>/^https?:\/\//i.test(u||'')?u:'';
+$('prl').innerHTML=L.length?L.map(a=>`<div class="av"><p><b>${esc(a.nom)}</b> <span class="pill">${esc(PT[a.type]||a.type)}</span></p><div class="who">${esc(a.ville)}${a.cp?' ('+esc(a.cp)+')':''}${a.la?'':' · <span class="warn">position introuvable : n\'apparaîtra pas sur la carte</span>'} · ${new Date(a.ts).toLocaleString('fr-FR',{day:'2-digit',month:'2-digit',hour:'2-digit',minute:'2-digit'})}</div>${a.texte?`<p>${esc(a.texte)}</p>`:''}<div class="who">${a.niveaux?'Pour : '+esc(a.niveaux)+' · ':''}${a.diplome?'Diplôme : '+esc(a.diplome):''}</div><div class="who">${sf(a.url)?`<a href="${esc(sf(a.url))}" target="_blank" rel="noopener">${esc(a.url)}</a> · `:''}<a href="mailto:${esc(a.email)}?subject=${encodeURIComponent('Votre fiche sur Pickleball du Jour')}">${esc(a.email)}</a></div><div class="acts">${a.statut!=='publie'?`<button class="pub" data-pid="${a.id}" data-a="publie">Publier</button>`:`<button data-pid="${a.id}" data-a="attente">Retirer du site</button>`}${a.statut!=='refuse'?`<button data-pid="${a.id}" data-a="refuse">Refuser</button>`:''}<button data-pid="${a.id}" data-a="supprimer">Supprimer</button></div></div>`).join(''):'<p class="muted">Aucune fiche ici pour le moment.</p>'}
+$('prl').addEventListener('click',async e=>{const b=e.target.closest('button[data-pid]');if(!b)return;b.disabled=true;try{await fetch(`${API}/profs/admin?k=${encodeURIComponent(code)}`,{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({id:+b.dataset.pid,action:b.dataset.a})});await profs()}catch(x){b.disabled=false}});
+$('prf2').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;prs=b.dataset.s;document.querySelectorAll('#prf2 button').forEach(x=>x.classList.toggle('on',x===b));drawProfs()});
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;document.querySelectorAll('#tabs button').forEach(x=>x.classList.toggle('on',x===b));document.querySelectorAll('section').forEach(s=>s.classList.toggle('on',s.id===b.dataset.t))});
 $('per').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)return;days=+b.dataset.d;document.querySelectorAll('#per button').forEach(x=>x.classList.toggle('on',x===b));load()});
-$('gf').addEventListener('submit',e=>{e.preventDefault();code=$('gc').value.trim();try{localStorage.setItem('pbjk',code)}catch(e){}$('gerr').textContent='';load();avis()});
-load();content();avis();setInterval(()=>{load();avis()},60000);
+$('gf').addEventListener('submit',e=>{e.preventDefault();code=$('gc').value.trim();try{localStorage.setItem('pbjk',code)}catch(e){}$('gerr').textContent='';load();avis();profs()});
+load();content();avis();profs();setInterval(()=>{load();avis();profs()},60000);
 }
 </script>
 </body>

@@ -333,6 +333,30 @@ PAGES = [
 ],
 },
 {
+"slug": "prof-de-pickleball",
+"en": "find-a-pickleball-coach",
+"title": "Prof de pickleball : trouver un cours ou un entraîneur près de chez vous",
+"h1": "Trouver un prof ou un cours de pickleball",
+"desc": "Annuaire des cours de pickleball en France : clubs, salles et entraîneurs, recherche par ville ou autour de vous. Profs et clubs : inscription gratuite.",
+"kicker": "Apprendre",
+"answer": "Pour prendre des cours de pickleball, cherchez votre ville dans l'annuaire ci-dessous : il distingue les structures qui annoncent des cours de celles où l'on peut simplement jouer. Sinon, demandez au club de tennis le plus proche : plus de 1 000 clubs FFT proposent le pickleball, souvent avec des séances d'initiation.",
+"body": """
+{{PROFS}}
+<h2>Cours collectif ou cours particulier ?</h2>
+<p>Pour débuter, le <b>cours collectif</b> est le meilleur choix : on apprend les règles, le service et le dink en jouant tout de suite en double, ce qui est la forme normale du pickleball. Le <b>cours particulier</b> devient utile ensuite, pour corriger un geste précis (le troisième coup, le revers, les déplacements) ou préparer un tournoi.</p>
+<h2>Comment reconnaître un bon prof</h2>
+<ul><li>Il vous fait jouer beaucoup, avec peu d'explications au début.</li><li>Il commence par le placement et la cuisine, pas par la puissance.</li><li>Il adapte les exercices à votre niveau et vous dit quoi travailler seul entre deux séances.</li></ul>
+<h2>Qui a le droit d'enseigner ?</h2>
+<p>En France, enseigner un sport <b>contre rémunération</b> demande un diplôme reconnu (par exemple un diplôme d'État de tennis) et une carte professionnelle d'éducateur sportif. Depuis que la Fédération française de tennis gère le pickleball, les enseignants de tennis peuvent suivre des modules pickleball dans les ligues régionales. Les bénévoles peuvent animer des séances dans leur club sans être payés.</p>
+<p>Entre deux cours, nos <a href="/seances/">séances vidéo</a> et le <a href="/progresser/">bilan « Progresser »</a> vous disent quoi travailler.</p>
+""",
+"faq": [
+("Combien coûte un cours de pickleball ?", "Les tarifs varient selon la ville, le club et la formule (collectif, particulier, stage). Les clubs associatifs proposent souvent une adhésion annuelle qui inclut des séances encadrées."),
+("Faut-il une licence pour prendre des cours ?", "Dans un club affilié à la FFT, une licence est en général demandée avec l'adhésion. Pour une séance découverte, ce n'est souvent pas nécessaire."),
+("Je suis prof ou je gère un club : comment apparaître dans l'annuaire ?", "Remplissez le formulaire « Faites-vous recenser » sur cette page. C'est gratuit, et chaque fiche est relue avant publication."),
+],
+},
+{
 "slug": "pickleball-dans-le-monde",
 "en": "pickleball-around-the-world",
 "title": "Le pickleball dans le monde : chiffres, circuits, Coupe du monde",

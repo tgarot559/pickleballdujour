@@ -12,6 +12,7 @@ const SCHEMA = [
   "CREATE INDEX IF NOT EXISTS hits_day ON hits(day)",
   "CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, ts INTEGER, lang TEXT)",
   "CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT)",
+  "CREATE TABLE IF NOT EXISTS profs (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, nom TEXT, type TEXT, ville TEXT, cp TEXT, dept TEXT, la REAL, lo REAL, url TEXT, email TEXT, niveaux TEXT, diplome TEXT, texte TEXT, statut TEXT, vid TEXT)",
 ];
 
 // ---------- Notifications (Web Push sans contenu : le téléphone va chercher le conseil du jour) ----------
@@ -140,8 +141,8 @@ async function stats(url, env) {
       q(`SELECT CAST(strftime('%w', day) AS INTEGER) k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY k ORDER BY k`),
       q(`SELECT AVG(CAST(ev_val AS INTEGER)) s, COUNT(*) n, AVG(CAST(substr(ev_val, instr(ev_val,'|')+1) AS INTEGER)) sc FROM hits WHERE day>=? AND ${FIN}`),
       q(`SELECT path k, ROUND(AVG(CAST(ev_val AS INTEGER))) s, ROUND(AVG(CAST(substr(ev_val, instr(ev_val,'|')+1) AS INTEGER))) sc, COUNT(*) n FROM hits WHERE day>=? AND ${FIN} GROUP BY path HAVING n>=1 ORDER BY n DESC LIMIT 40`),
-      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','fin_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`),
-      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND day<? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','fin_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`, prev, since),
+      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','fin_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi','recherche_prof','inscription_prof') GROUP BY ev`),
+      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND day<? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','fin_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi','recherche_prof','inscription_prof') GROUP BY ev`, prev, since),
       q(`SELECT ev_val k, SUM(ev='lecture_seance') lu, SUM(ev='mi_seance') mi, SUM(ev='fin_seance') fin, COUNT(DISTINCT CASE WHEN ev='lecture_seance' THEN vid||day END) u FROM hits WHERE day>=? AND ev IN ('lecture_seance','mi_seance','fin_seance') GROUP BY ev_val ORDER BY lu DESC`),
       q(`SELECT (SELECT COUNT(*) FROM push_subs) push, (SELECT COUNT(*) FROM avis WHERE statut='publie') avis_pub, (SELECT COUNT(*) FROM avis WHERE statut='attente') avis_att, (SELECT COUNT(*) FROM hits WHERE ev='appli_invite' AND ev_val='accepted') installs`),
     ]),
@@ -150,6 +151,28 @@ async function stats(url, env) {
   return { v: 2, days, since, views: tot.views, visitors: tot.visitors, prev: old, series, pages, sources, refs, utm, countries, cities, devices, langs, events, live,
     chan_day, channels, landing, bounce: bn && bn.n ? bn.one / bn.n : null, hours, wdays, dur: dur && dur.n ? Math.round(dur.s) : null, scroll: dur && dur.n ? Math.round(dur.sc) : null,
     page_dur, goals, goals_prev, videos, totals };
+}
+
+// ---------- Annuaire des profs : inscription publique, modération dans la console ----------
+const PROF_TABLE = "CREATE TABLE IF NOT EXISTS profs (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, nom TEXT, type TEXT, ville TEXT, cp TEXT, dept TEXT, la REAL, lo REAL, url TEXT, email TEXT, niveaux TEXT, diplome TEXT, texte TEXT, statut TEXT, vid TEXT)";
+async function profDepot(req, env) {
+  let b = {};
+  try { b = JSON.parse(await req.text() || "{}"); } catch (e) { return [400, { error: "format" }]; }
+  if (b.site) return [200, { ok: true }];
+  const nom = clean(b.nom, 80), ville = clean(b.ville, 60), email = clean(b.email, 120).toLowerCase();
+  let url = clean(b.url, 200); if (url && !/^https?:\/\//i.test(url)) url = "https://" + url;
+  if (nom.length < 2 || ville.length < 2 || !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email) || b.accord !== true) return [400, { error: "champs" }];
+  const type = ["prof", "club", "salle"].includes(b.type) ? b.type : "prof";
+  const la = Number(b.la), lo = Number(b.lo);
+  const ip = req.headers.get("CF-Connecting-IP") || "", day = new Date().toISOString().slice(0, 10);
+  const vid = (await sha(ip + "|prof|" + day)).slice(0, 16);
+  await env.DB.prepare(PROF_TABLE).run();
+  const [{ n }] = (await env.DB.prepare("SELECT COUNT(*) n FROM profs WHERE vid=?").bind(vid).all()).results;
+  if (n >= 5) return [429, { error: "limite" }];
+  await env.DB.prepare("INSERT INTO profs (ts,nom,type,ville,cp,dept,la,lo,url,email,niveaux,diplome,texte,statut,vid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+    .bind(Date.now(), nom, type, ville, clean(b.cp, 5), clean(b.dept, 3), isFinite(la) && la > 40 && la < 52 ? la : null, isFinite(lo) && lo > -6 && lo < 10 ? lo : null,
+      url, email, clean(b.niveaux, 120), clean(b.diplome, 120), clean(b.texte, 500), "attente", vid).run();
+  return [200, { ok: true }];
 }
 
 // ---------- Avis des joueurs : dépôt public, modération dans la console, publication ----------
@@ -216,6 +239,26 @@ export default {
       }
       const r = await env.DB.prepare("SELECT * FROM avis ORDER BY (statut='attente') DESC, ts DESC LIMIT 200").all();
       return json({ avis: r.results }, h);
+    }
+    if (url.pathname === "/profs" && req.method === "POST") { const [st, d] = await profDepot(req, env); return json(d, h, st); }
+    if (url.pathname === "/profs/publics") {
+      await env.DB.prepare(PROF_TABLE).run();
+      const r = await env.DB.prepare("SELECT id, nom, type, ville, dept, la, lo, url, niveaux, diplome, texte FROM profs WHERE statut='publie' ORDER BY ts DESC LIMIT 500").all();
+      return json({ profs: r.results }, { ...h, "Cache-Control": "public, max-age=300" });
+    }
+    if (url.pathname.startsWith("/profs/admin")) {
+      const k = url.searchParams.get("k") || "";
+      if (!k || (await sha(k)) !== ADMIN_HASH) return json({ error: "code" }, h, 401);
+      await env.DB.prepare(PROF_TABLE).run();
+      if (req.method === "POST") {
+        let b = {}; try { b = JSON.parse(await req.text() || "{}"); } catch (e) {}
+        const id = Math.round(+b.id);
+        if (b.action === "supprimer") await env.DB.prepare("DELETE FROM profs WHERE id=?").bind(id).run();
+        else if (["publie", "refuse", "attente"].includes(b.action)) await env.DB.prepare("UPDATE profs SET statut=? WHERE id=?").bind(b.action, id).run();
+        return json({ ok: true }, h);
+      }
+      const r = await env.DB.prepare("SELECT * FROM profs ORDER BY (statut='attente') DESC, ts DESC LIMIT 500").all();
+      return json({ profs: r.results }, h);
     }
     if (url.pathname === "/stats") {
       const k = url.searchParams.get("k") || "";
