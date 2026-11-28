@@ -12,7 +12,7 @@ const SCHEMA = [
   "CREATE INDEX IF NOT EXISTS hits_day ON hits(day)",
   "CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, ts INTEGER, lang TEXT)",
   "CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT)",
-  "CREATE TABLE IF NOT EXISTS profs (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, nom TEXT, type TEXT, ville TEXT, cp TEXT, dept TEXT, la REAL, lo REAL, url TEXT, email TEXT, niveaux TEXT, diplome TEXT, texte TEXT, statut TEXT, vid TEXT)",
+  "CREATE TABLE IF NOT EXISTS profs (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, nom TEXT, type TEXT, ville TEXT, cp TEXT, dept TEXT, la REAL, lo REAL, url TEXT, email TEXT, niveaux TEXT, diplome TEXT, texte TEXT, statut TEXT, vid TEXT, maj TEXT)",
 ];
 
 // ---------- Notifications (Web Push sans contenu : le téléphone va chercher le conseil du jour) ----------
@@ -154,7 +154,7 @@ async function stats(url, env) {
 }
 
 // ---------- Annuaire des profs : inscription publique, modération dans la console ----------
-const PROF_TABLE = "CREATE TABLE IF NOT EXISTS profs (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, nom TEXT, type TEXT, ville TEXT, cp TEXT, dept TEXT, la REAL, lo REAL, url TEXT, email TEXT, niveaux TEXT, diplome TEXT, texte TEXT, statut TEXT, vid TEXT)";
+const PROF_TABLE = "CREATE TABLE IF NOT EXISTS profs (id INTEGER PRIMARY KEY AUTOINCREMENT, ts INTEGER, nom TEXT, type TEXT, ville TEXT, cp TEXT, dept TEXT, la REAL, lo REAL, url TEXT, email TEXT, niveaux TEXT, diplome TEXT, texte TEXT, statut TEXT, vid TEXT, maj TEXT)";
 async function profDepot(req, env) {
   let b = {};
   try { b = JSON.parse(await req.text() || "{}"); } catch (e) { return [400, { error: "format" }]; }
@@ -169,9 +169,9 @@ async function profDepot(req, env) {
   await env.DB.prepare(PROF_TABLE).run();
   const [{ n }] = (await env.DB.prepare("SELECT COUNT(*) n FROM profs WHERE vid=?").bind(vid).all()).results;
   if (n >= 5) return [429, { error: "limite" }];
-  await env.DB.prepare("INSERT INTO profs (ts,nom,type,ville,cp,dept,la,lo,url,email,niveaux,diplome,texte,statut,vid) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
+  await env.DB.prepare("INSERT INTO profs (ts,nom,type,ville,cp,dept,la,lo,url,email,niveaux,diplome,texte,statut,vid,maj) VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)")
     .bind(Date.now(), nom, type, ville, clean(b.cp, 5), clean(b.dept, 3), isFinite(la) && la > 40 && la < 52 ? la : null, isFinite(lo) && lo > -6 && lo < 10 ? lo : null,
-      url, email, clean(b.niveaux, 120), clean(b.diplome, 120), clean(b.texte, 500), "attente", vid).run();
+      url, email, clean(b.niveaux, 120), clean(b.diplome, 120), clean(b.texte, 500), "attente", vid, clean(b.maj, 80)).run();
   return [200, { ok: true }];
 }
 
@@ -243,7 +243,7 @@ export default {
     if (url.pathname === "/profs" && req.method === "POST") { const [st, d] = await profDepot(req, env); return json(d, h, st); }
     if (url.pathname === "/profs/publics") {
       await env.DB.prepare(PROF_TABLE).run();
-      const r = await env.DB.prepare("SELECT id, nom, type, ville, dept, la, lo, url, niveaux, diplome, texte FROM profs WHERE statut='publie' ORDER BY ts DESC LIMIT 500").all();
+      const r = await env.DB.prepare("SELECT id, nom, type, ville, dept, la, lo, url, niveaux, diplome, texte, maj FROM profs WHERE statut='publie' ORDER BY ts DESC LIMIT 500").all();
       return json({ profs: r.results }, { ...h, "Cache-Control": "public, max-age=300" });
     }
     if (url.pathname.startsWith("/profs/admin")) {
