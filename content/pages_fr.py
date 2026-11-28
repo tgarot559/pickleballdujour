@@ -276,6 +276,7 @@ PAGES = [
 <li><strong>Pickle Arena, Bordeaux</strong> : inaugurée en août 2024, c'est le premier complexe de France entièrement consacré au pickleball, avec trois terrains couverts en résine. Un autre centre du même type a depuis ouvert à Lyon.</li>
 <li><strong>Pikkel, Chambéry</strong> : il accueille les championnats de France niveau 5.0 du 7 au 9 mai 2027.</li>
 <li><strong>Chevigny Tennis Club (Côte-d'Or)</strong> : il accueille les championnats de France niveaux 3.0 et 4.0 du 23 au 25 avril 2027.</li>
+<li><strong>Amicale Pickleball Châtelaillon (Charente-Maritime)</strong> : née en 2026, elle joue au Tennis Club de Châtelaillon-Plage plusieurs fois par semaine et organise des challenges amicaux avec les clubs voisins. Horaires et adhésion sur <a href="https://pickledeck.com/c/pickleballchatel" rel="noopener" target="_blank">sa page</a>.</li>
 <li><strong>Niort</strong> : le comité FFT des Deux-Sèvres organise une semaine du pickleball du 25 au 30 mai 2027, avec un tournoi K100 les 29 et 30 mai.</li>
 </ul>
 <h2>Les villes où ça bouge</h2>
