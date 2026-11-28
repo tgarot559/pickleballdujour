@@ -140,15 +140,16 @@ async function stats(url, env) {
       q(`SELECT CAST(strftime('%w', day) AS INTEGER) k, COUNT(DISTINCT vid||day) n FROM hits WHERE day>=? AND ${pv} GROUP BY k ORDER BY k`),
       q(`SELECT AVG(CAST(ev_val AS INTEGER)) s, COUNT(*) n, AVG(CAST(substr(ev_val, instr(ev_val,'|')+1) AS INTEGER)) sc FROM hits WHERE day>=? AND ${FIN}`),
       q(`SELECT path k, ROUND(AVG(CAST(ev_val AS INTEGER))) s, ROUND(AVG(CAST(substr(ev_val, instr(ev_val,'|')+1) AS INTEGER))) sc, COUNT(*) n FROM hits WHERE day>=? AND ${FIN} GROUP BY path HAVING n>=1 ORDER BY n DESC LIMIT 40`),
-      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`),
-      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND day<? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`, prev, since),
+      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','fin_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`),
+      q(`SELECT ev k, COUNT(*) n FROM hits WHERE day>=? AND day<? AND ev IN ('clic_newsletter','quiz_resultat','lecture_seance','fin_seance','notif_abonne','avis_envoye','telechargement_livret','clic_inscription','recherche_tournoi') GROUP BY ev`, prev, since),
+      q(`SELECT ev_val k, SUM(ev='lecture_seance') lu, SUM(ev='mi_seance') mi, SUM(ev='fin_seance') fin, COUNT(DISTINCT CASE WHEN ev='lecture_seance' THEN vid||day END) u FROM hits WHERE day>=? AND ev IN ('lecture_seance','mi_seance','fin_seance') GROUP BY ev_val ORDER BY lu DESC`),
       q(`SELECT (SELECT COUNT(*) FROM push_subs) push, (SELECT COUNT(*) FROM avis WHERE statut='publie') avis_pub, (SELECT COUNT(*) FROM avis WHERE statut='attente') avis_att, (SELECT COUNT(*) FROM hits WHERE ev='appli_invite' AND ev_val='accepted') installs`),
     ]),
   ]);
-  const [series, pages, sources, refs, utm, countries, cities, devices, langs, events, live, chan_day, channels, landing, [bn], hours, wdays, [dur], page_dur, goals, goals_prev, [totals]] = res;
+  const [series, pages, sources, refs, utm, countries, cities, devices, langs, events, live, chan_day, channels, landing, [bn], hours, wdays, [dur], page_dur, goals, goals_prev, videos, [totals]] = res;
   return { v: 2, days, since, views: tot.views, visitors: tot.visitors, prev: old, series, pages, sources, refs, utm, countries, cities, devices, langs, events, live,
     chan_day, channels, landing, bounce: bn && bn.n ? bn.one / bn.n : null, hours, wdays, dur: dur && dur.n ? Math.round(dur.s) : null, scroll: dur && dur.n ? Math.round(dur.sc) : null,
-    page_dur, goals, goals_prev, totals };
+    page_dur, goals, goals_prev, videos, totals };
 }
 
 // ---------- Avis des joueurs : dépôt public, modération dans la console, publication ----------
@@ -163,8 +164,11 @@ async function avisDepot(req, env) {
   const vid = (await sha(ip + "|avis|" + day)).slice(0, 16);
   const [{ n }] = (await env.DB.prepare("SELECT COUNT(*) n FROM avis WHERE vid=?").bind(vid).all()).results;
   if (n >= 3) return [429, { error: "limite" }];
-  await env.DB.prepare("INSERT INTO avis (ts,nom,ville,niveau,note,texte,statut,vid,page) VALUES (?,?,?,?,?,?,?,?,?)")
-    .bind(Date.now(), nom, ville, niveau, note, texte, "attente", vid, clean(b.page, 120)).run();
+  let email = clean(b.email, 120).toLowerCase();
+  if (email && !/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) email = "";
+  const ins = () => env.DB.prepare("INSERT INTO avis (ts,nom,ville,niveau,note,texte,statut,vid,page,email) VALUES (?,?,?,?,?,?,?,?,?,?)")
+    .bind(Date.now(), nom, ville, niveau, note, texte, "attente", vid, clean(b.page, 120), email).run();
+  try { await ins(); } catch (e) { await env.DB.prepare("ALTER TABLE avis ADD COLUMN email TEXT").run().catch(() => {}); await ins(); }
   return [200, { ok: true }];
 }
 
@@ -210,7 +214,7 @@ export default {
         else if (["publie", "refuse", "attente"].includes(b.action)) await env.DB.prepare("UPDATE avis SET statut=? WHERE id=?").bind(b.action, id).run();
         return json({ ok: true }, h);
       }
-      const r = await env.DB.prepare("SELECT id, ts, nom, ville, niveau, note, texte, statut, page FROM avis ORDER BY (statut='attente') DESC, ts DESC LIMIT 200").all();
+      const r = await env.DB.prepare("SELECT * FROM avis ORDER BY (statut='attente') DESC, ts DESC LIMIT 200").all();
       return json({ avis: r.results }, h);
     }
     if (url.pathname === "/stats") {

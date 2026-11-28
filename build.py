@@ -122,7 +122,7 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 </div><div class="wrap"><p class="note" style="color:#a9bcd8;margin-top:24px">© {TODAY.year} Pickleball du Jour</p></div></footer>
 {tabbar(lang, path)}
 <script>{{const b=document.getElementById('mb'),n=document.getElementById('nv');b.addEventListener('click',()=>{{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o)}})}}</script>
-<script>{{const A='https://pickleballdujour-stats.thierry-garot-17.workers.dev/hit';window.pbj=function(e,v){{try{{if(localStorage.getItem('pbj_optout'))return;const q=new URLSearchParams(location.search);const d=JSON.stringify({{p:location.pathname,r:e?'':document.referrer,l:navigator.language,w:innerWidth,u:q.get('utm_source')||'',e:e||'',v:v||''}});if(navigator.sendBeacon)navigator.sendBeacon(A,d);else fetch(A,{{method:'POST',body:d,keepalive:true}})}}catch(x){{}}}};pbj();{{const t0=Date.now();let mx=0,sent=0;const sc=()=>{{const h=document.documentElement;mx=Math.max(mx,Math.min(100,Math.round((scrollY+innerHeight)/Math.max(1,h.scrollHeight)*100)))}};sc();addEventListener('scroll',sc,{{passive:true}});const fin=()=>{{if(sent)return;sent=1;pbj('_fin',Math.round((Date.now()-t0)/1000)+'|'+mx)}};addEventListener('pagehide',fin);document.addEventListener('visibilitychange',()=>{{if(document.visibilityState==='hidden')fin()}})}}document.addEventListener('click',ev=>{{const a=ev.target.closest('a');if(!a)return;if(a.pathname&&/newsletter/.test(a.pathname)&&a.host===location.host)pbj('clic_newsletter',location.pathname)}})}}</script>
+<script>{{const A='https://pickleballdujour-stats.thierry-garot-17.workers.dev/hit';window.pbj=function(e,v){{try{{if(localStorage.getItem('pbj_optout'))return;const q=new URLSearchParams(location.search);const d=JSON.stringify({{p:location.pathname,r:e?'':document.referrer,l:navigator.language,w:innerWidth,u:q.get('utm_source')||'',e:e||'',v:v||''}});if(navigator.sendBeacon)navigator.sendBeacon(A,d);else fetch(A,{{method:'POST',body:d,keepalive:true}})}}catch(x){{}}}};pbj();{{const t0=Date.now();let mx=0,sent=0;const sc=()=>{{const h=document.documentElement;mx=Math.max(mx,Math.min(100,Math.round((scrollY+innerHeight)/Math.max(1,h.scrollHeight)*100)))}};sc();addEventListener('scroll',sc,{{passive:true}});const fin=()=>{{if(sent)return;sent=1;pbj('_fin',Math.round((Date.now()-t0)/1000)+'|'+mx)}};addEventListener('pagehide',fin);document.addEventListener('visibilitychange',()=>{{if(document.visibilityState==='hidden')fin()}})}}document.querySelectorAll('video[src*="/seances/"]').forEach(v=>{{const n=(v.getAttribute('src')||'').split('/').pop().replace('.mp4','');let h=0,e=0;v.addEventListener('timeupdate',()=>{{if(!h&&v.duration&&v.currentTime/v.duration>=.5){{h=1;pbj('mi_seance',n)}}}});v.addEventListener('ended',()=>{{if(!e){{e=1;pbj('fin_seance',n)}}}})}});document.addEventListener('click',ev=>{{const a=ev.target.closest('a');if(!a)return;if(a.pathname&&/newsletter/.test(a.pathname)&&a.host===location.host)pbj('clic_newsletter',location.pathname)}})}}</script>
 <script>{{(function(){{const FR=document.documentElement.lang==='fr',VK='BAvVVsT0goxYtefwBLiCWDmNAXtPdmNKLj8IEi0DQSyJ2_miJbCINtOwXgXoSr_-kzuo5Q_jHNI0x1qW3XhHEBA',API='https://pickleballdujour-stats.thierry-garot-17.workers.dev';
 if(!('serviceWorker' in navigator))return;navigator.serviceWorker.register('/sw.js').catch(()=>{{}});
 const LS=(k,v)=>{{try{{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}}catch(e){{}}}};
@@ -160,7 +160,7 @@ const blocked=()=>st.done||(st.t&&Date.now()-st.t<30*864e5)||P.startsWith('/avis
 if(blocked())return;let shown=false;
 function show(){{if(shown||!ok||blocked())return;shown=true;st.t=Date.now();save();pbj('avis_toast','vu');
 const d=document.createElement('div');d.className='avtoast';d.setAttribute('role','dialog');d.setAttribute('aria-label','Donner votre avis');
-d.innerHTML='<button class="avx" aria-label="Fermer">×</button><b>Le site vous est utile ?</b><span>Dites-le en 30 secondes, ça aide les autres joueurs.</span><div class="avst">'+[1,2,3,4,5].map(i=>'<a href="/avis/?note='+i+'#avis" aria-label="'+i+' sur 5">★</a>').join('')+'</div>';
+d.innerHTML='<button class="avx" aria-label="Fermer">×</button><b>Le site vous est utile ?</b><span>Dites-le en 30 secondes, ça aide les autres joueurs.</span><div class="avst">'+[1,2,3,4,5].map(i=>'<a href="/avis/?note='+i+'#avis" aria-label="'+i+' sur 5"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.6l2.85 6.05 6.65.82-4.9 4.58 1.28 6.6L12 17.4l-5.88 3.25 1.28-6.6-4.9-4.58 6.65-.82z"/></svg></a>').join('')+'</div>';
 document.body.appendChild(d);requestAnimationFrame(()=>d.classList.add('in'));
 d.querySelector('.avx').onclick=()=>{{d.remove();pbj('avis_toast','ferme')}};d.querySelectorAll('.avst a').forEach(a=>a.onclick=()=>pbj('avis_toast','clic'))}}
 const mobile=matchMedia('(hover:none)').matches;
@@ -238,7 +238,7 @@ def seance_pages():
 <p><span class="svb" style="background:{col}">Niveau {lab}</span></p>
 <h1>{esc(x["title"])}</h1>
 <p class="lead">Une séance vidéo de {x["dur"]} secondes : le principe animé sur le terrain, puis un exercice avec son objectif.</p>
-<video class="spv" src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="metadata" crossorigin="anonymous" width="1280" height="720" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video>
+<video class="spv" src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="metadata" crossorigin="anonymous" width="1280" height="720" onplay="if(!this.dataset.p){{this.dataset.p=1;window.pbj&&pbj('lecture_seance','{x["slug"]}')}}"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video>
 <h2>Le principe</h2><p>{esc(x["desc"])}</p>
 <h2>L'exercice</h2><p>{esc(ucf(x["exo"].replace("Exercice : ", "", 1)))}</p><p class="spgoal"><b>{esc(x["goal"])}</b></p>
 <h2>À retenir</h2><p>{esc(ucf(x["outro"].replace("Retenez : ", "", 1)))}</p>
@@ -264,7 +264,7 @@ def seances_page():
     cr, crld = crumbs("fr", [("Séances", None)])
     secs, lds = [], []
     for key, name, col, blurb in LEVEL_NAMES:
-        cards = "".join(f'''<article class="sv" id="{x["slug"]}"><video src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="none" crossorigin="anonymous" onplay="window.pbj&&pbj('lecture_seance','{x["slug"]}')"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video><div class="svm"><h3><a href="/seances/{x["slug"]}/">{esc(x["title"])}</a></h3><p>{x["dur"]} s · {esc(x["goal"])}</p></div></article>''' for x in SESSIONS if x["level"] == key)
+        cards = "".join(f'''<article class="sv" id="{x["slug"]}"><video src="/seances/{x["slug"]}.mp4" poster="/seances/{x["slug"]}.jpg" controls playsinline preload="none" crossorigin="anonymous" onplay="if(!this.dataset.p){{this.dataset.p=1;window.pbj&&pbj('lecture_seance','{x["slug"]}')}}"><track kind="subtitles" srclang="fr" label="Français" src="/seances/{x["slug"]}.vtt"></video><div class="svm"><h3><a href="/seances/{x["slug"]}/">{esc(x["title"])}</a></h3><p>{x["dur"]} s · {esc(x["goal"])}</p></div></article>''' for x in SESSIONS if x["level"] == key)
         secs.append(f'<section class="svl"><h2><span class="svb" style="background:{col}">{name}</span></h2><p class="note">{esc(blurb)}</p><div class="svg">{cards}</div></section>')
     lds.append({"@context": "https://schema.org", "@type": "ItemList", "name": "Séances vidéo de pickleball", "itemListElement": [{"@type": "ListItem", "position": i + 1, "url": SITE + "/seances/" + x["slug"] + "/", "name": x["title"]} for i, x in enumerate(SESSIONS)]})
     body = f'''<div class="wrap page">{cr}<h1>Séances vidéo&nbsp;: 30 secondes pour progresser</h1>
@@ -288,8 +288,9 @@ def avis_block(where, full=False):
 <details class="avisform"{' open' if full else ''}><summary>Donner mon avis</summary>
 <form id="avf" novalidate>
 <div class="avrow"><label>Prénom <input name="nom" maxlength="40" autocomplete="given-name" required></label><label>Ville <input name="ville" maxlength="40" autocomplete="address-level2"></label></div>
+<label>E-mail <span class="opt">facultatif, jamais publié : seulement pour pouvoir vous répondre</span><input type="email" name="email" maxlength="120" autocomplete="email" inputmode="email"></label>
 <label>Votre niveau <select name="niveau"><option value="">Je préfère ne pas dire</option><option>Découverte</option><option>Initié</option><option>Confirmé</option><option>Avancé</option></select></label>
-<fieldset class="stars"><legend>Votre note</legend><div class="sr">{"".join(f'<input type="radio" name="note" id="n{i}" value="{i}"{" checked" if i == 5 else ""}><label for="n{i}" title="{i} sur 5">★</label>' for i in range(5, 0, -1))}</div></fieldset>
+<fieldset class="stars"><legend>Votre note <span class="stxt" id="stxt">5 sur 5, excellent</span></legend><div class="srow">{"".join(f'<input type="radio" name="note" id="n{i}" value="{i}"{" checked" if i == 5 else ""}><label for="n{i}" title="{i} sur 5"><span class="sv">{i} sur 5</span><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.6l2.85 6.05 6.65.82-4.9 4.58 1.28 6.6L12 17.4l-5.88 3.25 1.28-6.6-4.9-4.58 6.65-.82z"/></svg></label>' for i in range(5, 0, -1))}</div></fieldset>
 <label>Votre avis <textarea name="texte" rows="4" minlength="20" maxlength="600" required placeholder="Ce qui vous a été utile, ce qui manque…"></textarea></label>
 <input name="site" tabindex="-1" autocomplete="off" class="hp" aria-hidden="true">
 <label class="chk"><input type="checkbox" name="accord" required> J'accepte que mon avis soit publié sur le site avec mon prénom et ma ville.</label>
@@ -297,14 +298,15 @@ def avis_block(where, full=False):
 </form></details>
 <p class="note">{AVIS_NOTE}{'' if full else ' <a href="/avis/">Tous les avis</a>'}</p>
 </div></section>
-<script>{{const A='{STATS_API}',S=document.getElementById('avis'),F=document.getElementById('avf'),M=document.getElementById('avmsg');
+<script>{{const A='{STATS_API}',S=document.getElementById('avis'),F=document.getElementById('avf'),M=document.getElementById('avmsg'),ST='<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path fill="currentColor" d="M12 2.6l2.85 6.05 6.65.82-4.9 4.58 1.28 6.6L12 17.4l-5.88 3.25 1.28-6.6-4.9-4.58 6.65-.82z"/></svg>';
+{{const W=['','1 sur 5, décevant','2 sur 5, moyen','3 sur 5, correct','4 sur 5, très bien','5 sur 5, excellent'],T=document.getElementById('stxt');F.addEventListener('change',e=>{{if(e.target.name==='note'&&T)T.textContent=W[+e.target.value]}})}}
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({{'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}}[c]));
 fetch(A+'/avis/publics').then(r=>{{if(!r.ok)throw 0;return r.json()}}).then(d=>{{S.hidden=false;const a=d.avis||[];
 if(a.length){{const m=a.reduce((x,y)=>x+y.note,0)/a.length;document.getElementById('avstat').innerHTML='<b>'+m.toFixed(1).replace('.',',')+' / 5</b> · '+a.length+' avis';}}
 else document.getElementById('avstat').textContent='Soyez le premier à donner votre avis.';
-document.getElementById('avlist').innerHTML=a.slice(0,{60 if full else 6}).map(x=>'<figure class="avis"><div class="st" aria-label="'+x.note+' sur 5">'+'★'.repeat(x.note)+'<span>'+'★'.repeat(5-x.note)+'</span></div><blockquote>'+esc(x.texte)+'</blockquote><figcaption>'+esc(x.nom)+(x.ville?', '+esc(x.ville):'')+(x.niveau?' · '+esc(x.niveau):'')+'</figcaption></figure>').join('')}}).catch(()=>{{}});
-F.addEventListener('submit',async e=>{{e.preventDefault();const f=new FormData(F);const d={{nom:f.get('nom'),ville:f.get('ville'),niveau:f.get('niveau'),note:+f.get('note'),texte:f.get('texte'),site:f.get('site'),accord:!!f.get('accord'),page:location.pathname}};
-if((d.nom||'').trim().length<2){{M.textContent='Indiquez votre prénom.';return}}if((d.texte||'').trim().length<20){{M.textContent='Votre avis doit faire au moins 20 caractères.';return}}if(!d.accord){{M.textContent='Cochez la case d’accord pour la publication.';return}}
+document.getElementById('avlist').innerHTML=a.slice(0,{60 if full else 6}).map(x=>'<figure class="avis"><div class="st" role="img" aria-label="'+x.note+' sur 5">'+ST.repeat(x.note)+'<span>'+ST.repeat(5-x.note)+'</span></div><blockquote>'+esc(x.texte)+'</blockquote><figcaption>'+esc(x.nom)+(x.ville?', '+esc(x.ville):'')+(x.niveau?' · '+esc(x.niveau):'')+'</figcaption></figure>').join('')}}).catch(()=>{{}});
+F.addEventListener('submit',async e=>{{e.preventDefault();const f=new FormData(F);const d={{nom:f.get('nom'),email:(f.get('email')||'').trim(),ville:f.get('ville'),niveau:f.get('niveau'),note:+f.get('note'),texte:f.get('texte'),site:f.get('site'),accord:!!f.get('accord'),page:location.pathname}};
+if((d.nom||'').trim().length<2){{M.textContent='Indiquez votre prénom.';return}}if((d.texte||'').trim().length<20){{M.textContent='Votre avis doit faire au moins 20 caractères.';return}}if(d.email&&!/^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$/.test(d.email)){{M.textContent='L’adresse e-mail semble incomplète (ou laissez le champ vide).';return}}if(!d.accord){{M.textContent='Cochez la case d’accord pour la publication.';return}}
 M.textContent='Envoi…';try{{const r=await fetch(A+'/avis',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify(d)}});
 if(r.status===429){{M.textContent='Vous avez déjà envoyé plusieurs avis aujourd’hui. Merci !';return}}if(!r.ok)throw 0;F.reset();M.textContent='Merci ! Votre avis sera publié après relecture.';window.pbj&&pbj('avis_envoye','{where}')}}catch(x){{M.textContent='L’envoi n’a pas fonctionné. Réessayez dans un instant.'}}}})}}</script>'''
 
@@ -493,6 +495,9 @@ def main():
         rss(lang, tips, otips)
     shutil.copy(os.path.join(ROOT, "static", "style.css"), os.path.join(OUT, "style.css"))
     shutil.copy(os.path.join(ROOT, "static", "img", "icone.svg"), os.path.join(OUT, "favicon.svg"))
+    os.makedirs(os.path.join(OUT, "admin"), exist_ok=True)
+    with open(os.path.join(OUT, "admin", "seances.json"), "w", encoding="utf-8") as _f:
+        json.dump({x["slug"]: {"t": x["title"], "l": x["level"]} for x in SESSIONS}, _f, ensure_ascii=False)
     os.makedirs(os.path.join(OUT, "admin"), exist_ok=True)
     shutil.copy(os.path.join(ROOT, "static", "admin.html"), os.path.join(OUT, "admin", "index.html"))
     for short in ("inscription", "en/signup"):
