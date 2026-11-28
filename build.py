@@ -19,14 +19,14 @@ LAUNCH = datetime.date(2026, 11, 27)
 TODAY = datetime.date.today()
 import hashlib as _h
 CSSV = _h.md5(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "style.css"), "rb").read()).hexdigest()[:8]
-AUTHOR = {"@type": "Person", "name": "Thierry Garot", "url": "https://thierrygarot.fr/", "sameAs": ["https://www.linkedin.com/in/thierry-garot"]}
+AUTHOR = {"@type": "Person", "@id": "https://thierrygarot.fr/#person", "name": "Thierry Garot", "url": "https://thierrygarot.fr/", "sameAs": ["https://thierrygarot.fr/", "https://www.linkedin.com/in/thierry-garot"]}
 
 T = {
  "fr": {"name": "Pickleball du Jour", "lang": "fr", "home": "/", "tips": "conseils", "tips_t": "Conseils", "tip_of_day": "Le conseil du jour",
         "nav": [("Progresser", "/progresser/"), ("Séances", "/seances/"), ("Débuter", "/debuter-au-pickleball/"), ("Règles", "/regles-du-pickleball/"), ("Raquettes", "/choisir-raquette-pickleball/"), ("Tournois", "/tournois-pickleball/"), ("Monde", "/pickleball-dans-le-monde/"), ("Conseils", "/conseils/")],
         "news": "/newsletter/", "news_t": "Newsletter", "other": "EN", "faq": "Questions fréquentes", "short": "En bref", "try": "À essayer",
         "read": "Lire le conseil", "all_tips": "Tous les conseils", "guides": "Les guides de fond", "updated": "Mis à jour le",
-        "by": "Par Thierry Garot, joueur de pickleball", "tip_n": "Conseil n°", "home_crumb": "Accueil",
+        "by": "Par <a href=\"https://thierrygarot.fr/\" rel=\"author\">Thierry Garot</a>, joueur de pickleball", "tip_n": "Conseil n°", "home_crumb": "Accueil",
         "hero_h": "Un conseil de pickleball par jour.",
         "hero_p": "Simple, concret, à essayer dès votre prochaine partie. Et des guides complets sur les règles, le matériel et les tournois en France et dans le monde.",
         "cta": "Recevoir les conseils", "about": "/a-propos/", "about_t": "À propos", "legal": "/mentions-legales/", "legal_t": "Mentions légales",
@@ -38,7 +38,7 @@ T = {
         "nav": [("Get started", "/en/how-to-start-pickleball/"), ("Rules", "/en/pickleball-rules/"), ("Paddles", "/en/choosing-a-pickleball-paddle/"), ("Tournaments", "/en/pickleball-tournaments/"), ("World", "/en/pickleball-around-the-world/"), ("Tips", "/en/tips/")],
         "news": "/en/newsletter/", "news_t": "Newsletter", "other": "FR", "faq": "Frequently asked questions", "short": "In short", "try": "Try this",
         "read": "Read the tip", "all_tips": "All tips", "guides": "In-depth guides", "updated": "Updated",
-        "by": "By Thierry Garot, pickleball player", "tip_n": "Tip #", "home_crumb": "Home",
+        "by": "By <a href=\"https://thierrygarot.fr/\" rel=\"author\">Thierry Garot</a>, pickleball player", "tip_n": "Tip #", "home_crumb": "Home",
         "hero_h": "One pickleball tip a day.",
         "hero_p": "Simple, practical, ready for your next game. Plus complete guides to the rules, gear and tournaments in France and worldwide.",
         "cta": "Get the tips", "about": "/en/about/", "about_t": "About", "legal": "/en/legal/", "legal_t": "Legal notice",
