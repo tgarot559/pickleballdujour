@@ -18,7 +18,7 @@ SITE = "https://pickleballdujour.fr"
 LAUNCH = datetime.date(2026, 11, 27)
 TODAY = datetime.date.today()
 import hashlib as _h
-PUSH_READY = False  # passe à True une fois le Worker de notifications déployé
+PUSH_READY = True
 CSSV = _h.md5(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "style.css"), "rb").read()).hexdigest()[:8]
 AUTHOR = {"@type": "Person", "@id": "https://thierrygarot.fr/#person", "name": "Thierry Garot", "url": "https://thierrygarot.fr/", "sameAs": ["https://thierrygarot.fr/", "https://www.linkedin.com/in/thierry-garot"]}
 
