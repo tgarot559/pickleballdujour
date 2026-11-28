@@ -328,8 +328,8 @@ def home(lang, pages, tips, otips):
     cal = "/tournois-pickleball/" if lang == "fr" else "/en/pickleball-tournaments/"
     body = f'''<section class="hero"><div class="wrap">
 <div><h1>{t["hero_h"]}</h1><p>{t["hero_p"]}</p>
-<p style="margin:18px 0 22px"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a>{' <a class="btn ghost" href="/progresser/" onclick="window.pbj&&pbj(\'clic_quiz\',\'accueil\')">Faire mon bilan</a>' if lang == "fr" else ""}</p>
-<div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · {esc(tip[1])}</span><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
+<p class="herocta"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a>{'<a class="btn ghost" href="/progresser/" onclick="window.pbj&&pbj(\'clic_quiz\',\'accueil\')">Faire mon bilan</a>' if lang == "fr" else ""}</p>
+<div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · {esc(tip[1])}</span><p class="tdate" id="tod-d"></p><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
 </div>
 <div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
 </div></section>
@@ -339,7 +339,7 @@ def home(lang, pages, tips, otips):
 <section class="band"><div class="wrap two"><div><h2 style="margin-top:0">{t["events"]}</h2><div class="tbl"><table><tbody>{ev}</tbody></table></div><p><a href="{cal}">{t["see_cal"]} →</a></p></div>
 <div class="price best"><h2 style="margin-top:0">{t["newsband_h"]}</h2><p>{t["newsband_p"]}</p><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil-bas')">{t["cta"]}</a></div></div></section>
 <script>{{const D={data};const L=new Date(2026,10,27);const n=Math.floor((new Date().setHours(0,0,0,0)-L.getTime())/864e5);const i=((n%D.length)+D.length)%D.length;const x=D[i];
-document.getElementById('tod-t').textContent=x[2];document.getElementById('tod-s').textContent=x[3];document.getElementById('tod-a').href=x[0];const im=document.getElementById('tod-img');im.src=x[4];im.alt=x[2];document.getElementById('tod-ia').href=x[0];}}</script>'''
+document.getElementById('tod-t').textContent=x[2];document.getElementById('tod-s').textContent=x[3];document.getElementById('tod-a').href=x[0];const im=document.getElementById('tod-img');im.src=x[4];im.alt=x[2];document.getElementById('tod-ia').href=x[0];const dd=new Date().toLocaleDateString('{"fr-FR" if lang == "fr" else "en-GB"}',{{weekday:'long',day:'numeric',month:'long',year:'numeric'}});document.getElementById('tod-d').textContent=dd.charAt(0).toUpperCase()+dd.slice(1);}}</script>'''
     ld = [{"@context": "https://schema.org", "@type": "WebSite", "name": "Pickleball du Jour", "url": SITE + t["home"], "inLanguage": lang,
            "description": t["hero_p"], "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": SITE, "founder": AUTHOR}}]
     title = "Pickleball du Jour · Un conseil de pickleball par jour" if lang == "fr" else "Pickleball du Jour · One pickleball tip a day"
