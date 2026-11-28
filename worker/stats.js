@@ -10,7 +10,50 @@ const SCHEMA = [
   "CREATE INDEX IF NOT EXISTS avis_statut ON avis(statut)",
   "CREATE TABLE IF NOT EXISTS hits (ts INTEGER, day TEXT, path TEXT, lang TEXT, ref TEXT, ref_host TEXT, src TEXT, utm TEXT, country TEXT, city TEXT, device TEXT, vid TEXT, ev TEXT, ev_val TEXT)",
   "CREATE INDEX IF NOT EXISTS hits_day ON hits(day)",
+  "CREATE TABLE IF NOT EXISTS push_subs (endpoint TEXT PRIMARY KEY, ts INTEGER, lang TEXT)",
+  "CREATE TABLE IF NOT EXISTS meta (k TEXT PRIMARY KEY, v TEXT)",
 ];
+
+// ---------- Notifications (Web Push sans contenu : le téléphone va chercher le conseil du jour) ----------
+const VAPID_PUBLIC = "BAvVVsT0goxYtefwBLiCWDmNAXtPdmNKLj8IEi0DQSyJ2_miJbCINtOwXgXoSr_-kzuo5Q_jHNI0x1qW3XhHEBA";
+const b64u = (buf) => btoa(String.fromCharCode(...new Uint8Array(buf))).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+const b64uStr = (s) => b64u(new TextEncoder().encode(s));
+let _key = null;
+async function vapidKey(env) {
+  if (!_key) _key = await crypto.subtle.importKey("jwk", JSON.parse(env.VAPID_JWK), { name: "ECDSA", namedCurve: "P-256" }, false, ["sign"]);
+  return _key;
+}
+async function vapidJWT(env, aud) {
+  const head = b64uStr(JSON.stringify({ typ: "JWT", alg: "ES256" }));
+  const body = b64uStr(JSON.stringify({ aud, exp: Math.floor(Date.now() / 1000) + 12 * 3600, sub: "mailto:contact@pickleballdujour.fr" }));
+  const sig = await crypto.subtle.sign({ name: "ECDSA", hash: "SHA-256" }, await vapidKey(env), new TextEncoder().encode(head + "." + body));
+  return head + "." + body + "." + b64u(sig);
+}
+async function pushOne(env, endpoint) {
+  const aud = new URL(endpoint).origin;
+  const r = await fetch(endpoint, { method: "POST", headers: { Authorization: `vapid t=${await vapidJWT(env, aud)}, k=${VAPID_PUBLIC}`, TTL: "43200", Urgency: "normal", "Content-Length": "0" } });
+  if (r.status === 404 || r.status === 410) await env.DB.prepare("DELETE FROM push_subs WHERE endpoint=?").bind(endpoint).run();
+  return r.status;
+}
+async function pushAll(env) {
+  const subs = (await env.DB.prepare("SELECT endpoint FROM push_subs").all()).results;
+  const res = { total: subs.length, ok: 0, gone: 0, err: 0 };
+  for (let i = 0; i < subs.length; i += 40) {
+    const st = await Promise.all(subs.slice(i, i + 40).map((x) => pushOne(env, x.endpoint).catch(() => 0)));
+    for (const c of st) c >= 200 && c < 300 ? res.ok++ : c === 404 || c === 410 ? res.gone++ : res.err++;
+  }
+  return res;
+}
+async function dailyPush(env) {
+  const today = new Intl.DateTimeFormat("en-CA", { timeZone: "Europe/Paris" }).format(new Date());
+  const last = (await env.DB.prepare("SELECT v FROM meta WHERE k='push_last'").all()).results[0];
+  if (last && last.v === today) return { skip: "deja envoye" };
+  const tip = await fetch("https://pickleballdujour.fr/tip-du-jour.json", { cf: { cacheTtl: 0 } }).then((r) => r.json()).catch(() => null);
+  if (!tip || tip.date !== today) return { skip: "pas de nouveau conseil" };
+  const res = await pushAll(env);
+  await env.DB.prepare("INSERT OR REPLACE INTO meta (k, v) VALUES ('push_last', ?)").bind(today).run();
+  return res;
+}
 
 function cors(req) {
   const o = req.headers.get("Origin") || "";
@@ -104,11 +147,32 @@ async function avisDepot(req, env) {
 }
 
 export default {
+  async scheduled(event, env, ctx) { ctx.waitUntil(dailyPush(env)); },
   async fetch(req, env, ctx) {
     const url = new URL(req.url), h = cors(req);
     if (req.method === "OPTIONS") return new Response(null, { headers: h });
     if (url.pathname === "/setup") { for (const s of SCHEMA) await env.DB.prepare(s).run(); return json({ ok: true }, h); }
     if (url.pathname === "/hit" && req.method === "POST") { ctx.waitUntil(hit(req, env).catch(() => {})); return new Response(null, { status: 204, headers: h }); }
+    if (url.pathname === "/push/sub" && req.method === "POST") {
+      let b = {}; try { b = JSON.parse(await req.text() || "{}"); } catch (e) {}
+      const ep = String(b.endpoint || "");
+      if (!/^https:\/\/[a-z0-9.-]+\//i.test(ep) || ep.length > 600) return json({ error: "endpoint" }, h, 400);
+      await env.DB.prepare("INSERT OR REPLACE INTO push_subs (endpoint, ts, lang) VALUES (?,?,?)").bind(ep, Date.now(), String(b.lang || "fr").slice(0, 5)).run();
+      return json({ ok: true }, h);
+    }
+    if (url.pathname === "/push/unsub" && req.method === "POST") {
+      let b = {}; try { b = JSON.parse(await req.text() || "{}"); } catch (e) {}
+      await env.DB.prepare("DELETE FROM push_subs WHERE endpoint=?").bind(String(b.endpoint || "")).run();
+      return json({ ok: true }, h);
+    }
+    if (url.pathname.startsWith("/push/admin")) {
+      const k = url.searchParams.get("k") || "";
+      if (!k || (await sha(k)) !== ADMIN_HASH) return json({ error: "code" }, h, 401);
+      if (url.searchParams.get("send") === "1") return json(await pushAll(env), h);
+      if (url.searchParams.get("daily") === "1") return json(await dailyPush(env), h);
+      const [{ n }] = (await env.DB.prepare("SELECT COUNT(*) n FROM push_subs").all()).results;
+      return json({ abonnes: n }, h);
+    }
     if (url.pathname === "/avis" && req.method === "POST") { const [st, d] = await avisDepot(req, env); return json(d, h, st); }
     if (url.pathname === "/avis/publics") {
       const r = await env.DB.prepare("SELECT id, ts, nom, ville, niveau, note, texte FROM avis WHERE statut='publie' ORDER BY ts DESC LIMIT 60").all();

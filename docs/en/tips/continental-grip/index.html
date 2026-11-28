@@ -14,7 +14,7 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="apple-touch-icon" href="/img/apple-touch-icon.png"><link rel="manifest" href="/manifest.webmanifest">
 <meta property="og:image" content="https://pickleballdujour.fr/img/scenes/grip-continental-en.png"><meta name="twitter:card" content="summary_large_image">
 <link rel="preload" href="/fonts/inter-latin-400-normal.woff2" as="font" type="font/woff2" crossorigin><link rel="preload" href="/fonts/archivo-latin-800-normal.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="/style.css?v=251bb58b">
+<link rel="stylesheet" href="/style.css?v=c256169d">
 <link rel="alternate" type="application/rss+xml" title="Pickleball du Jour" href="/en/tips/feed.xml">
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Article", "headline": "One grip for everything", "description": "The \"hammer\", or continental, grip lets you play forehand, backhand and volley without changing grip.", "inLanguage": "en", "articleSection": "Technique", "datePublished": "2026-11-27", "dateModified": "2026-11-28", "author": {"@type": "Person", "@id": "https://thierrygarot.fr/#person", "name": "Thierry Garot", "url": "https://thierrygarot.fr/", "sameAs": ["https://thierrygarot.fr/", "https://www.linkedin.com/in/thierry-garot"]}, "publisher": {"@type": "Organization", "name": "Pickleball du Jour", "url": "https://pickleballdujour.fr"}, "image": "https://pickleballdujour.fr/img/scenes/grip-continental-en.png"}</script><script type="application/ld+json">{"@context": "https://schema.org", "@type": "BreadcrumbList", "itemListElement": [{"@type": "ListItem", "position": 1, "name": "Home", "item": "https://pickleballdujour.fr/en/"}, {"@type": "ListItem", "position": 2, "name": "Tips", "item": "https://pickleballdujour.fr/en/tips/"}, {"@type": "ListItem", "position": 3, "name": "One grip for everything"}]}</script>
 </head>
@@ -44,6 +44,33 @@
 <nav class="tabbar" aria-label="Quick navigation"><a href="/en/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6h-6v6H4a1 1 0 0 1-1-1z"/></svg><span>Home</span></a><a href="/en/tips/" class="on" aria-current="page"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="8"/><path d="M12 8v4l3 2"/></svg><span>Tips</span></a><a href="/en/pickleball-tournaments/"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M8 4h8v4a4 4 0 0 1-8 0zM6 5H4v2a3 3 0 0 0 3 3M18 5h2v2a3 3 0 0 1-3 3M12 12v4M8 20h8M10 16h4v4h-4z"/></svg><span>Events</span></a><a href="/en/newsletter/"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="5" width="18" height="14" rx="2"/><path d="M3 7l9 6 9-6"/></svg><span>Newsletter</span></a></nav>
 <script>{const b=document.getElementById('mb'),n=document.getElementById('nv');b.addEventListener('click',()=>{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o)})}</script>
 <script>{const A='https://pickleballdujour-stats.thierry-garot-17.workers.dev/hit';window.pbj=function(e,v){try{if(localStorage.getItem('pbj_optout'))return;const q=new URLSearchParams(location.search);const d=JSON.stringify({p:location.pathname,r:e?'':document.referrer,l:navigator.language,w:innerWidth,u:q.get('utm_source')||'',e:e||'',v:v||''});if(navigator.sendBeacon)navigator.sendBeacon(A,d);else fetch(A,{method:'POST',body:d,keepalive:true})}catch(x){}};pbj();document.addEventListener('click',ev=>{const a=ev.target.closest('a');if(!a)return;if(a.pathname&&/newsletter/.test(a.pathname)&&a.host===location.host)pbj('clic_newsletter',location.pathname)})}</script>
+<script>{(function(){const FR=document.documentElement.lang==='fr',VK='BAvVVsT0goxYtefwBLiCWDmNAXtPdmNKLj8IEi0DQSyJ2_miJbCINtOwXgXoSr_-kzuo5Q_jHNI0x1qW3XhHEBA',API='https://pickleballdujour-stats.thierry-garot-17.workers.dev';
+if(!('serviceWorker' in navigator))return;navigator.serviceWorker.register('/sw.js').catch(()=>{});
+const LS=(k,v)=>{try{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}catch(e){}};
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+let vis=+(LS('pbj_visits')||0);if(!sessionStorage.getItem('pbj_v')){try{sessionStorage.setItem('pbj_v','1')}catch(e){}vis++;LS('pbj_visits',vis)}
+// Notifications
+const nb=document.getElementById('nfb'),nm=document.getElementById('nfm');
+const u8=s=>{const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))};
+async function sub(){try{const perm=await Notification.requestPermission();if(perm!=='granted'){nm.textContent=FR?'Notifications refusées. Vous pourrez les activer dans les réglages du navigateur.':'Notifications blocked. You can enable them in your browser settings.';return}
+const reg=await navigator.serviceWorker.ready;const s=await reg.pushManager.subscribe({userVisibleOnly:true,applicationServerKey:u8(VK)});
+await fetch(API+'/push/sub',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({endpoint:s.endpoint,lang:FR?'fr':'en'})});
+LS('pbj_push','1');nb.hidden=true;nm.textContent=FR?'C’est fait : le conseil arrivera chaque matin.':'Done: the tip will arrive every morning.';window.pbj&&pbj('notif_abonne','')}catch(e){nm.textContent=FR?'L’activation n’a pas fonctionné. Réessayez plus tard.':'It did not work. Please try again later.'}}
+if(nb){const canPush='PushManager' in window&&'Notification' in window;
+if(canPush&&Notification.permission!=='denied'){navigator.serviceWorker.ready.then(r=>r.pushManager.getSubscription()).then(s=>{if(!s){nb.hidden=false;nb.onclick=sub}}).catch(()=>{})}
+else if(ios&&!standalone&&FR){nb.hidden=false;nb.onclick=()=>{nm.textContent='Sur iPhone, installez d’abord l’appli : touchez Partager, puis « Sur l’écran d’accueil ». Ouvrez-la et touchez ce bouton.'}}}
+// Invitation à installer (mobile, 2e visite ou plus, une fois tous les 60 jours)
+if(standalone||!matchMedia('(max-width:820px)').matches)return;
+const last=+(LS('pbj_inst')||0);if(Date.now()-last<60*864e5||vis<2)return;
+let deferred=null;window.addEventListener('beforeinstallprompt',e=>{e.preventDefault();deferred=e;setTimeout(show,4000)});
+if(ios)setTimeout(show,8000);
+function show(){if(document.querySelector('.avtoast,.insttoast'))return;LS('pbj_inst',Date.now());
+const d=document.createElement('div');d.className='insttoast';d.setAttribute('role','dialog');d.setAttribute('aria-label',FR?'Installer l’appli':'Install the app');
+d.innerHTML='<button class="avx" aria-label="'+(FR?'Fermer':'Close')+'">×</button><img src="/img/icon-192.png" alt="" width="44" height="44"><div><b>'+(FR?'Pickleball du Jour en appli':'Pickleball du Jour as an app')+'</b><span>'+(ios?(FR?'Touchez Partager, puis « Sur l’écran d’accueil ».':'Tap Share, then “Add to Home Screen”.'):(FR?'Le conseil du jour en un geste, même hors connexion.':'Today’s tip in one tap, even offline.'))+'</span></div>'+(ios?'':'<button class="btn instgo">'+(FR?'Installer':'Install')+'</button>');
+document.body.appendChild(d);requestAnimationFrame(()=>d.classList.add('in'));window.pbj&&pbj('appli_invite','vu');
+d.querySelector('.avx').onclick=()=>d.remove();const g=d.querySelector('.instgo');if(g)g.onclick=async()=>{if(!deferred)return;deferred.prompt();const c=await deferred.userChoice;window.pbj&&pbj('appli_invite',c.outcome);d.remove()}}
+})()}</script>
 <script>{const o=document.getElementById('optout');if(o){const done=()=>{o.outerHTML='<b>'+(document.documentElement.lang==='fr'?'C’est noté : vos visites ne sont plus comptées sur cet appareil.':'Done: your visits are no longer counted on this device.')+'</b>'};try{if(localStorage.getItem('pbj_optout'))done()}catch(e){}o.addEventListener('click',ev=>{ev.preventDefault();try{localStorage.setItem('pbj_optout','1')}catch(e){}done()})}}</script>
 <script>{(function(){if(document.documentElement.lang!=='fr')return;const K='pbj_avis',P=location.pathname;let st={};try{st=JSON.parse(localStorage.getItem(K)||'{}')}catch(e){}
 const save=()=>{try{localStorage.setItem(K,JSON.stringify(st))}catch(e){}};

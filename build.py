@@ -18,6 +18,7 @@ SITE = "https://pickleballdujour.fr"
 LAUNCH = datetime.date(2026, 11, 27)
 TODAY = datetime.date.today()
 import hashlib as _h
+PUSH_READY = False  # passe à True une fois le Worker de notifications déployé
 CSSV = _h.md5(open(os.path.join(os.path.dirname(os.path.abspath(__file__)), "static", "style.css"), "rb").read()).hexdigest()[:8]
 AUTHOR = {"@type": "Person", "@id": "https://thierrygarot.fr/#person", "name": "Thierry Garot", "url": "https://thierrygarot.fr/", "sameAs": ["https://thierrygarot.fr/", "https://www.linkedin.com/in/thierry-garot"]}
 
@@ -122,6 +123,33 @@ def layout(lang, path, title, desc, body, alt_path, ld=None, og_type="website", 
 {tabbar(lang, path)}
 <script>{{const b=document.getElementById('mb'),n=document.getElementById('nv');b.addEventListener('click',()=>{{const o=n.classList.toggle('open');b.setAttribute('aria-expanded',o)}})}}</script>
 <script>{{const A='https://pickleballdujour-stats.thierry-garot-17.workers.dev/hit';window.pbj=function(e,v){{try{{if(localStorage.getItem('pbj_optout'))return;const q=new URLSearchParams(location.search);const d=JSON.stringify({{p:location.pathname,r:e?'':document.referrer,l:navigator.language,w:innerWidth,u:q.get('utm_source')||'',e:e||'',v:v||''}});if(navigator.sendBeacon)navigator.sendBeacon(A,d);else fetch(A,{{method:'POST',body:d,keepalive:true}})}}catch(x){{}}}};pbj();document.addEventListener('click',ev=>{{const a=ev.target.closest('a');if(!a)return;if(a.pathname&&/newsletter/.test(a.pathname)&&a.host===location.host)pbj('clic_newsletter',location.pathname)}})}}</script>
+<script>{{(function(){{const FR=document.documentElement.lang==='fr',VK='BAvVVsT0goxYtefwBLiCWDmNAXtPdmNKLj8IEi0DQSyJ2_miJbCINtOwXgXoSr_-kzuo5Q_jHNI0x1qW3XhHEBA',API='https://pickleballdujour-stats.thierry-garot-17.workers.dev';
+if(!('serviceWorker' in navigator))return;navigator.serviceWorker.register('/sw.js').catch(()=>{{}});
+const LS=(k,v)=>{{try{{if(v===undefined)return localStorage.getItem(k);localStorage.setItem(k,v)}}catch(e){{}}}};
+const standalone=matchMedia('(display-mode: standalone)').matches||navigator.standalone===true;
+const ios=/iphone|ipad|ipod/i.test(navigator.userAgent)&&!window.MSStream;
+let vis=+(LS('pbj_visits')||0);if(!sessionStorage.getItem('pbj_v')){{try{{sessionStorage.setItem('pbj_v','1')}}catch(e){{}}vis++;LS('pbj_visits',vis)}}
+// Notifications
+const nb=document.getElementById('nfb'),nm=document.getElementById('nfm');
+const u8=s=>{{const p='='.repeat((4-s.length%4)%4),b=atob((s+p).replace(/-/g,'+').replace(/_/g,'/'));return Uint8Array.from([...b].map(c=>c.charCodeAt(0)))}};
+async function sub(){{try{{const perm=await Notification.requestPermission();if(perm!=='granted'){{nm.textContent=FR?'Notifications refusées. Vous pourrez les activer dans les réglages du navigateur.':'Notifications blocked. You can enable them in your browser settings.';return}}
+const reg=await navigator.serviceWorker.ready;const s=await reg.pushManager.subscribe({{userVisibleOnly:true,applicationServerKey:u8(VK)}});
+await fetch(API+'/push/sub',{{method:'POST',headers:{{'Content-Type':'application/json'}},body:JSON.stringify({{endpoint:s.endpoint,lang:FR?'fr':'en'}})}});
+LS('pbj_push','1');nb.hidden=true;nm.textContent=FR?'C’est fait : le conseil arrivera chaque matin.':'Done: the tip will arrive every morning.';window.pbj&&pbj('notif_abonne','')}}catch(e){{nm.textContent=FR?'L’activation n’a pas fonctionné. Réessayez plus tard.':'It did not work. Please try again later.'}}}}
+if(nb){{const canPush='PushManager' in window&&'Notification' in window;
+if(canPush&&Notification.permission!=='denied'){{navigator.serviceWorker.ready.then(r=>r.pushManager.getSubscription()).then(s=>{{if(!s){{nb.hidden=false;nb.onclick=sub}}}}).catch(()=>{{}})}}
+else if(ios&&!standalone&&FR){{nb.hidden=false;nb.onclick=()=>{{nm.textContent='Sur iPhone, installez d’abord l’appli : touchez Partager, puis « Sur l’écran d’accueil ». Ouvrez-la et touchez ce bouton.'}}}}}}
+// Invitation à installer (mobile, 2e visite ou plus, une fois tous les 60 jours)
+if(standalone||!matchMedia('(max-width:820px)').matches)return;
+const last=+(LS('pbj_inst')||0);if(Date.now()-last<60*864e5||vis<2)return;
+let deferred=null;window.addEventListener('beforeinstallprompt',e=>{{e.preventDefault();deferred=e;setTimeout(show,4000)}});
+if(ios)setTimeout(show,8000);
+function show(){{if(document.querySelector('.avtoast,.insttoast'))return;LS('pbj_inst',Date.now());
+const d=document.createElement('div');d.className='insttoast';d.setAttribute('role','dialog');d.setAttribute('aria-label',FR?'Installer l’appli':'Install the app');
+d.innerHTML='<button class="avx" aria-label="'+(FR?'Fermer':'Close')+'">×</button><img src="/img/icon-192.png" alt="" width="44" height="44"><div><b>'+(FR?'Pickleball du Jour en appli':'Pickleball du Jour as an app')+'</b><span>'+(ios?(FR?'Touchez Partager, puis « Sur l’écran d’accueil ».':'Tap Share, then “Add to Home Screen”.'):(FR?'Le conseil du jour en un geste, même hors connexion.':'Today’s tip in one tap, even offline.'))+'</span></div>'+(ios?'':'<button class="btn instgo">'+(FR?'Installer':'Install')+'</button>');
+document.body.appendChild(d);requestAnimationFrame(()=>d.classList.add('in'));window.pbj&&pbj('appli_invite','vu');
+d.querySelector('.avx').onclick=()=>d.remove();const g=d.querySelector('.instgo');if(g)g.onclick=async()=>{{if(!deferred)return;deferred.prompt();const c=await deferred.userChoice;window.pbj&&pbj('appli_invite',c.outcome);d.remove()}}}}
+}})()}}</script>
 <script>{{const o=document.getElementById('optout');if(o){{const done=()=>{{o.outerHTML='<b>'+(document.documentElement.lang==='fr'?'C’est noté : vos visites ne sont plus comptées sur cet appareil.':'Done: your visits are no longer counted on this device.')+'</b>'}};try{{if(localStorage.getItem('pbj_optout'))done()}}catch(e){{}}o.addEventListener('click',ev=>{{ev.preventDefault();try{{localStorage.setItem('pbj_optout','1')}}catch(e){{}}done()}})}}}}</script>
 <script>{{(function(){{if(document.documentElement.lang!=='fr')return;const K='pbj_avis',P=location.pathname;let st={{}};try{{st=JSON.parse(localStorage.getItem(K)||'{{}}')}}catch(e){{}}
 const save=()=>{{try{{localStorage.setItem(K,JSON.stringify(st))}}catch(e){{}}}};
@@ -379,6 +407,10 @@ def home(lang, pages, tips, otips):
     t = T[lang]
     pre = "" if lang == "fr" else "/en"
     base = f"{pre}/{t['tips']}/"
+    if lang == "fr":
+        x0 = tips[0]
+        with open(os.path.join(OUT, "tip-du-jour.json"), "w", encoding="utf-8") as f:
+            json.dump({"date": x0[6] if len(x0) > 6 else "", "title": "Conseil du jour : " + x0[2], "summary": x0[3], "url": f"{base}{x0[0]}/?utm_source=notification"}, f, ensure_ascii=False)
     fresh = len(tips[0]) > 6 and tips[0][6] == TODAY.isoformat()
     idx = 0 if fresh else (TODAY - LAUNCH).days % len(tips)
     tip = tips[idx]
@@ -391,7 +423,7 @@ def home(lang, pages, tips, otips):
     body = f'''<section class="hero"><div class="wrap">
 <div><h1>{t["hero_h"]}</h1><p>{t["hero_p"]}</p>
 <p class="herocta"><a class="btn" href="{NL_URL}" onclick="window.pbj&&pbj('clic_inscription','accueil')">{t["cta"]}</a>{'<a class="btn ghost" href="/progresser/" onclick="window.pbj&&pbj(\'clic_quiz\',\'accueil\')">Faire mon bilan</a>' if lang == "fr" else ""}</p>
-<div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · <span id="tod-c">{esc(tip[1])}</span></span><p class="tdate" id="tod-d"></p><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a></div>
+<div class="tipcard" id="tod"><span class="k">{t["tip_of_day"]} · <span id="tod-c">{esc(tip[1])}</span></span><p class="tdate" id="tod-d"></p><h2 id="tod-t">{esc(tip[2])}</h2><p id="tod-s">{esc(tip[3])}</p><a id="tod-a" href="{base}{tip[0]}/">{t["read"]} →</a>{'<button class="notifbtn" id="nfb" type="button" hidden>' if PUSH_READY else '<button class="notifbtn" id="nfb-off" type="button" hidden>'}{"🔔 Recevoir le conseil chaque matin" if lang == "fr" else "🔔 Get the tip every morning"}</button><p class="notifmsg" id="nfm" aria-live="polite"></p></div>
 </div>
 <div class="todimg"><a id="tod-ia" href="{base}{tip[0]}/"><img id="tod-img" src="/img/scenes/{fk(idx)}-{lang}.png" width="300" height="{scenes.H}" alt="{esc(tip[2])}"></a></div>
 </div></section>
@@ -474,8 +506,10 @@ def main():
     if os.path.isdir(os.path.join(ROOT, "static", "livret")):
         shutil.copytree(os.path.join(ROOT, "static", "livret"), os.path.join(OUT, "livret"))
     with open(os.path.join(OUT, "manifest.webmanifest"), "w") as f:
-        json.dump({"name": "Pickleball du Jour", "short_name": "Pickleball", "start_url": "/", "display": "standalone", "background_color": "#ffffff", "theme_color": "#1f5fbf",
-                   "icons": [{"src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png"}, {"src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png"}]}, f)
+        json.dump({"id": "/", "name": "Pickleball du Jour", "short_name": "Pickleball", "description": "Un conseil de pickleball par jour, des séances vidéo de 30 secondes et les tournois près de chez vous.",
+                   "lang": "fr", "start_url": "/?utm_source=app", "scope": "/", "display": "standalone", "orientation": "portrait", "background_color": "#ffffff", "theme_color": "#1f5fbf", "categories": ["sports", "education"],
+                   "icons": [{"src": "/img/icon-192.png", "sizes": "192x192", "type": "image/png", "purpose": "any"}, {"src": "/img/icon-512.png", "sizes": "512x512", "type": "image/png", "purpose": "any"}],
+                   "shortcuts": [{"name": "Le conseil du jour", "url": "/?utm_source=app"}, {"name": "Séances vidéo", "url": "/seances/"}, {"name": "Trouver un tournoi", "url": "/tournois-pickleball/"}, {"name": "Mon bilan", "url": "/progresser/"}]}, f)
     with open(os.path.join(OUT, "CNAME"), "w") as f:
         f.write("pickleballdujour.fr\n")
     # Fichiers de validation moteurs (Search Console, IndexNow) servis à la racine
@@ -484,6 +518,11 @@ def main():
         for fn in os.listdir(rootdir):
             shutil.copy(os.path.join(rootdir, fn), os.path.join(OUT, fn))
     open(os.path.join(OUT, ".nojekyll"), "w").close()
+    with open(os.path.join(ROOT, "static", "sw.js"), encoding="utf-8") as f:
+        swsrc = f.read().replace("__VERSION__", CSSV)
+    with open(os.path.join(OUT, "sw.js"), "w", encoding="utf-8") as f:
+        f.write(swsrc)
+    write("/hors-ligne/", layout("fr", "/hors-ligne/", "Hors connexion · Pickleball du Jour", "Vous êtes hors connexion.", '''<div class="wrap page"><h1>Vous êtes hors connexion</h1><p class="lead">Pas de réseau pour l'instant. Les pages que vous avez déjà ouvertes restent disponibles : revenez en arrière ou ouvrez le conseil du jour.</p><p><a class="btn" href="/">Le conseil du jour</a></p></div>''', "/en/").replace('<meta name="description"', '<meta name="robots" content="noindex"><meta name="description"', 1))
     with open(os.path.join(OUT, "_headers"), "w") as f:
         f.write("/*\n  X-Content-Type-Options: nosniff\n  Referrer-Policy: strict-origin-when-cross-origin\n  X-Frame-Options: SAMEORIGIN\n  Strict-Transport-Security: max-age=31536000\n\n/img/*\n  Cache-Control: public, max-age=2592000\n\n/style.css\n  Cache-Control: public, max-age=86400\n")
     def vsm(u):
