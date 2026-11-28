@@ -1,0 +1,28 @@
+name: IndexNow (Bing, Copilot, Yandex)
+on:
+  push:
+    branches: [main]
+    paths: ["docs/**"]
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+      - name: Attendre la mise en ligne GitHub Pages
+        run: sleep 120
+      - name: Signaler les pages modifiées
+        run: |
+          KEY=df70b66cb74e652cc333f8dc3fa7c258
+          SITE=https://pickleballdujour.fr
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ] || ! git rev-parse HEAD~1 >/dev/null 2>&1; then
+            URLS=$(grep -o '<loc>[^<]*</loc>' docs/sitemap.xml | sed 's#</\?loc>##g')
+          else
+            URLS=$(git diff --name-only HEAD~1 HEAD -- docs | grep 'index.html$' | sed 's#^docs##; s#index.html$##' | sed "s#^#$SITE#")
+          fi
+          [ -z "$URLS" ] && { echo "Aucune page modifiée"; exit 0; }
+          JSON=$(printf '%s\n' $URLS | head -10000 | python3 -c 'import sys,json;print(json.dumps({"host":"pickleballdujour.fr","key":"'"$KEY"'","keyLocation":"'"$SITE/$KEY.txt"'","urlList":[l.strip() for l in sys.stdin if l.strip()]}))')
+          echo "$JSON" | python3 -c 'import sys,json;print(len(json.load(sys.stdin)["urlList"]),"URL envoyées")'
+          curl -s -o /dev/null -w "IndexNow HTTP %{http_code}\n" -X POST https://api.indexnow.org/indexnow -H "Content-Type: application/json; charset=utf-8" -d "$JSON"
