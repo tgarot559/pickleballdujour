@@ -426,11 +426,15 @@ def main():
     with open(os.path.join(OUT, "sitemap.xml"), "w") as f:
         f.write(f'<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">{sm}</urlset>')
     with open(os.path.join(OUT, "robots.txt"), "w") as f:
-        f.write(f"User-agent: *\nAllow: /\nDisallow: /admin/\n\nUser-agent: GPTBot\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /\n\nUser-agent: PerplexityBot\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
+        f.write(f"User-agent: *\nAllow: /\nDisallow: /admin/\n\nUser-agent: Bingbot\nAllow: /\nDisallow: /admin/\n\nUser-agent: GPTBot\nAllow: /\n\nUser-agent: OAI-SearchBot\nAllow: /\n\nUser-agent: ChatGPT-User\nAllow: /\n\nUser-agent: ClaudeBot\nAllow: /\n\nUser-agent: Claude-SearchBot\nAllow: /\n\nUser-agent: Claude-User\nAllow: /\n\nUser-agent: PerplexityBot\nAllow: /\n\nUser-agent: Perplexity-User\nAllow: /\n\nUser-agent: Google-Extended\nAllow: /\n\nUser-agent: Applebot-Extended\nAllow: /\n\nUser-agent: MistralAI-User\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n")
     llms = ["# Pickleball du Jour", "", "> Site indépendant du pickleball en français (et en anglais) créé par Thierry Garot, joueur de pickleball en France. Un conseil pratique chaque jour, des guides complets (règles FFT 2026, terrain, raquettes, débuter, pickleball ou padel), le calendrier des tournois en France et dans le monde.", "", "## Guides (FR)"]
     llms += [f"- [{p['h1']}]({SITE}/{p['slug']}/): {p['answer']}" for p in PFR]
     llms += ["", "## Guides (EN)"] + [f"- [{p['h1']}]({SITE}/en/{p['slug']}/): {p['answer']}" for p in PEN]
-    llms += ["", "## Conseils du jour", f"- [Tous les conseils]({SITE}/conseils/)", f"- [All tips]({SITE}/en/tips/)"]
+    llms += ["", "## Conseils du jour", f"- [Tous les conseils]({SITE}/conseils/): un conseil pratique publié chaque matin, avec un schéma de terrain et un exercice mesurable", f"- [All tips]({SITE}/en/tips/)"]
+    llms += ["", "## Progresser", f"- [Bilan de niveau en 2 minutes]({SITE}/progresser/): 8 questions sans inscription ; niveau estimé (Découverte, Initié, Confirmé, Avancé), points forts, axes de progrès, conseils et séance vidéo recommandés"]
+    llms += ["", "## Séances vidéo (30 secondes, par niveau)"] + [f"- [{x['title']}]({SITE}/seances/#{x['slug']}): niveau {dict(avance='Avancé', confirme='Confirmé', initie='Initié', decouverte='Découverte')[x['level']]}, {x['dur']} s. {x['desc']}" for x in SESSIONS]
+    llms += ["", "## Tournois", f"- [Trouver un tournoi près de chez soi]({SITE}/tournois-pickleball/#recherche): tournois homologués FFT (K25 à K1000) et tournois de clubs, recherche par ville ou position, mis à jour chaque semaine"]
+    llms += ["", "## Autres", f"- [Avis des joueurs]({SITE}/avis/)", f"- [Newsletter gratuite du dimanche]({SITE}/newsletter/)", f"- [À propos]({SITE}/a-propos/)"]
     with open(os.path.join(OUT, "tournois.json"), "w") as f:
         json.dump(tdata(), f, ensure_ascii=False)
     with open(os.path.join(OUT, "llms.txt"), "w") as f:
